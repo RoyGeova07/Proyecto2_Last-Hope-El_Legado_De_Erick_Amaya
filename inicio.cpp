@@ -9,6 +9,12 @@
 #include<QMovie>
 #include<QApplication>
 #include<QScreen>
+#include<QFile>
+#include<QDir>
+#include<QDebug>
+#include<QDataStream>
+#include<QMessageBox>
+#include"lobby.h"
 
 Inicio::Inicio(QWidget*parent):QWidget(parent)
 {
@@ -91,6 +97,56 @@ Inicio::Inicio(QWidget*parent):QWidget(parent)
     contenedor->raise();//esto se asegura q este dentro del gif
 
     connect(Salir,&QPushButton::clicked,this,&Inicio::close);
+    connect(btnNuevaPartida,&QPushButton::clicked,this,&Inicio::AbrirJuego);
 
+
+}
+
+void Inicio::AbrirJuego()
+{
+
+    QString rutaBase=QDir::currentPath();
+    QDir directorio(rutaBase);
+
+    if(!directorio.exists("Partidas"))
+    {
+
+        if(!directorio.mkdir("Partidas"))
+        {
+
+            QMessageBox::warning(this,"Error","No se pudo crear la carpeta de partidas");
+            return;
+
+        }
+
+    }
+
+    //aqui se crea el archivo
+    QString rutaArchivo=rutaBase+"/Partidas/Partida1.dat";
+    QFile archivo(rutaArchivo);
+
+    if(archivo.open(QIODevice::WriteOnly))
+    {
+
+        QDataStream salida(&archivo);
+        QString mensaje="Partida creada correctamente";
+        salida<<mensaje;
+        archivo.close();
+
+
+        qDebug()<<"Archivo de partida creado en: "<<rutaArchivo;
+        QMessageBox::information(this,"Nueva Partida","Partida creada exitosamente!");
+
+    }else{
+
+        QMessageBox::warning(this,"Error","No se pudo crear el archivo de partida");
+        return;
+
+    }
+
+    lobby*ventanaLobby=new lobby();
+    ventanaLobby->show();
+
+    this->close();
 
 }

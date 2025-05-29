@@ -10,12 +10,16 @@ CONFIG += c++17
 
 SOURCES += \
     inicio.cpp \
+    lobby.cpp \
     main.cpp \
-    mainwindow.cpp
+    mainwindow.cpp \
+    personaje.cpp
 
 HEADERS += \
     inicio.h \
-    mainwindow.h
+    lobby.h \
+    mainwindow.h \
+    personaje.h
 
 FORMS += \
     mainwindow.ui
@@ -26,4 +30,4 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 RESOURCES += \
-    recursos.qrc
+    inicio.qrc \
