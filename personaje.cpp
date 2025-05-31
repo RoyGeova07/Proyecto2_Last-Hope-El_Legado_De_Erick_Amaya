@@ -1,11 +1,11 @@
 #include "personaje.h"
 #include<QDebug>
 
-personaje::personaje(QWidget*parent):QLabel(parent),frameActual(0),velocidadMovimiento(10)
+personaje::personaje(QWidget*parent):QLabel(parent),frameActual(0),velocidadMovimiento(10),miradoDerecha(true)
 {
 
     this->resize(128,128);//aqui tamanio del frame
-    this->move(100,500);//aqui posiciion inicial
+    this->move(600,500);//aqui posiciion inicial del personaje
 
     timer=new QTimer(this);
     connect(timer,&QTimer::timeout,this,&personaje::AvanzarFrame);
@@ -15,6 +15,29 @@ personaje::personaje(QWidget*parent):QLabel(parent),frameActual(0),velocidadMovi
 void personaje::SetAnimacion(const QString &ruta, int cantidadFrames)
 {
 
+    bool debeRefrescarFlip=false;
+
+    //aqui si la direccion cambio la ultima vez que se dibujo
+    static bool ultimaDireccionDerecha = true;
+
+    if(miradoDerecha!=ultimaDireccionDerecha)
+    {
+
+        debeRefrescarFlip=true;
+        ultimaDireccionDerecha=miradoDerecha;
+
+    }
+
+    if(animacionActual==ruta&&!debeRefrescarFlip)
+    {
+
+        //aqui, si ya es la animacion actual, asegurarse que el timer esta corriendo
+        if(!timer->isActive())
+            timer->start(100);
+        return;
+
+    }
+
     QPixmap spriteSheet(ruta);
     if(spriteSheet.isNull())
     {
@@ -23,6 +46,7 @@ void personaje::SetAnimacion(const QString &ruta, int cantidadFrames)
         return;
 
     }
+    animacionActual=ruta;
     frames.clear();
     frameActual=0;//con esto reinicia desde el primer frame
 
@@ -31,7 +55,13 @@ void personaje::SetAnimacion(const QString &ruta, int cantidadFrames)
     for(int i=0;i<cantidadFrames;++i)
     {
 
-       QPixmap frame = spriteSheet.copy(i*frameAncho,0,frameAncho,spriteSheet.height());
+        QPixmap frame = spriteSheet.copy(i*frameAncho,0,frameAncho,spriteSheet.height());
+        if(!miradoDerecha)
+        {
+
+            frame=frame.transformed(QTransform().scale(-1,1));//volteo horizontallll
+
+        }
         frames.append(frame);
 
     }
@@ -40,6 +70,20 @@ void personaje::SetAnimacion(const QString &ruta, int cantidadFrames)
 
     timer->start(100);//con esto inicia para que avance la primera animacion
 
+
+}
+
+void personaje::DetenerAnimacion()
+{
+
+    timer->stop();
+    if(!frames.isEmpty())
+    {
+
+        setPixmap(frames[0]);//dejar el primer frame
+
+    }
+    animacionActual.clear();//reinicia la animacion actual
 
 }
 
@@ -57,6 +101,7 @@ void personaje::MoverIzquierda()
 {
 
     this->move(x()-velocidadMovimiento,y());
+    miradoDerecha=false;
 
 }
 
@@ -64,5 +109,55 @@ void personaje::MoverDerecha()
 {
 
     this->move(x()+velocidadMovimiento,y());
+    miradoDerecha=true;
+
+}
+
+void personaje::MoverArriba()
+{
+
+    this->move(x(),y()-velocidadMovimiento);
+
+}
+
+void personaje::MoverAbajo()
+{
+
+    this->move(x(),y()+velocidadMovimiento);
+
+}
+
+void personaje::SetAnimacionMovimiento(int velocidad)
+{
+
+    velocidadMovimiento=velocidad;
+
+}
+
+void personaje::MoverSiNoColisiona(int dx, int dy, const QVector<QRect> &obstaculos)
+{
+
+    QRect nuevaPos=this->geometry();
+    nuevaPos.translate(dx,dy);
+
+    //con este for, revisa la colision con cada obstaculo
+    for(const QRect& obs:obstaculos)
+    {
+
+        if(nuevaPos.intersects(obs))
+        {
+
+            //si colisiona, no se mueve
+            return;
+
+        }
+
+    }
+    //si no, si se mueve
+    this->move(nuevaPos.topLeft());
+
+    //aqui se actualiza la direccion para el flip
+    if(dx>0)miradoDerecha=true;
+    else if(dx<0)miradoDerecha=false;
 
 }
