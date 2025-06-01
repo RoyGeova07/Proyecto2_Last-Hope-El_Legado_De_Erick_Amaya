@@ -1,5 +1,43 @@
 <RCC>
     <qresource prefix="/imagenes">
         <file>inicio.gif</file>
+        <file>assets/items/curar1.png</file>
+        <file>assets/items/curar2.png</file>
+        <file>assets/items/municiones.png</file>
+        <file>assets/mapas/lobby.jpg</file>
+        <file>assets/mapas/War.png</file>
+        <file>assets/mapas/War2.png</file>
+        <file>assets/mapas/War3.png</file>
+        <file>assets/mapas/War4.png</file>
+        <file>assets/mapas/War5.png</file>
+        <file>assets/mapas/War6.png</file>
+        <file>assets/NPC/Hablar1_NPC1.png</file>
+        <file>assets/NPC/Hablar1_NPC2.png</file>
+        <file>assets/NPC/Hablar1_NPC3.png</file>
+        <file>assets/NPC/Hablar2_NPC2.png</file>
+        <file>assets/NPC/Hablar2_NPC3.png</file>
+        <file>assets/protagonista/Idle.png</file>
+        <file>assets/protagonista/Recharge.png</file>
+        <file>assets/protagonista/Run.png</file>
+        <file>assets/protagonista/Shot_1.png</file>
+        <file>assets/protagonista/Walk.png</file>
+        <file>assets/Zombies/Attack_1_Z1.png</file>
+        <file>assets/Zombies/Attack_1_Z2.png</file>
+        <file>assets/Zombies/Attack_1_Z3.png</file>
+        <file>assets/Zombies/Attack_2_Z1.png</file>
+        <file>assets/Zombies/Attack_2_Z2.png</file>
+        <file>assets/Zombies/Attack_2_Z3.png</file>
+        <file>assets/Zombies/Dead_Z1.png</file>
+        <file>assets/Zombies/Dead_Z2.png</file>
+        <file>assets/Zombies/Dead_Z3.png</file>
+        <file>assets/Zombies/Hurt_Z1.png</file>
+        <file>assets/Zombies/Hurt_Z2.png</file>
+        <file>assets/Zombies/Hurt_Z3.png</file>
+        <file>assets/Zombies/Idle_Z1.png</file>
+        <file>assets/Zombies/Idle_Z2.png</file>
+        <file>assets/Zombies/Idle_Z3.png</file>
+        <file>assets/Zombies/Run_Z1.png</file>
+        <file>assets/Zombies/Run_Z2.png</file>
+        <file>assets/Zombies/Run_Z3.png</file>
     </qresource>
 </RCC>

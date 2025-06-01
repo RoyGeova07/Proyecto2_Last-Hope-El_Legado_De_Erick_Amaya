@@ -9,7 +9,7 @@ lobby::lobby(QWidget*parent):QWidget(parent)
     this->resize(1280,720);
     this->setWindowTitle("Lobby - Last hope");
 
-    QPixmap fondoPixmap("assets/mapas/lobby.jpg");
+    QPixmap fondoPixmap(":/imagenes/assets/mapas/lobby.jpg");
     if (fondoPixmap.isNull())
     {
 
@@ -24,7 +24,7 @@ lobby::lobby(QWidget*parent):QWidget(parent)
     }
 
     jugador=new personaje(this);
-    jugador->SetAnimacion("assets/protagonista/Idle.png",7);//aqui idle perfecto
+    jugador->SetAnimacion(":/imagenes/assets/protagonista/Idle.png",7);//aqui idle perfecto
     jugador->show();
     jugador->raise();//con esto se aseguara que este encima del fondo
 
@@ -33,6 +33,22 @@ lobby::lobby(QWidget*parent):QWidget(parent)
     derechaPresionada=false;
     arribaPresionado=false;
     abajoPresionado=false;
+
+    // QLabel para mostrar el dialogo
+    QLabel* dialogoUI = new QLabel(this);
+    dialogoUI->setStyleSheet("background: black; color: white; padding: 15px; border-radius: 10px;");
+    dialogoUI->setAlignment(Qt::AlignCenter);
+    dialogoUI->setGeometry(100, 100, 400, 100);
+    dialogoUI->hide();
+
+    //Npc Inicial
+    NPC* npc2 = new NPC(NPC::Tipo::NPC2, this);
+    npc2->move(700, 250);
+    npc2->show();
+
+    // Verificar colision
+    QRect rectJugador = jugador->geometry();
+    QRect rectNPC = npc2->geometry();
 
     //aqui se crear el timer de movimiento
     movimientoTimer=new QTimer(this);
@@ -44,7 +60,7 @@ lobby::lobby(QWidget*parent):QWidget(parent)
         if(izquierdaPresionada)
         {
 
-            jugador->MoverSiNoColisiona(-jugador->getVelocidadMoviento(),0,obstaculos);
+            jugador->MoverSiNoColisiona(-jugador->getVelocidadMoviento(), 0, obstaculos);
             moviendo=true;
 
         }else if(derechaPresionada){
@@ -74,12 +90,12 @@ lobby::lobby(QWidget*parent):QWidget(parent)
             {
 
                 jugador->SetAnimacionMovimiento(6);
-                jugador->SetAnimacion("assets/protagonista/Run.png",8);
+                jugador->SetAnimacion(":/imagenes/assets/protagonista/Run.png",8);
 
             }else{
 
                 jugador->SetAnimacionMovimiento(2);
-                jugador->SetAnimacion("assets/protagonista/Walk.png", 7);
+                jugador->SetAnimacion(":/imagenes/assets/protagonista/Walk.png", 7);
 
             }
 
@@ -88,10 +104,15 @@ lobby::lobby(QWidget*parent):QWidget(parent)
             // Si no se mueve, detener
             movimientoTimer->stop();
             jugador->DetenerAnimacion();
-            jugador->SetAnimacion("assets/protagonista/Idle.png", 7);
+            jugador->SetAnimacion(":/imagenes/assets/protagonista/Idle.png", 7);
 
         }
 
+        if(rectJugador.intersects(rectNPC)) {
+            if(!npc2->estaHablando()) {
+                npc2->mostrarDialogo(dialogoUI);
+            }
+        }
     });
 
     movimientoTimer->setInterval(30);//33fps
@@ -119,6 +140,9 @@ lobby::lobby(QWidget*parent):QWidget(parent)
     //Lado derecho
     //                      x, y,ancho,alto
     obstaculos.append(QRect(1272,282,3,324));
+
+    //NPC
+    obstaculos.append(QRect(750,250,40,70));
 
 }
 

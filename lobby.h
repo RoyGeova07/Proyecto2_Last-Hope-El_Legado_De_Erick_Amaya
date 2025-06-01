@@ -1,6 +1,7 @@
 #ifndef LOBBY_H
 #define LOBBY_H
 #include"personaje.h"
+#include "npc.h"
 #include<QVector>
 #include<QRect>
 
@@ -20,6 +21,8 @@ protected:
 private:
 
     personaje*jugador;
+    QVector<NPC*> npcs;
+    QLabel* lblDialogo;
     bool shiftPresionado;
     bool izquierdaPresionada;
     bool derechaPresionada;

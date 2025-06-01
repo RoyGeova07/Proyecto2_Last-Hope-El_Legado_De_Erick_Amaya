@@ -13,12 +13,14 @@ SOURCES += \
     lobby.cpp \
     main.cpp \
     mainwindow.cpp \
+    npc.cpp \
     personaje.cpp
 
 HEADERS += \
     inicio.h \
     lobby.h \
     mainwindow.h \
+    npc.h \
     personaje.h
 
 FORMS += \
