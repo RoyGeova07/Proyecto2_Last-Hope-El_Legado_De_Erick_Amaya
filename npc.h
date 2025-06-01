@@ -19,13 +19,18 @@ public:
 
     explicit NPC(Tipo tipo, QWidget* parent = nullptr);
 
-    // Animacion
+    // Animación
     void SetAnimacion(const QString& ruta, int cantidadFrames);
     void AvanzarFrame();
 
-    // Dialogo
+    // Diálogo
     void mostrarDialogo(QLabel* dialogoLabel);
     bool estaHablando() const { return hablando; }
+
+    // UI contextual
+    void mostrarHintInteractuar();       // Mostrar "Presiona H para hablar"
+    void ocultarHintInteractuar();       // Ocultar label de interacción
+    QLabel* getHintLabel() const { return labelPresionaH; }
 
 private:
     Tipo tipo;
@@ -38,6 +43,8 @@ private:
     int indiceDialogo;
     QString dialogoActual;
     bool hablando;
+
+    QLabel* labelPresionaH = nullptr;    // 💬 UI encima del NPC
 };
 
 #endif // NPC_H
