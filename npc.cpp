@@ -26,7 +26,7 @@ NPC::NPC(Tipo tipo, QWidget* parent)
         break;
     case Tipo::NPC2:
         SetAnimacion(":/imagenes/assets/NPC/Hablar1_NPC2.png", 4);
-        dialogos = {"El camino más corto es la derecha", "Callejón B tiene un botiquín!"};
+        dialogos = {"Bienvenido Militar Erick, Mira los 5 cuevas que ves estan bloqueadas, la primera cueva esta desbloqueada, puedesentrar por ahi y enfrentarte a los zombies.", "En este callejon libre hay botiquin."};
         break;
     case Tipo::NPC3:
         SetAnimacion(":/imagenes/assets/NPC/Hablar1_NPC3.png", 6);

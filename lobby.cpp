@@ -3,6 +3,7 @@
 #include <QLabel>
 #include <QKeyEvent>
 #include <QDebug>
+#include<QPainter>
 
 lobby::lobby(QWidget* parent) : QWidget(parent)
 {
@@ -29,7 +30,7 @@ lobby::lobby(QWidget* parent) : QWidget(parent)
     arribaPresionado = false;
     abajoPresionado = false;
 
-    // QLabel para mostrar el diálogo
+    //aqui QLabel para mostrar el dialogo
     lblDialogo = new QLabel(this);
     lblDialogo->setStyleSheet("background: black; color: white; padding: 15px; border-radius: 10px;");
     lblDialogo->setAlignment(Qt::AlignCenter);
@@ -38,14 +39,14 @@ lobby::lobby(QWidget* parent) : QWidget(parent)
 
     // Crear y registrar NPCs
     NPC* npc2 = new NPC(NPC::Tipo::NPC2, this);
-    npc2->move(700, 250);
+    npc2->move(1100,390);
     npc2->show();
-    npcs.append(npc2); // Registrar en el vector global
+    npcs.append(npc2); //aqui se registra en el vector global
 
-    // Obstáculo físico del NPC
-    obstaculos.append(QRect(750, 250, 40, 70));
+    //aqui obstaculo fisico del NPC
+    obstaculos.append(QRect(1151,468,17,60));
 
-    // Crear timer de movimiento
+    //aqui se creaa timer de movimiento
     movimientoTimer = new QTimer(this);
     connect(movimientoTimer, &QTimer::timeout, this, [=]() {
         bool moviendo = false;
@@ -105,13 +106,13 @@ lobby::lobby(QWidget* parent) : QWidget(parent)
 
     movimientoTimer->setInterval(30); // ~33 FPS
 
-    // OBSTÁCULOS FIJOS
-    obstaculos.append(QRect(3, 2, 1334, 227));     // Muro superior
-    obstaculos.append(QRect(44, 557, 234, 118));   // Mesa abajo izquierda
-    obstaculos.append(QRect(5, 669, 1273, 47));    // Piso inferior
-    obstaculos.append(QRect(900, 570, 160, 150));  // Casilleros
-    obstaculos.append(QRect(3, 278, 5, 388));      // Pared izquierda
-    obstaculos.append(QRect(1272, 282, 3, 324));   // Pared derecha
+    // OBSTACULOS FIJOS
+    obstaculos.append(QRect(3,2,1334,227));     // Muro superior
+    obstaculos.append(QRect(44,557,234,118));   // Mesa abajo izquierda
+    obstaculos.append(QRect(5,669,1273,47));    // Piso inferior
+    obstaculos.append(QRect(900,570,160,150));  // Casilleros
+    obstaculos.append(QRect(1,278,3,274));      // Pared izquierda
+    obstaculos.append(QRect(1312,282,3,324));   // Pared derecha
 }
 
 void lobby::keyPressEvent(QKeyEvent* event)
