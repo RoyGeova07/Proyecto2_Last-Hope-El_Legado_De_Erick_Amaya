@@ -1,4 +1,5 @@
 #include "inicio.h"
+#include "Nivel01.h"
 #include<QPushButton>
 #include<QLabel>
 #include<QVBoxLayout>
@@ -146,6 +147,9 @@ void Inicio::AbrirJuego()
 
     lobby*ventanaLobby=new lobby();
     ventanaLobby->show();
+    Nivel01* ventana=new Nivel01();
+    //ventana->show();
+
 
     this->close();
 
