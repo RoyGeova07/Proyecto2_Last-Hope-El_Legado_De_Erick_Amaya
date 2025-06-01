@@ -23,7 +23,7 @@ protected:
     bool abajoPresionado;
     bool ZPresionado;
 
-    // Métodos virtuales
+    //aqui Metodos virtuales
     virtual void configurarEscena() = 0;
     virtual void configurarObstaculos() = 0;
     virtual void configurarNPCs() {}

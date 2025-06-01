@@ -11,7 +11,6 @@ private:
 
     void configurarEscena() override;
     void configurarObstaculos() override;
-    void configurarNPCs() override;
 protected:
     void onMovimientoUpdate() override;
 

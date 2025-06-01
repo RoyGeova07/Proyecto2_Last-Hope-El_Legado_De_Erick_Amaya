@@ -11,16 +11,16 @@ lobby::lobby(QWidget* parent) : EscenaBase(parent) {
     configurarEscena();
     inicializarJugador();
     configurarObstaculos();
-    configurarNPCs();
 
     //aqui QLabel para mostrar el dialogo
     lblDialogo = new QLabel(this);
     lblDialogo->setStyleSheet("background: black; color: white; padding: 15px; border-radius: 10px;");
-    lblDialogo->setAlignment(Qt::AlignCenter);
-    lblDialogo->setGeometry(100, 100, 400, 100);
+    lblDialogo->setAlignment(Qt::AlignLeft|Qt::AlignTop); //con este mejora alineacion mejor para textos largo
+    lblDialogo->setWordWrap(true); // Para que haga salto de linea automatico
+    lblDialogo->setGeometry(100, 100, 600, 150);
     lblDialogo->hide();
 
-    // Crear y registrar NPCs
+    //aqui se crea y registrar los NPCs
     NPC* npc2 = new NPC(NPC::Tipo::NPC2, this);
     npc2->move(1100,390);
     npc2->show();
@@ -34,56 +34,84 @@ lobby::lobby(QWidget* parent) : EscenaBase(parent) {
     connect(movimientoTimer, &QTimer::timeout, this, [=]() {
         bool moviendo = false;
 
-        if (izquierdaPresionada) {
-            jugador->MoverSiNoColisiona(-jugador->getVelocidadMoviento(), 0, obstaculos);
-            moviendo = true;
-        } else if (derechaPresionada) {
-            jugador->MoverSiNoColisiona(jugador->getVelocidadMoviento(), 0, obstaculos);
-            moviendo = true;
+        if (izquierdaPresionada)
+        {
+
+            jugador->MoverSiNoColisiona(-jugador->getVelocidadMoviento(),0,obstaculos);
+            moviendo=true;
+
+        }else if (derechaPresionada)
+        {
+
+            jugador->MoverSiNoColisiona(jugador->getVelocidadMoviento(),0,obstaculos);
+            moviendo=true;
+
         }
 
-        if (arribaPresionado) {
-            jugador->MoverSiNoColisiona(0, -jugador->getVelocidadMoviento(), obstaculos);
-            moviendo = true;
+        if(arribaPresionado)
+        {
+
+            jugador->MoverSiNoColisiona(0,-jugador->getVelocidadMoviento(),obstaculos);
+            moviendo=true;
+
         } else if (abajoPresionado) {
             jugador->MoverSiNoColisiona(0, jugador->getVelocidadMoviento(), obstaculos);
             moviendo = true;
         }
 
-        if (moviendo) {
-            if (shiftPresionado) {
+        if(moviendo)
+        {
+
+            if(shiftPresionado)
+            {
+
                 jugador->SetAnimacionMovimiento(6);
                 jugador->SetAnimacion(":/imagenes/assets/protagonista/Run.png", 8);
-            } else {
+
+            }else{
+
                 jugador->SetAnimacionMovimiento(2);
                 jugador->SetAnimacion(":/imagenes/assets/protagonista/Walk.png", 7);
+
             }
-        } else {
+        }else{
+
             movimientoTimer->stop();
             jugador->DetenerAnimacion();
             jugador->SetAnimacion(":/imagenes/assets/protagonista/Idle.png", 7);
+
         }
 
-        // Detección de proximidad con NPCs
-        QRect rectJugador = jugador->geometry();
-        bool hayNpcCerca = false;
-        npcCercano = nullptr;
+        //aqui deteccion de proximidad con NPCs
+        QRect rectJugador=jugador->geometry();
+        bool hayNpcCerca=false;
+        npcCercano=nullptr;
 
-        for (NPC* npc : npcs) {
-            QRect rectNPC = npc->geometry();
-            QRect zonaProximidad = rectNPC.adjusted(-20, -20, 20, 20); // margen de 20px
+        for (NPC*npc:npcs)
+        {
 
-            if (rectJugador.intersects(zonaProximidad)) {
+            QRect rectNPC=npc->geometry();
+            QRect zonaProximidad=rectNPC.adjusted(-20,-20,20,20); // margen de 20px
+
+            if(rectJugador.intersects(zonaProximidad))
+            {
+
                 npc->mostrarHintInteractuar();
-                npcCercano = npc;
-                hayNpcCerca = true;
-            } else {
+                npcCercano=npc;
+                hayNpcCerca=true;
+
+            }else{
+
                 npc->ocultarHintInteractuar();
+
             }
         }
 
-        if (!hayNpcCerca) {
-            npcCercano = nullptr;
+        if(!hayNpcCerca)
+        {
+
+            npcCercano=nullptr;
+
         }
     });
 
@@ -93,18 +121,28 @@ lobby::lobby(QWidget* parent) : EscenaBase(parent) {
     Movimientos();
 }
 
-void lobby::configurarEscena() {
+void lobby::configurarEscena()
+{
+
     QPixmap fondoPixmap(":/imagenes/assets/mapas/lobby.jpg");
-    if (fondoPixmap.isNull()) {
-        qDebug() << "Error al cargar imagen desde assets/mapas/lobby.jpg";
-    } else {
-        QLabel* fondo = new QLabel(this);
+    if(fondoPixmap.isNull())
+    {
+
+        qDebug()<<"Error al cargar imagen desde assets/mapas/lobby.jpg";
+
+    }else{
+
+        QLabel*fondo=new QLabel(this);
         fondo->setPixmap(fondoPixmap.scaled(this->size()));
-        fondo->setGeometry(0, 0, width(), height());
+        fondo->setGeometry(0,0,width(),height());
+
     }
+
 }
 
-void lobby::configurarObstaculos() {
+void lobby::configurarObstaculos()
+{
+
     // OBSTACULOS FIJOS
     obstaculos.append(QRect(3,2,1334,227));     // Muro superior
     obstaculos.append(QRect(44,557,234,118));   // Mesa abajo izquierda
@@ -115,41 +153,52 @@ void lobby::configurarObstaculos() {
 
 }
 
-void lobby::configurarNPCs() {
-    NPC* npc2 = new NPC(NPC::Tipo::NPC2, this);
-    npc2->move(700, 250);
-    npc2->show();
-    npcs.append(npc2);
-    obstaculos.append(QRect(750, 250, 40, 70)); // Obstáculo físico del NPC
-}
 
-void lobby::onMovimientoUpdate() {
-    QRect rectJugador = jugador->geometry();
-    bool hayNpcCerca = false;
-    npcCercano = nullptr;
+void lobby::onMovimientoUpdate()
+{
 
-    for (NPC* npc : npcs) {
-        QRect rectNPC = npc->geometry();
-        QRect zonaProximidad = rectNPC.adjusted(-20, -20, 20, 20);
+    QRect rectJugador=jugador->geometry();
+    bool hayNpcCerca=false;
+    npcCercano=nullptr;
 
-        if (rectJugador.intersects(zonaProximidad)) {
+    for(NPC* npc : npcs)
+    {
+
+        QRect rectNPC=npc->geometry();
+        QRect zonaProximidad=rectNPC.adjusted(-20,-20,20,20);
+
+        if(rectJugador.intersects(zonaProximidad))
+        {
+
             npc->mostrarHintInteractuar();
-            npcCercano = npc;
-            hayNpcCerca = true;
-        } else {
+            npcCercano=npc;
+            hayNpcCerca=true;
+
+        }else{
+
             npc->ocultarHintInteractuar();
+
         }
     }
 
-    if (!hayNpcCerca) {
-        npcCercano = nullptr;
+    if(!hayNpcCerca)
+    {
+
+        npcCercano=nullptr;
+
     }
 }
 
-void lobby::keyPressEvent(QKeyEvent* event) {
+void lobby::keyPressEvent(QKeyEvent* event)
+{
+
     EscenaBase::keyPressEvent(event);
 
-    if (event->key() == Qt::Key_H && npcCercano && !npcCercano->estaHablando()) {
+    if(event->key()==Qt::Key_H&&npcCercano&&!npcCercano->estaHablando())
+    {
+
         npcCercano->mostrarDialogo(lblDialogo);
+
     }
+
 }

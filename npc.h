@@ -19,11 +19,11 @@ public:
 
     explicit NPC(Tipo tipo, QWidget* parent = nullptr);
 
-    // Animación
+    //aqui para la animacion
     void SetAnimacion(const QString& ruta, int cantidadFrames);
     void AvanzarFrame();
 
-    // Diálogo
+    //aqui para Dialogo
     void mostrarDialogo(QLabel* dialogoLabel);
     bool estaHablando() const { return hablando; }
 
