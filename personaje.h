@@ -4,6 +4,8 @@
 #include<QLabel>
 #include<QPixmap>
 #include<QTimer>
+#include <QFile>
+#include <QMap>
 #include<QStringList>
 
 //para las colisicones necesito QRect
@@ -38,6 +40,25 @@ public:
 
     QString animacionActual;//bandera para evitar que se reinicie una animacion si ya esta en curso
 
+    void setVidas(int vidas){
+        vida = vidas;
+        guardarDatosJugador();
+    }
+    void setEnergia(int energia){
+        this->energia = energia;
+        guardarDatosJugador();
+    }
+    void setMuniciones(int municiones){
+        this->municiones = municiones;
+        guardarDatosJugador();
+    }
+
+    int getVidas(){return vida;}
+    int getEnergia(){return energia;}
+    int getMuniciones(){return municiones;}
+    void guardarDatosJugador();
+    QMap<QString, int> cargarDatosJugador();
+
 private:
 
     QVector<QPixmap>frames;
@@ -46,7 +67,11 @@ private:
     int velocidadMovimiento;
     bool miradoDerecha;
 
-    QVector<QRect> obstaculos; //aqui obstaculos
+    QVector<QRect> obstaculos; //aqui obstaculo
+
+    int vida;
+    int energia;
+    int municiones;
 
 };
 

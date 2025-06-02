@@ -13,6 +13,25 @@ lobby::lobby(QWidget* parent) : EscenaBase(parent) {
     configurarObstaculos();
 
     //aqui QLabel para mostrar el dialogo
+    lblDatos = new QLabel(this);
+    lblDatos->setStyleSheet("background: black; color: white; padding: 15px; border-radius: 10px;");
+    lblDatos->setAlignment(Qt::AlignLeft|Qt::AlignTop); //con este mejora alineacion mejor para textos largo
+    lblDatos->setWordWrap(true); // Para que haga salto de linea automatico
+    lblDatos->setGeometry(10, 10, 120, 70);
+    lblDatos->raise();
+    lblDatos->show();
+
+    //Actualizar los datos del jugador
+    auto actualizarUI = [=]() {
+        QMap<QString, int> datos = jugador->cargarDatosJugador();
+        QString texto = QString("Energia: %1\nMuniciones: %2")
+                            .arg(datos["Energia"])
+                            .arg(datos["Municiones"]);
+        lblDatos->setText(texto);
+    };
+    actualizarUI();
+
+    //aqui QLabel para mostrar el dialogo
     lblDialogo = new QLabel(this);
     lblDialogo->setStyleSheet("background: black; color: white; padding: 15px; border-radius: 10px;");
     lblDialogo->setAlignment(Qt::AlignLeft|Qt::AlignTop); //con este mejora alineacion mejor para textos largo

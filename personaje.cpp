@@ -1,7 +1,8 @@
 #include "personaje.h"
 #include<QDebug>
 
-personaje::personaje(QWidget*parent):QLabel(parent),frameActual(0),velocidadMovimiento(10),miradoDerecha(true)
+personaje::personaje(QWidget*parent):QLabel(parent),frameActual(0),velocidadMovimiento(10),miradoDerecha(true),
+    vida(3),energia(10),municiones(20)
 {
 
     this->resize(128,128);//aqui tamanio del frame
@@ -9,6 +10,8 @@ personaje::personaje(QWidget*parent):QLabel(parent),frameActual(0),velocidadMovi
 
     timer=new QTimer(this);
     connect(timer,&QTimer::timeout,this,&personaje::AvanzarFrame);
+
+    guardarDatosJugador();
 
 }
 
@@ -160,4 +163,38 @@ void personaje::MoverSiNoColisiona(int dx, int dy, const QVector<QRect> &obstacu
     if(dx>0)miradoDerecha=true;
     else if(dx<0)miradoDerecha=false;
 
+}
+
+void personaje::guardarDatosJugador()
+{
+    QFile archivo("jugador.dat");
+    if (archivo.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        QTextStream out(&archivo);
+        out << "Vida: " << vida << "\n";
+        out << "Energia: " << energia << "\n";
+        out << "Municiones: " << municiones << "\n";
+        archivo.close();
+        qDebug() << "Datos del jugador guardados correctamente.";
+    } else {
+        qDebug() << "Error al abrir el archivo para guardar los datos del jugador.";
+    }
+}
+
+QMap<QString, int> personaje::cargarDatosJugador() {
+    QMap<QString, int> datos;
+    QFile archivo("jugador.dat");
+
+    QTextStream in(&archivo);
+    while (!in.atEnd()) {
+        QString linea = in.readLine();
+        QStringList partes = linea.split(": ");
+        if (partes.size() == 2) {
+            QString clave = partes[0].trimmed();
+            int valor = partes[1].toInt();
+            datos[clave] = valor;
+        }
+    }
+
+    archivo.close();
+    return datos;
 }

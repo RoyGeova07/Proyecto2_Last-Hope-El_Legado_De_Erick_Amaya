@@ -44,7 +44,7 @@ private:
     QString dialogoActual;
     bool hablando;
 
-    QLabel* labelPresionaH = nullptr;    // 💬 UI encima del NPC
+    QLabel* labelPresionaH = nullptr;
 };
 
 #endif // NPC_H

@@ -6,6 +6,7 @@ class lobby : public EscenaBase {
 
 private:
     QLabel* lblDialogo;
+    QLabel* lblDatos;
     QList<NPC*> npcs;
     NPC* npcCercano;
 
