@@ -1,8 +1,10 @@
 #include "lobby.h"
+#include "mapa.h"
 #include <QPixmap>
 #include <QLabel>
 #include <QDebug>
 #include<QPainter>
+#include <QPushButton>
 
 lobby::lobby(QWidget* parent) : EscenaBase(parent) {
     this->resize(1280, 720);
@@ -12,11 +14,11 @@ lobby::lobby(QWidget* parent) : EscenaBase(parent) {
     inicializarJugador();
     configurarObstaculos();
 
-    //aqui QLabel para mostrar el dialogo
+    //aqui QLabel para mostrar los datos
     lblDatos = new QLabel(this);
     lblDatos->setStyleSheet("background: black; color: white; padding: 15px; border-radius: 10px;");
-    lblDatos->setAlignment(Qt::AlignLeft|Qt::AlignTop); //con este mejora alineacion mejor para textos largo
-    lblDatos->setWordWrap(true); // Para que haga salto de linea automatico
+    lblDatos->setAlignment(Qt::AlignLeft|Qt::AlignTop);
+    lblDatos->setWordWrap(true);
     lblDatos->setGeometry(10, 10, 120, 70);
     lblDatos->raise();
     lblDatos->show();
@@ -38,6 +40,23 @@ lobby::lobby(QWidget* parent) : EscenaBase(parent) {
     lblDialogo->setWordWrap(true); // Para que haga salto de linea automatico
     lblDialogo->setGeometry(100, 100, 600, 150);
     lblDialogo->hide();
+
+    // Boton para ver el mapa
+    QPushButton *btnMapa = new QPushButton(this);
+    QPixmap pixmap(":/imagenes/assets/items/btnMapa.png");
+    btnMapa->setIcon(QIcon(pixmap));
+    btnMapa->setIconSize(pixmap.size());
+    btnMapa->setFixedSize(pixmap.size());
+    btnMapa->setStyleSheet("QPushButton { border: none; background: transparent; }");
+    btnMapa->move(640,150);
+
+    connect(btnMapa, &QPushButton::clicked, this, [this]() {
+        Mapa* mapa = new Mapa();
+        mapa->show();
+        this->close();
+        qDebug() << "Botón de pausa presionado!";
+    });
+
 
     //aqui se crea y registrar los NPCs
     NPC* npc2 = new NPC(NPC::Tipo::NPC2, this);

@@ -184,14 +184,23 @@ QMap<QString, int> personaje::cargarDatosJugador() {
     QMap<QString, int> datos;
     QFile archivo("jugador.dat");
 
+    // Valores por defecto si el archivo no existe o está corrupto
+    datos["Vida"] = 3;
+    datos["Energia"] = 10;
+    datos["Municiones"] = 30;
+
+    if (!archivo.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        return datos;
+    }
+
     QTextStream in(&archivo);
     while (!in.atEnd()) {
-        QString linea = in.readLine();
+        QString linea = in.readLine().trimmed();  // Elimina espacios extras
         QStringList partes = linea.split(": ");
         if (partes.size() == 2) {
-            QString clave = partes[0].trimmed();
+            QString clave = partes[0];  // "Vida", "Energia", "Municiones"
             int valor = partes[1].toInt();
-            datos[clave] = valor;
+            datos[clave] = valor;  // Actualiza el mapa
         }
     }
 

@@ -15,6 +15,7 @@ SOURCES += \
     lobby.cpp \
     main.cpp \
     mainwindow.cpp \
+    mapa.cpp \
     npc.cpp \
     personaje.cpp
 
@@ -24,6 +25,7 @@ HEADERS += \
     inicio.h \
     lobby.h \
     mainwindow.h \
+    mapa.h \
     npc.h \
     personaje.h
 
