@@ -43,7 +43,6 @@ lobby::lobby(QWidget* parent) : EscenaBase(parent) {
 
     // Boton para ver el mapa
     QPushButton *btnMapa = new QPushButton(this);
-    btnMapa->setText("Mapa");
     QPixmap pixmap(":/imagenes/assets/items/btnMapa.png");
     btnMapa->setIcon(QIcon(pixmap));
     btnMapa->setIconSize(pixmap.size());

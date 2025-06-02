@@ -28,8 +28,8 @@ Mapa::Mapa(QWidget* parent) {
 
     // Boton para volver al lobby
     QPushButton *btnVolver = new QPushButton(this);
-    btnVolver->setText("Volver");
-    btnVolver->setStyleSheet("QPushButton { border: none; background: black; }");
+    btnVolver->setText("⬅");
+    btnVolver->setStyleSheet("QPushButton { border: none; background: transparent; font-size: 40px; }");
     btnVolver->move(10,10);
 
     connect(btnVolver, &QPushButton::clicked, this, [this]() {
