@@ -43,18 +43,21 @@ lobby::lobby(QWidget* parent) : EscenaBase(parent) {
 
     // Boton para ver el mapa
     QPushButton *btnMapa = new QPushButton(this);
+    btnMapa->setText("Mapa");
     QPixmap pixmap(":/imagenes/assets/items/btnMapa.png");
     btnMapa->setIcon(QIcon(pixmap));
     btnMapa->setIconSize(pixmap.size());
     btnMapa->setFixedSize(pixmap.size());
-    btnMapa->setStyleSheet("QPushButton { border: none; background: transparent; }");
+    btnMapa->setStyleSheet("QPushButton { border: white; background: transparent; }");
+    btnMapa->setFocusPolicy(Qt::NoFocus); //Para que el focus este en el teclado + la ventana
     btnMapa->move(640,150);
 
     connect(btnMapa, &QPushButton::clicked, this, [this]() {
         Mapa* mapa = new Mapa();
         mapa->show();
         this->close();
-        qDebug() << "Botón de pausa presionado!";
+        qDebug() << "Boton de mapa presionado";
+        this->setFocus();
     });
 
 
