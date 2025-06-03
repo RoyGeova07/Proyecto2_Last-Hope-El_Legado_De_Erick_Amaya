@@ -1,6 +1,8 @@
 #ifndef MAPA_H
 #define MAPA_H
 #include<QWidget>
+#include "grafo.h"
+
 
 class QPushButton;
 class QLabel;
@@ -12,6 +14,9 @@ class Mapa:public QWidget
 
 public:
     explicit Mapa(QWidget *parent=nullptr);
+
+private:
+    void visualizarGrafo(const Grafo& grafo);
 
 };
 

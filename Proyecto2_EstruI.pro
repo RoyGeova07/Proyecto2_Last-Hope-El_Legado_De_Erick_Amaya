@@ -11,6 +11,7 @@ CONFIG += c++17
 SOURCES += \
     Nivel01.cpp \
     escenabase.cpp \
+    grafo.cpp \
     inicio.cpp \
     lobby.cpp \
     main.cpp \
@@ -22,6 +23,7 @@ SOURCES += \
 HEADERS += \
     Nivel01.h \
     escenabase.h \
+    grafo.h \
     inicio.h \
     lobby.h \
     mainwindow.h \
