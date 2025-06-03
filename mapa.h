@@ -17,6 +17,7 @@ public:
 
 private:
     void visualizarGrafo(const Grafo& grafo);
+    void abrirPestana(const QString& nombreNodo);
 
 };
 

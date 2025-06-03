@@ -1,6 +1,6 @@
 #include "escenabase.h"
 
-class Nivel01 : public EscenaBase {
+class Ciudad : public EscenaBase {
     Q_OBJECT
 
 private:
@@ -8,5 +8,5 @@ private:
     void configurarObstaculos() override;
 
 public:
-    Nivel01(QWidget* parent = nullptr);
+    Ciudad(QWidget* parent = nullptr);
 };

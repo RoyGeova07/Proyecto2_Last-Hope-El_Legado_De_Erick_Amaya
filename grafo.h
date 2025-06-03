@@ -1,10 +1,9 @@
-#ifndef GRAFO_H
-#define GRAFO_H
-
+// En Grafo.h
 #include <QString>
 #include <QMap>
 #include <QList>
 #include <QPointF>
+#include <functional>
 
 class Grafo {
 public:
@@ -17,23 +16,25 @@ public:
             : destino(dest), peso(p), puntosIntermedios(puntos) {}
     };
 
+    // Tipo para las funciones que abren pestañas
+    using FuncionAbrirPestana = std::function<void()>;
+
     Grafo();
 
-
-    void agregarNodo(const QString& nombre, const QPointF& posicion);
+    void agregarNodo(const QString& nombre, const QPointF& posicion, FuncionAbrirPestana funcion = nullptr);
     void agregarArista(const QString& origen, const QString& destino, int peso,
                        const QList<QPointF>& puntosIntermedios = {});
 
     QList<QString> obtenerNodos() const;
     QList<Arista> obtenerAristas(const QString& nodo) const;
     QPointF obtenerPosicionNodo(const QString& nodo) const;
+    FuncionAbrirPestana obtenerFuncionNodo(const QString& nodo) const;
     bool existeNodo(const QString& nodo) const;
 
-    void crearGrafoCiudad();
+     void crearGrafoCiudad(std::function<void(QString)> manejadorClics = nullptr);
 
 private:
     QMap<QString, QList<Arista>> listaAdyacencia;
     QMap<QString, QPointF> posicionesNodos;
+    QMap<QString, FuncionAbrirPestana> funcionesNodos;
 };
-
-#endif // GRAFO_H

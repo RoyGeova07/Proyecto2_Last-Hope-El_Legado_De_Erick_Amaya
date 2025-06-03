@@ -1,5 +1,5 @@
 #include "inicio.h"
-#include "Nivel01.h"
+#include "Ciudad.h"
 #include<QPushButton>
 #include<QLabel>
 #include<QVBoxLayout>
@@ -147,7 +147,7 @@ void Inicio::AbrirJuego()
 
     lobby*ventanaLobby=new lobby();
     ventanaLobby->show();
-    Nivel01* ventana=new Nivel01();
+    Ciudad* ventana=new Ciudad();
     //ventana->show();
 
 

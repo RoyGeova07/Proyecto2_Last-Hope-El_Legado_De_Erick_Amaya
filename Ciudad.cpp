@@ -1,9 +1,9 @@
-#include "Nivel01.h"
+#include "Ciudad.h"
 #include <QPixmap>
 #include <QLabel>
 #include <QDebug>
 
-Nivel01::Nivel01(QWidget* parent) : EscenaBase(parent) {
+Ciudad::Ciudad(QWidget* parent) : EscenaBase(parent) {
     this->resize(1280, 720);
     this->setWindowTitle("Nivel 1 - Last hope");
 
@@ -14,7 +14,7 @@ Nivel01::Nivel01(QWidget* parent) : EscenaBase(parent) {
     Movimientos();
 }
 
-void Nivel01::configurarEscena() {
+void Ciudad::configurarEscena() {
     QPixmap fondoPixmap(":/imagenes/assets/mapas/War.png");
     if (fondoPixmap.isNull()) {
         qDebug() << "Error al cargar imagen desde assets/mapas/War.png";
@@ -25,7 +25,7 @@ void Nivel01::configurarEscena() {
     }
 }
 
-void Nivel01::configurarObstaculos() {
+void Ciudad::configurarObstaculos() {
     // OBSTÁCULOS FIJOS
     obstaculos.append(QRect(3, 2, 1334, 470));     // Muro superior
     obstaculos.append(QRect(5, 669, 1273, 47));    // Piso inferior

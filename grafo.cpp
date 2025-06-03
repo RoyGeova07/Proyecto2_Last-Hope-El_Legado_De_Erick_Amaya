@@ -2,10 +2,11 @@
 
 Grafo::Grafo() {}
 
-void Grafo::agregarNodo(const QString& nombre, const QPointF& posicion) {
+void Grafo::agregarNodo(const QString& nombre, const QPointF& posicion, FuncionAbrirPestana funcion) {
     if (!listaAdyacencia.contains(nombre)) {
         listaAdyacencia[nombre] = QList<Arista>();
         posicionesNodos[nombre] = posicion;
+        funcionesNodos[nombre] = funcion;
     }
 }
 
@@ -33,18 +34,23 @@ bool Grafo::existeNodo(const QString& nodo) const {
     return listaAdyacencia.contains(nodo);
 }
 
-void Grafo::crearGrafoCiudad() {
+Grafo::FuncionAbrirPestana Grafo::obtenerFuncionNodo(const QString& nodo) const {
+    return funcionesNodos.value(nodo);
+}
+
+void Grafo::crearGrafoCiudad(std::function<void(QString)> manejadorClics) {
     listaAdyacencia.clear();
     posicionesNodos.clear();
+    funcionesNodos.clear();
 
-    // nodos
-    agregarNodo("Lobby", QPointF(-400, 330));
-    agregarNodo("Gasolinera", QPointF(120, 100));
-    agregarNodo("Ciudad", QPointF(-180, 265));
-    agregarNodo("Mall", QPointF(120, 265));
-    agregarNodo("Supermercado", QPointF(450, 265));
-    agregarNodo("Laboratorio", QPointF(700, 265));
-    agregarNodo("Gimnasio", QPointF(120, 500));
+    // Agregar nodos con sus posiciones y funciones
+    agregarNodo("Lobby", QPointF(-400, 330), [manejadorClics]() { if(manejadorClics) manejadorClics("Lobby"); });
+    agregarNodo("Gasolinera", QPointF(120, 100), [manejadorClics]() { if(manejadorClics) manejadorClics("Gasolinera"); });
+    agregarNodo("Ciudad", QPointF(-180, 265), [manejadorClics]() { if(manejadorClics) manejadorClics("Ciudad"); });
+    agregarNodo("Mall", QPointF(120, 265), [manejadorClics]() { if(manejadorClics) manejadorClics("Mall"); });
+    agregarNodo("Supermercado", QPointF(450, 265), [manejadorClics]() { if(manejadorClics) manejadorClics("Supermercado"); });
+    agregarNodo("Laboratorio", QPointF(700, 265), [manejadorClics]() { if(manejadorClics) manejadorClics("Laboratorio"); });
+    agregarNodo("Gimnasio", QPointF(120, 500), [manejadorClics]() { if(manejadorClics) manejadorClics("Gimnasio"); });
 
     // las aristas con sus pesos y puntos intermedios
     agregarArista("Ciudad", "Lobby", 1);
