@@ -18,7 +18,8 @@ SOURCES += \
     mainwindow.cpp \
     mapa.cpp \
     npc.cpp \
-    personaje.cpp
+    personaje.cpp \
+    zombie.cpp
 
 HEADERS += \
     Ciudad.h \
@@ -29,7 +30,8 @@ HEADERS += \
     mainwindow.h \
     mapa.h \
     npc.h \
-    personaje.h
+    personaje.h \
+    zombie.h
 
 FORMS += \
     mainwindow.ui

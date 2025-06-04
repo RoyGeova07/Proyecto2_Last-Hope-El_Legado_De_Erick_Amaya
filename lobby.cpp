@@ -240,5 +240,4 @@ void lobby::keyPressEvent(QKeyEvent* event)
         npcCercano->mostrarDialogo(lblDialogo);
 
     }
-
 }

@@ -2,11 +2,10 @@
 
 Grafo::Grafo() {}
 
-void Grafo::agregarNodo(const QString& nombre, const QPointF& posicion, FuncionAbrirPestana funcion) {
+void Grafo::agregarNodo(const QString& nombre, const QPointF& posicion) {
     if (!listaAdyacencia.contains(nombre)) {
         listaAdyacencia[nombre] = QList<Arista>();
         posicionesNodos[nombre] = posicion;
-        funcionesNodos[nombre] = funcion;
     }
 }
 
@@ -34,23 +33,18 @@ bool Grafo::existeNodo(const QString& nodo) const {
     return listaAdyacencia.contains(nodo);
 }
 
-Grafo::FuncionAbrirPestana Grafo::obtenerFuncionNodo(const QString& nodo) const {
-    return funcionesNodos.value(nodo);
-}
-
-void Grafo::crearGrafoCiudad(std::function<void(QString)> manejadorClics) {
+void Grafo::crearGrafoCiudad() {
     listaAdyacencia.clear();
     posicionesNodos.clear();
-    funcionesNodos.clear();
 
-    // Agregar nodos con sus posiciones y funciones
-    agregarNodo("Lobby", QPointF(-400, 330), [manejadorClics]() { if(manejadorClics) manejadorClics("Lobby"); });
-    agregarNodo("Gasolinera", QPointF(120, 100), [manejadorClics]() { if(manejadorClics) manejadorClics("Gasolinera"); });
-    agregarNodo("Ciudad", QPointF(-180, 265), [manejadorClics]() { if(manejadorClics) manejadorClics("Ciudad"); });
-    agregarNodo("Mall", QPointF(120, 265), [manejadorClics]() { if(manejadorClics) manejadorClics("Mall"); });
-    agregarNodo("Supermercado", QPointF(450, 265), [manejadorClics]() { if(manejadorClics) manejadorClics("Supermercado"); });
-    agregarNodo("Laboratorio", QPointF(700, 265), [manejadorClics]() { if(manejadorClics) manejadorClics("Laboratorio"); });
-    agregarNodo("Gimnasio", QPointF(120, 500), [manejadorClics]() { if(manejadorClics) manejadorClics("Gimnasio"); });
+    // nodos
+    agregarNodo("Lobby", QPointF(-400, 330));
+    agregarNodo("Gasolinera", QPointF(120, 100));
+    agregarNodo("Ciudad", QPointF(-180, 265));
+    agregarNodo("Mall", QPointF(120, 265));
+    agregarNodo("Supermercado", QPointF(450, 265));
+    agregarNodo("Laboratorio", QPointF(700, 265));
+    agregarNodo("Gimnasio", QPointF(120, 500));
 
     // las aristas con sus pesos y puntos intermedios
     agregarArista("Ciudad", "Lobby", 1);

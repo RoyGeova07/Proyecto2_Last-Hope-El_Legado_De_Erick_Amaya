@@ -1,5 +1,4 @@
 #include "mapa.h"
-#include <Ciudad.h>
 #include <lobby.h>
 #include <QPixmap>
 #include <QLabel>
@@ -28,12 +27,10 @@ Mapa::Mapa(QWidget* parent) : QWidget(parent) {
 
     // Crear y configurar el grafo
     Grafo grafoCiudad;
-    grafoCiudad.crearGrafoCiudad([this](QString nombreNodo) {
-        abrirPestana(nombreNodo);
-    });
+    grafoCiudad.crearGrafoCiudad();
     visualizarGrafo(grafoCiudad);
 
-    // Boton para volver al lobby
+    // Botón para volver al lobby
     QPushButton *btnVolver = new QPushButton(this);
     btnVolver->setText("⬅");
     btnVolver->setStyleSheet("QPushButton { border: none; background: transparent; font-size: 40px; }");
@@ -46,23 +43,6 @@ Mapa::Mapa(QWidget* parent) : QWidget(parent) {
         qDebug() << "Volviendo al lobby...!";
     });
 }
-
-void Mapa::abrirPestana(const QString& nombreNodo) {
-    qDebug() << "Abriendo pestaña:" << nombreNodo;
-
-    if (nombreNodo == "Lobby") {
-        lobby* l = new lobby();
-        l->show();
-        this->close();
-    }
-    else if (nombreNodo == "Ciudad") {
-        Ciudad* g = new Ciudad();
-        g->show();
-        this->close();
-    }
-
-    }
-
 
 void Mapa::visualizarGrafo(const Grafo& grafo) {
     QGraphicsScene* escena = new QGraphicsScene(this);
@@ -106,30 +86,10 @@ void Mapa::visualizarGrafo(const Grafo& grafo) {
     for (const QString& nodo : grafo.obtenerNodos()) {
         QPointF posicion = grafo.obtenerPosicionNodo(nodo);
 
-        // Crear un circulo para el nodo
-        QGraphicsEllipseItem* circulo = new QGraphicsEllipseItem(-15, -15, 30, 30);
-        circulo->setPos(posicion);
-        circulo->setBrush(Qt::gray);
-
-        // Hacer el círculo interactivo
-        circulo->setFlag(QGraphicsItem::ItemIsSelectable, true);
-        circulo->setFlag(QGraphicsItem::ItemIsFocusable, true);
-        circulo->setAcceptHoverEvents(true);
-        circulo->setData(0, nodo);
-
-        escena->addItem(circulo);
+        QGraphicsEllipseItem* nodoItem = new QGraphicsEllipseItem(
+            posicion.x() - 20, posicion.y() - 20, 40, 40);
+        nodoItem->setBrush(QBrush(Qt::gray));
+        nodoItem->setPen(QPen(Qt::black, 2));
+        escena->addItem(nodoItem);
     }
-
-    // Conectar la señal de click de la escena
-    connect(escena, &QGraphicsScene::selectionChanged, this, [this, grafo, escena]() {
-        QGraphicsItem* item = escena->selectedItems().value(0);
-        if (item) {
-            QString nombreNodo = item->data(0).toString();
-            if (!nombreNodo.isEmpty()) {
-                abrirPestana(nombreNodo);
-            }
-        }
-    });
 }
-
-
