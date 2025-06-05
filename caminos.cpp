@@ -5,6 +5,7 @@
 #include<QTimer>
 #include"lobby.h"
 #include"Ciudad.h"
+#include "gasolinera.h"
 
 Caminos::Caminos(QWidget* parent) : EscenaBase(parent), rutaActual(1)
 {
@@ -16,7 +17,7 @@ Caminos::Caminos(QWidget* parent) : EscenaBase(parent), rutaActual(1)
     configurarObstaculos();
     Movimientos();
 
-    jugador->move(22,214);
+    jugador->move(22,190);
 
     labelPresionarT = new QLabel("PRESIONE T PARA ENTRAR", this);
     labelPresionarT->setStyleSheet("background: rgba(0,0,0,180); color: white; padding: 5px; border-radius: 5px;");
@@ -42,10 +43,23 @@ void Caminos::configurarObstaculos()
 
     if (rutaActual == 1)
     {
-        //obstaculos.append(QRect(18, 351, 344, 686));
+        obstaculos.clear();
+        obstaculos.append(QRect(18, 20, 270, 100)); //PARTE SUPERIOR IZQUIERDA
+        obstaculos.append(QRect(288, 20, 700, 20)); //PARTE SUPERIOR DERECHA
+        obstaculos.append(QRect(18, 335, 270, 400)); //PARTE INFERIOR IZQUIERDA
+        obstaculos.append(QRect(288, 365, 60, 300)); //PARTE INFERIOR IZQUIERDA 2
+        obstaculos.append(QRect(550, 220, 270, 40)); //PARTE INFERIOR DERECHA
+        obstaculos.append(QRect(580, 260, 270, 40)); //PARTE INFERIOR DERECHA 2
+        obstaculos.append(QRect(610, 300, 270, 60)); //PARTE INFERIOR DERECHA 3
+        obstaculos.append(QRect(680, 360, 270, 80)); //PARTE INFERIOR DERECHA 3
+        obstaculos.append(QRect(720, 440, 270, 80)); //PARTE INFERIOR DERECHA 4
 
     }else if (rutaActual == 2){
-       // obstaculos.append(QRect(30, 75, 215, 420));
+       obstaculos.clear();
+       obstaculos.append(QRect(18, 20, 205, 330)); //PARTE SUPERIOR IZQUIERDA
+       obstaculos.append(QRect(223, 20, 800, 20)); //PARTE SUPERIOR DERECHA
+       obstaculos.append(QRect(430, 220, 400, 170)); //PARTE MEDIA
+       obstaculos.append(QRect(18, 600, 1000, 30)); //PARTE INFERIOR
 
     }
 }
@@ -95,7 +109,9 @@ void Caminos::onMovimientoUpdate()
     // aqui Cambiar a RUTA_2 cuando el jugador llegue al final de la carretera de arriba (borde derecho)
     if (rutaActual == 1 && rectJugador.right() >= width() - 50 && rectJugador.top() <= 200)
     {
+        obstaculos.clear();
         cambiarRuta(2);
+        configurarObstaculos();
 
         //aqui se coloca al jugador en el borde IZQUIERDO de la carretera inferior de RUTA_2
         jugador->move(100, height() - jugador->height() - 120);
@@ -103,12 +119,26 @@ void Caminos::onMovimientoUpdate()
     }
 
     //aqui vuelve a RUTA_1 si el jugador regresa por la izquierda en RUTA_2 (carretera inferior)
-    if (rutaActual == 2 && rectJugador.left() <= 100 && rectJugador.bottom() >= height() - 120)
+    if (rutaActual == 2 && rectJugador.left() <= 70 && rectJugador.bottom() >= height() - 200)
     {
+        obstaculos.clear();
         cambiarRuta(1);
+        configurarObstaculos();
 
         //aqui vuelve a colocar al jugador en borde derecho de carretera de ARRIBA en RUTA_1
         jugador->move(width() - jugador->width() - 50, 200);
+        return;
+    }
+
+    //aqui ingresa a Gasolinera solo para que existan dos mapas para el avance
+    if (rutaActual == 2 && rectJugador.right() >= width() - 50 && rectJugador.top() <= 200)
+    {
+        qDebug() << "Cambiando de nivel...";
+        jugador->move(100, height() - jugador->height() - 120);
+        Gasolinera* gaso = new Gasolinera();
+        gaso->show();
+        this->close();
+
         return;
     }
 

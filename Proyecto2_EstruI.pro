@@ -12,6 +12,7 @@ SOURCES += \
     Ciudad.cpp \
     caminos.cpp \
     escenabase.cpp \
+    gasolinera.cpp \
     grafo.cpp \
     inicio.cpp \
     lobby.cpp \
@@ -26,6 +27,7 @@ HEADERS += \
     Ciudad.h \
     caminos.h \
     escenabase.h \
+    gasolinera.h \
     grafo.h \
     inicio.h \
     lobby.h \
