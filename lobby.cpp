@@ -5,6 +5,7 @@
 #include <QDebug>
 #include<QPainter>
 #include <QPushButton>
+#include"caminos.h"
 
 lobby::lobby(QWidget* parent) : EscenaBase(parent) {
     this->resize(1280, 720);
@@ -40,6 +41,13 @@ lobby::lobby(QWidget* parent) : EscenaBase(parent) {
     lblDialogo->setWordWrap(true); // Para que haga salto de linea automatico
     lblDialogo->setGeometry(100, 100, 600, 150);
     lblDialogo->hide();
+
+    labelPresionarR=new QLabel("PRESIONE R PARA EXPLORAR",this);
+    labelPresionarR->setStyleSheet("background: rgba(0,0,0,180); color: white; padding: 5px; border-radius: 5px;");
+    labelPresionarR->setAlignment(Qt::AlignCenter);
+    labelPresionarR->setWordWrap(true);
+    labelPresionarR->setFixedSize(200,30);
+    labelPresionarR->hide();//con este al inicio estara oculto
 
     // Boton para ver el mapa
     QPushButton *btnMapa = new QPushButton(this);
@@ -122,7 +130,8 @@ lobby::lobby(QWidget* parent) : EscenaBase(parent) {
 
         }
 
-        //aqui deteccion de proximidad con NPCs
+//==================================================================================
+        //AQUI DETECCION DE LA PROXIMIDAD DE LOS NPCS
         QRect rectJugador=jugador->geometry();
         bool hayNpcCerca=false;
         npcCercano=nullptr;
@@ -146,7 +155,22 @@ lobby::lobby(QWidget* parent) : EscenaBase(parent) {
 
             }
         }
+// ============================================================================================
 
+        //AQUI PONER LA DETECCION DE LA PUERTA
+
+        QRect zonaPuerta1(120, 280, 80, 120);
+
+        if (rectJugador.intersects(zonaPuerta1))
+        {
+            mostrarHintPuerta();
+            hayPuertaCerca = true;
+        }
+        else
+        {
+            ocultarHintPuerta();
+            hayPuertaCerca = false;
+        }
         if(!hayNpcCerca)
         {
 
@@ -227,6 +251,20 @@ void lobby::onMovimientoUpdate()
         npcCercano=nullptr;
 
     }
+
+    QRect zonaPuerta1(120, 280, 80, 120);
+
+    if (rectJugador.intersects(zonaPuerta1))
+    {
+        mostrarHintPuerta();
+        hayPuertaCerca = true;
+    }
+    else
+    {
+        ocultarHintPuerta();
+        hayPuertaCerca = false;
+    }
+
 }
 
 void lobby::keyPressEvent(QKeyEvent* event)
@@ -234,10 +272,47 @@ void lobby::keyPressEvent(QKeyEvent* event)
 
     EscenaBase::keyPressEvent(event);
 
+    //AQUI SE PROGRAMA LA ACCION DESPUES DE PRESIONAR UNA TECCLA EN ESPCIFICO DEL JUEGO
     if(event->key()==Qt::Key_H&&npcCercano&&!npcCercano->estaHablando())
     {
 
         npcCercano->mostrarDialogo(lblDialogo);
 
     }
+
+    //si presiona R y esta cerca de la puerta
+    if(event->key()==Qt::Key_R&&labelPresionarR->isVisible())
+    {
+
+        qDebug()<<"Explorar la puerta";
+
+        Caminos*caminos=new Caminos();
+        caminos->show();
+
+        this->close();
+
+    }
+
+}
+void lobby::mostrarHintPuerta()
+{
+    if (!labelPresionarR->isVisible())
+    {
+        QRect zonaPuerta1(120, 280, 80, 120);
+        labelPresionarR->move(zonaPuerta1.center().x() - labelPresionarR->width() / 2,
+                              zonaPuerta1.top() - labelPresionarR->height() - 10);
+
+        labelPresionarR->show();
+        labelPresionarR->raise();
+    }
+}
+
+void lobby::ocultarHintPuerta()
+{
+    labelPresionarR->hide();
+}
+
+void lobby::posicionarJugadorEnPuerta()
+{
+    jugador->move(120, 280); // misma zona de la puerta
 }

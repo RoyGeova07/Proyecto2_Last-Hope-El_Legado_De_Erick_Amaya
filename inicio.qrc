@@ -42,5 +42,7 @@
         <file>assets/mapas/Mapa.png</file>
         <file>assets/items/btnMapa.png</file>
         <file>assets/mapas/Mapa.jpeg</file>
+        <file>assets/mapas/RUTA_2.jpg</file>
+        <file>assets/mapas/RUTA_1.jpg</file>
     </qresource>
 </RCC>

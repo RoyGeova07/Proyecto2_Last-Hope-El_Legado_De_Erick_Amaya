@@ -10,6 +10,7 @@ CONFIG += c++17
 
 SOURCES += \
     Ciudad.cpp \
+    caminos.cpp \
     escenabase.cpp \
     grafo.cpp \
     inicio.cpp \
@@ -23,6 +24,7 @@ SOURCES += \
 
 HEADERS += \
     Ciudad.h \
+    caminos.h \
     escenabase.h \
     grafo.h \
     inicio.h \

@@ -9,7 +9,11 @@ private:
     QLabel* lblDatos;
     QList<NPC*> npcs;
     NPC* npcCercano;
+    QLabel*labelPresionarR;
+    bool hayPuertaCerca = false;
 
+    void mostrarHintPuerta();
+    void ocultarHintPuerta();
     void configurarEscena() override;
     void configurarObstaculos() override;
 protected:
@@ -17,5 +21,6 @@ protected:
 
 public:
     lobby(QWidget* parent = nullptr);
+    void posicionarJugadorEnPuerta();
     void keyPressEvent(QKeyEvent* event) override;
 };

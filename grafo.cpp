@@ -11,9 +11,12 @@ void Grafo::agregarNodo(const QString& nombre, const QPointF& posicion) {
 
 void Grafo::agregarArista(const QString& origen, const QString& destino, int peso,
                           const QList<QPointF>& puntosIntermedios) {
-    if (listaAdyacencia.contains(origen) && listaAdyacencia.contains(destino)) {
+    if (listaAdyacencia.contains(origen) && listaAdyacencia.contains(destino))
+    {
+
         listaAdyacencia[origen].append(Arista(destino, peso, puntosIntermedios));
         listaAdyacencia[destino].append(Arista(origen, peso, puntosIntermedios)); // Grafo no dirigido
+
     }
 }
 
@@ -33,7 +36,8 @@ bool Grafo::existeNodo(const QString& nodo) const {
     return listaAdyacencia.contains(nodo);
 }
 
-void Grafo::crearGrafoCiudad() {
+void Grafo::crearGrafoCiudad()
+{
     listaAdyacencia.clear();
     posicionesNodos.clear();
 
@@ -49,12 +53,12 @@ void Grafo::crearGrafoCiudad() {
     // las aristas con sus pesos y puntos intermedios
     agregarArista("Ciudad", "Lobby", 1);
     agregarArista("Gasolinera", "Ciudad", 2, {QPointF(-220, 100)});
-    agregarArista("Ciudad", "Mall", 3);
-    agregarArista("Mall", "Supermercado", 1);
-    agregarArista("Supermercado", "Laboratorio", 2);
-    agregarArista("Supermercado", "Gimnasio", 1, {QPointF(450, 500)});
-    agregarArista("Supermercado", "Gasolinera", 1, {QPointF(450, 100)});
-    agregarArista("Gimnasio", "Lobby", 2, {QPointF(-300, 500)});
-    agregarArista("Gimnasio", "Mall", 2);
+    agregarArista("Ciudad","Mall",3);
+    agregarArista("Mall","Supermercado",1);
+    agregarArista("Supermercado","Laboratorio",2);
+    agregarArista("Supermercado","Gimnasio",1,{QPointF(450, 500)});
+    agregarArista("Supermercado","Gasolinera", 1, {QPointF(450, 100)});
+    agregarArista("Gimnasio","Lobby",2,{QPointF(-300,500)});
+    agregarArista("Gimnasio","Mall",2);
     agregarArista("Gasolinera", "Mall", 2);
 }
