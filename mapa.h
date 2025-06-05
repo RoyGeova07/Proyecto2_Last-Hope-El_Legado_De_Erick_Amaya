@@ -2,6 +2,7 @@
 #define MAPA_H
 #include<QWidget>
 #include "grafo.h"
+#include"personaje.h"
 
 
 class QPushButton;
@@ -17,6 +18,7 @@ public:
 
 private:
     void visualizarGrafo(const Grafo& grafo);
+    personaje*jugador;
 
 };
 

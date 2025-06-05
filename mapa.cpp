@@ -11,7 +11,7 @@
 #include <QGraphicsLineItem>
 #include <QGraphicsTextItem>
 
-Mapa::Mapa(QWidget* parent) : QWidget(parent) {
+Mapa::Mapa(QWidget* parent) : QWidget(parent),jugador(nullptr) {
     this->resize(1280, 720);
     this->setWindowTitle("Mapa - Last hope");
 
@@ -37,7 +37,16 @@ Mapa::Mapa(QWidget* parent) : QWidget(parent) {
     btnVolver->move(10, 10);
 
     connect(btnVolver, &QPushButton::clicked, this, [this]() {
-        lobby* l = new lobby();
+
+        if(!jugador)
+        {
+
+            jugador=new personaje();
+            jugador->SetAnimacion(":/imagenes/assets/protagonista/Idle.png",7);
+
+        }
+
+        lobby* l = new lobby(jugador);
         l->show();
         this->close();
         qDebug() << "Volviendo al lobby...!";

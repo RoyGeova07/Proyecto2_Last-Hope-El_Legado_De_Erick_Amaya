@@ -1,10 +1,12 @@
 #include "escenabase.h"
 #include "npc.h"
+#include"personaje.h"
 
 class lobby : public EscenaBase {
     Q_OBJECT
 
 private:
+
     QLabel* lblDialogo;
     QLabel* lblDatos;
     QList<NPC*> npcs;
@@ -20,7 +22,7 @@ protected:
     void onMovimientoUpdate() override;
 
 public:
-    lobby(QWidget* parent = nullptr);
+    explicit lobby(personaje*jugadorExistente, QWidget* parent=nullptr);
     void posicionarJugadorEnPuerta();
     void keyPressEvent(QKeyEvent* event) override;
 };

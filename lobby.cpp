@@ -7,13 +7,19 @@
 #include <QPushButton>
 #include"caminos.h"
 
-lobby::lobby(QWidget* parent) : EscenaBase(parent) {
+lobby::lobby(personaje*jugadorExistente, QWidget* parent) : EscenaBase(jugadorExistente,parent)
+{
+
     this->resize(1280, 720);
     this->setWindowTitle("Lobby - Last hope");
 
     configurarEscena();
-    inicializarJugador();
     configurarObstaculos();
+
+    jugador=jugadorExistente;
+    jugador->setParent(this);
+    jugador->show();
+    jugador->raise();
 
     //aqui QLabel para mostrar los datos
     lblDatos = new QLabel(this);
@@ -76,110 +82,6 @@ lobby::lobby(QWidget* parent) : EscenaBase(parent) {
 
     //aqui obstaculo fisico del NPC
     obstaculos.append(QRect(1151,468,17,60));
-
-    //aqui se creaa timer de movimiento
-    movimientoTimer = new QTimer(this);
-    connect(movimientoTimer, &QTimer::timeout, this, [=]() {
-        bool moviendo = false;
-
-        if (izquierdaPresionada)
-        {
-
-            jugador->MoverSiNoColisiona(-jugador->getVelocidadMoviento(),0,obstaculos);
-            moviendo=true;
-
-        }else if (derechaPresionada)
-        {
-
-            jugador->MoverSiNoColisiona(jugador->getVelocidadMoviento(),0,obstaculos);
-            moviendo=true;
-
-        }
-
-        if(arribaPresionado)
-        {
-
-            jugador->MoverSiNoColisiona(0,-jugador->getVelocidadMoviento(),obstaculos);
-            moviendo=true;
-
-        } else if (abajoPresionado) {
-            jugador->MoverSiNoColisiona(0, jugador->getVelocidadMoviento(), obstaculos);
-            moviendo = true;
-        }
-
-        if(moviendo)
-        {
-
-            if(shiftPresionado)
-            {
-
-                jugador->SetAnimacionMovimiento(6);
-                jugador->SetAnimacion(":/imagenes/assets/protagonista/Run.png", 8);
-
-            }else{
-
-                jugador->SetAnimacionMovimiento(2);
-                jugador->SetAnimacion(":/imagenes/assets/protagonista/Walk.png", 7);
-
-            }
-        }else{
-
-            movimientoTimer->stop();
-            jugador->DetenerAnimacion();
-            jugador->SetAnimacion(":/imagenes/assets/protagonista/Idle.png", 7);
-
-        }
-
-//==================================================================================
-        //AQUI DETECCION DE LA PROXIMIDAD DE LOS NPCS
-        QRect rectJugador=jugador->geometry();
-        bool hayNpcCerca=false;
-        npcCercano=nullptr;
-
-        for (NPC*npc:npcs)
-        {
-
-            QRect rectNPC=npc->geometry();
-            QRect zonaProximidad=rectNPC.adjusted(-20,-20,20,20); // margen de 20px
-
-            if(rectJugador.intersects(zonaProximidad))
-            {
-
-                npc->mostrarHintInteractuar();
-                npcCercano=npc;
-                hayNpcCerca=true;
-
-            }else{
-
-                npc->ocultarHintInteractuar();
-
-            }
-        }
-// ============================================================================================
-
-        //AQUI PONER LA DETECCION DE LA PUERTA
-
-        QRect zonaPuerta1(120, 280, 80, 120);
-
-        if (rectJugador.intersects(zonaPuerta1))
-        {
-            mostrarHintPuerta();
-            hayPuertaCerca = true;
-        }
-        else
-        {
-            ocultarHintPuerta();
-            hayPuertaCerca = false;
-        }
-        if(!hayNpcCerca)
-        {
-
-            npcCercano=nullptr;
-
-        }
-    });
-
-    movimientoTimer->setInterval(30); // ~33 FPS
 
 
     Movimientos();
@@ -284,9 +186,10 @@ void lobby::keyPressEvent(QKeyEvent* event)
     if(event->key()==Qt::Key_R&&labelPresionarR->isVisible())
     {
 
-        qDebug()<<"Explorar la puerta";
+        qDebug()<<"Explorar la puerta.";
+        ResetearMovimiento();//para evitar errores
 
-        Caminos*caminos=new Caminos();
+        Caminos*caminos=new Caminos(jugador);
         caminos->show();
 
         this->close();

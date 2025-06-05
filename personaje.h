@@ -66,6 +66,8 @@ private:
     QTimer*timer;
     int velocidadMovimiento;
     bool miradoDerecha;
+    //aqui si la direccion cambio la ultima vez que se dibujo
+    bool ultimaDireccionDerecha;
 
     QVector<QRect> obstaculos; //aqui obstaculo
 

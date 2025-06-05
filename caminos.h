@@ -21,6 +21,9 @@ private:
     void configurarObstaculos() override;
     void cambiarRuta(int nuevaRuta);
 
+    void posicionarJugadorEnCalleRuta1();
+    void posicionarJugadorEnCalleRuta2();
+
 protected:
 
     void onMovimientoUpdate() override;
@@ -28,7 +31,7 @@ protected:
 
 public:
 
-    explicit Caminos(QWidget* parent = nullptr);
+    explicit Caminos(personaje*jugadorExistente,QWidget* parent = nullptr);
     bool regresandoAlLobby = false;
 };
 

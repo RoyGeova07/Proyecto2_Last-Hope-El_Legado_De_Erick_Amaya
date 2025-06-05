@@ -7,17 +7,21 @@
 #include"Ciudad.h"
 #include "gasolinera.h"
 
-Caminos::Caminos(QWidget* parent) : EscenaBase(parent), rutaActual(1)
+Caminos::Caminos(personaje*jugadorExistente, QWidget* parent) : EscenaBase(jugadorExistente,parent), rutaActual(1)
 {
     this->resize(1078, 714);
     this->setWindowTitle("Caminos - Last hope");
 
     configurarEscena();
-    inicializarJugador();
     configurarObstaculos();
+
+    jugador->setParent(this);
+    jugador->show();
+    jugador->raise();
+
     Movimientos();
 
-    jugador->move(22,190);
+    jugador->move(42,190);
 
     labelPresionarT = new QLabel("PRESIONE T PARA ENTRAR", this);
     labelPresionarT->setStyleSheet("background: rgba(0,0,0,180); color: white; padding: 5px; border-radius: 5px;");
@@ -62,6 +66,26 @@ void Caminos::configurarObstaculos()
        obstaculos.append(QRect(18, 600, 1000, 30)); //PARTE INFERIOR
 
     }
+}
+
+void Caminos::posicionarJugadorEnCalleRuta1()
+{
+
+    // Posicion en la calle superior de RUTA 1
+    //jugador->move(width()-jugador->width()-50,180);
+    int posX=width()-jugador->width()-50;
+    int posY=115;
+
+    jugador->move(posX,posY);
+
+}
+
+void Caminos::posicionarJugadorEnCalleRuta2()
+{
+
+    // Posicion en la calle inferior de RUTA 2
+    jugador->move(100,height()-jugador->height()-120);
+
 }
 
 void Caminos::cambiarRuta(int nuevaRuta)
@@ -113,8 +137,7 @@ void Caminos::onMovimientoUpdate()
         cambiarRuta(2);
         configurarObstaculos();
 
-        //aqui se coloca al jugador en el borde IZQUIERDO de la carretera inferior de RUTA_2
-        jugador->move(100, height() - jugador->height() - 120);
+        posicionarJugadorEnCalleRuta2();
         return;
     }
 
@@ -125,8 +148,8 @@ void Caminos::onMovimientoUpdate()
         cambiarRuta(1);
         configurarObstaculos();
 
-        //aqui vuelve a colocar al jugador en borde derecho de carretera de ARRIBA en RUTA_1
-        jugador->move(width() - jugador->width() - 50, 200);
+        posicionarJugadorEnCalleRuta1();
+
         return;
     }
 
@@ -153,7 +176,24 @@ void Caminos::onMovimientoUpdate()
 
             qDebug() << "Regresando al lobby...";
 
-            lobby* lobbyWindow = new lobby();
+            // Parar el timer
+            if (movimientoTimer && movimientoTimer->isActive())
+                movimientoTimer->stop();
+
+            // Resetear las teclas
+            shiftPresionado = false;
+            izquierdaPresionada = false;
+            derechaPresionada = false;
+            arribaPresionado = false;
+            abajoPresionado = false;
+            ZPresionado = false;
+
+            // Dejar el personaje en Idle
+            jugador->DetenerAnimacion();
+            jugador->SetAnimacion(":/imagenes/assets/protagonista/Idle.png",7);
+
+
+            lobby* lobbyWindow = new lobby(jugador);
             lobbyWindow->posicionarJugadorEnPuerta();
             lobbyWindow->show();
             this->close();
@@ -161,6 +201,8 @@ void Caminos::onMovimientoUpdate()
             return;
         }
     }
+
+
 
     if (rutaActual == 2)
     {
@@ -196,6 +238,14 @@ void Caminos::keyPressEvent(QKeyEvent *event)
         this->close();
 
         return; // salir
+    }
+
+    if(!jugador)
+    {
+
+        jugador->DetenerAnimacion();
+        jugador->SetAnimacion(":/imagenes/assets/protagonista/Idle.png",7);
+
     }
 
 }

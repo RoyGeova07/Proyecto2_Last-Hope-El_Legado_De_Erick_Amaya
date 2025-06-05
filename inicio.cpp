@@ -17,7 +17,7 @@
 #include<QMessageBox>
 #include"lobby.h"
 
-Inicio::Inicio(QWidget*parent):QWidget(parent)
+Inicio::Inicio(QWidget*parent):QWidget(parent),jugador(nullptr)
 {
 
     this->resize(1100,700);
@@ -145,7 +145,15 @@ void Inicio::AbrirJuego()
 
     }
 
-    lobby*ventanaLobby=new lobby();
+    if (!jugador)
+    {
+
+        jugador=new personaje();
+        jugador->SetAnimacion(":/imagenes/assets/protagonista/Idle.png", 7);
+
+    }
+
+    lobby*ventanaLobby=new lobby(jugador);
     ventanaLobby->show();
     //Ciudad* ventana=new Ciudad();
     //ventana->show();

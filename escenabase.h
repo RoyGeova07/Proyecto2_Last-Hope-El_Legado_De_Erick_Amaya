@@ -31,7 +31,9 @@ protected:
 
 public:
     explicit EscenaBase(QWidget* parent = nullptr);
+    explicit EscenaBase(personaje*jugador,QWidget*parent=nullptr);
     virtual ~EscenaBase();
+    void ResetearMovimiento();
 
     void inicializarJugador();
     void Movimientos();

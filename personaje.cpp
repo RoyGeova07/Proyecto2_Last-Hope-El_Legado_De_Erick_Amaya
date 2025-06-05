@@ -1,7 +1,7 @@
 #include "personaje.h"
 #include<QDebug>
 
-personaje::personaje(QWidget*parent):QLabel(parent),frameActual(0),velocidadMovimiento(10),miradoDerecha(true),
+personaje::personaje(QWidget*parent):QLabel(parent),frameActual(0),velocidadMovimiento(10),miradoDerecha(true),ultimaDireccionDerecha(true),
     vida(3),energia(10),municiones(20)
 {
 
@@ -19,9 +19,6 @@ void personaje::SetAnimacion(const QString &ruta, int cantidadFrames)
 {
 
     bool debeRefrescarFlip=false;
-
-    //aqui si la direccion cambio la ultima vez que se dibujo
-    static bool ultimaDireccionDerecha = true;
 
     if(miradoDerecha!=ultimaDireccionDerecha)
     {

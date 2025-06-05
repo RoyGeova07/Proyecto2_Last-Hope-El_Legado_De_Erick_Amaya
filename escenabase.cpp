@@ -10,16 +10,37 @@ EscenaBase::EscenaBase(QWidget* parent) : QWidget(parent),
     abajoPresionado(false), ZPresionado(false) {
 }
 
-EscenaBase::~EscenaBase() {
-    delete jugador;
+EscenaBase::EscenaBase(personaje *jugadorExistente, QWidget *parent):QWidget(parent),
+
+    jugador(jugadorExistente), movimientoTimer(nullptr),
+    shiftPresionado(false), izquierdaPresionada(false),
+    derechaPresionada(false), arribaPresionado(false),
+    abajoPresionado(false), ZPresionado(false) {
+
+}
+
+EscenaBase::~EscenaBase()
+{
+
     delete movimientoTimer;
+
 }
 
 void EscenaBase::inicializarJugador() {
-    jugador = new personaje(this);
-    jugador->SetAnimacion(":/imagenes/assets/protagonista/Idle.png", 7);
+    if(!jugador)
+    {
+
+        jugador = new personaje(this);//Solo si NO hay jugador
+        jugador->SetAnimacion(":/imagenes/assets/protagonista/Idle.png",7);
+
+    }else{
+
+        jugador->setParent(this);//si ya se actualizo solo se actualiza el parent
+
+    }
     jugador->show();
     jugador->raise();
+
 }
 
 void EscenaBase::Movimientos() {
@@ -120,4 +141,25 @@ void EscenaBase::keyReleaseEvent(QKeyEvent* event) {
         ZPresionado = false;
         break;
     }
+}
+
+void EscenaBase::ResetearMovimiento()
+{
+
+    if (movimientoTimer && movimientoTimer->isActive())
+        movimientoTimer->stop();
+
+    shiftPresionado = false;
+    izquierdaPresionada = false;
+    derechaPresionada = false;
+    arribaPresionado = false;
+    abajoPresionado = false;
+    ZPresionado = false;
+
+    if (jugador)
+    {
+        jugador->DetenerAnimacion();
+        jugador->SetAnimacion(":/imagenes/assets/protagonista/Idle.png",7);
+    }
+
 }

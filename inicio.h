@@ -1,6 +1,7 @@
 #ifndef INICIO_H
 #define INICIO_H
 #include<QWidget>
+#include"personaje.h"
 
 class QPushButton;
 class QLabel;
@@ -20,6 +21,8 @@ private:
     QPushButton*btnNuevaPartida;
     QPushButton*btnCargarPartida;
     QPushButton*Salir;
+
+    personaje*jugador;
 
     void AbrirJuego();
     void AbrirMenuCargarPartida();
