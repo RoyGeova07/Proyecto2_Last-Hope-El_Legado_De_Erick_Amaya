@@ -16,7 +16,7 @@ Mapa::Mapa(QWidget* parent) : QWidget(parent) {
     this->setWindowTitle("Mapa - Last hope");
 
     // Cargar imagen de fondo
-    QPixmap fondoPixmap(":/imagenes/assets/mapas/Mapa.png");
+    QPixmap fondoPixmap(":/imagenes/assets/mapas/Mapa.jpeg");
     if(fondoPixmap.isNull()) {
         qDebug() << "Error al cargar imagen desde assets/mapas/Mapa.png";
     } else {

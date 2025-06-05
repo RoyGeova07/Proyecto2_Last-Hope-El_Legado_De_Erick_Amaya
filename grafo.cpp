@@ -39,16 +39,16 @@ void Grafo::crearGrafoCiudad() {
 
     // nodos
     agregarNodo("Lobby", QPointF(-400, 330));
-    agregarNodo("Gasolinera", QPointF(120, 100));
-    agregarNodo("Ciudad", QPointF(-180, 265));
-    agregarNodo("Mall", QPointF(120, 265));
+    agregarNodo("Gasolinera", QPointF(100, 100));
+    agregarNodo("Ciudad", QPointF(-220, 265));
+    agregarNodo("Mall", QPointF(100, 265));
     agregarNodo("Supermercado", QPointF(450, 265));
     agregarNodo("Laboratorio", QPointF(700, 265));
-    agregarNodo("Gimnasio", QPointF(120, 500));
+    agregarNodo("Gimnasio", QPointF(100, 500));
 
     // las aristas con sus pesos y puntos intermedios
     agregarArista("Ciudad", "Lobby", 1);
-    agregarArista("Gasolinera", "Ciudad", 2, {QPointF(-180, 100)});
+    agregarArista("Gasolinera", "Ciudad", 2, {QPointF(-220, 100)});
     agregarArista("Ciudad", "Mall", 3);
     agregarArista("Mall", "Supermercado", 1);
     agregarArista("Supermercado", "Laboratorio", 2);
@@ -56,5 +56,5 @@ void Grafo::crearGrafoCiudad() {
     agregarArista("Supermercado", "Gasolinera", 1, {QPointF(450, 100)});
     agregarArista("Gimnasio", "Lobby", 2, {QPointF(-300, 500)});
     agregarArista("Gimnasio", "Mall", 2);
-    agregarArista("Gasolinera", "Mall", 2, {QPointF(120, 150)});
+    agregarArista("Gasolinera", "Mall", 2);
 }

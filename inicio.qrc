@@ -41,5 +41,6 @@
         <file>assets/Zombies/Run_Z3.png</file>
         <file>assets/mapas/Mapa.png</file>
         <file>assets/items/btnMapa.png</file>
+        <file>assets/mapas/Mapa.jpeg</file>
     </qresource>
 </RCC>

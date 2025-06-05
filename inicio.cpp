@@ -146,9 +146,9 @@ void Inicio::AbrirJuego()
     }
 
     lobby*ventanaLobby=new lobby();
-    //ventanaLobby->show();
+    ventanaLobby->show();
     Ciudad* ventana=new Ciudad();
-    ventana->show();
+    //ventana->show();
 
 
     this->close();
