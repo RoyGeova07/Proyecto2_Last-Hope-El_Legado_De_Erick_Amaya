@@ -1,4 +1,9 @@
 #include "Grafo.h"
+#include "Cola.h"
+#include <limits>
+#include <algorithm>
+#include <unordered_map>
+#include <queue>
 
 Grafo::Grafo() {}
 
@@ -51,14 +56,65 @@ void Grafo::crearGrafoCiudad()
     agregarNodo("Gimnasio", QPointF(100, 500));
 
     // las aristas con sus pesos y puntos intermedios
-    agregarArista("Ciudad", "Lobby", 1);
-    agregarArista("Gasolinera", "Ciudad", 2, {QPointF(-220, 100)});
-    agregarArista("Ciudad","Mall",3);
-    agregarArista("Mall","Supermercado",1);
-    agregarArista("Supermercado","Laboratorio",2);
-    agregarArista("Supermercado","Gimnasio",1,{QPointF(450, 500)});
-    agregarArista("Supermercado","Gasolinera", 1, {QPointF(450, 100)});
-    agregarArista("Gimnasio","Lobby",2,{QPointF(-300,500)});
-    agregarArista("Gimnasio","Mall",2);
-    agregarArista("Gasolinera", "Mall", 2);
+    agregarArista("Ciudad", "Lobby", 10);
+    agregarArista("Gasolinera", "Ciudad", 20, {QPointF(-220, 100)});
+    agregarArista("Ciudad","Mall", 15);
+    agregarArista("Mall","Supermercado",15);
+    agregarArista("Supermercado","Laboratorio",10);
+    agregarArista("Supermercado","Gimnasio",20,{QPointF(450, 500)});
+    agregarArista("Supermercado","Gasolinera", 25, {QPointF(450, 100)});
+    agregarArista("Gimnasio","Lobby",25,{QPointF(-300,500)});
+    agregarArista("Gimnasio","Mall",5);
+    agregarArista("Gasolinera", "Mall", 5);
+}
+
+QList<QString> Grafo::dijkstra(const QString& origen, const QString& destino) {
+    //  almacenar distancias y predecesores
+    std::unordered_map<QString, float> distancias;
+    std::unordered_map<QString, QString> predecesores;
+
+    // inicializar todas las distancias como infinito
+    for (const auto& nodo : listaAdyacencia.keys()) {
+        distancias[nodo] = std::numeric_limits<float>::infinity();
+    }
+    distancias[origen] = 0.0f;
+
+    // Cola de prioridad usando un comparador personalizado
+    auto comparar = [](const std::pair<QString, float>& a, const std::pair<QString, float>& b) {
+        return a.second > b.second;
+    };
+    Cola<float> cola;
+    cola.insertar(0.0f, origen);
+
+    while (!cola.colaVacia()) {
+        auto elemento = cola.desencolar();
+        QString actual = elemento.nivel;
+        float distanciaActual = elemento.dato;
+
+        if (actual == destino) break;
+
+        for (const auto& arista : listaAdyacencia[actual]) {
+            float nuevaDistancia = distancias[actual] + arista.peso;
+
+            if (nuevaDistancia < distancias[arista.destino]) {
+                distancias[arista.destino] = nuevaDistancia;
+                predecesores[arista.destino] = actual;
+                cola.insertar(nuevaDistancia, arista.destino);
+            }
+        }
+    }
+
+    // reconstruir la ruta
+    QList<QString> ruta;
+    QString nodo = destino;
+    while (nodo != "") {
+        ruta.prepend(nodo);
+        nodo = predecesores.count(nodo) ? predecesores[nodo] : "";
+    }
+
+    if (ruta.first() != origen) {
+        return QList<QString>(); // retorna lista vacía si no hay ruta
+    }
+
+    return ruta;
 }

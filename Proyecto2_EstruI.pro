@@ -25,6 +25,8 @@ SOURCES += \
 
 HEADERS += \
     Ciudad.h \
+    Cola.h \
+    Elemento.h \
     caminos.h \
     escenabase.h \
     gasolinera.h \

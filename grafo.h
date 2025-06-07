@@ -28,6 +28,7 @@ public:
     QList<Arista> obtenerAristas(const QString& nodo) const;
     QPointF obtenerPosicionNodo(const QString& nodo) const;
     bool existeNodo(const QString& nodo) const;
+    QList<QString> dijkstra(const QString& origen, const QString& destino);
 
     void crearGrafoCiudad();
 
