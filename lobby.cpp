@@ -7,19 +7,23 @@
 #include <QPushButton>
 #include"caminos.h"
 
-lobby::lobby(personaje*jugadorExistente, QWidget* parent) : EscenaBase(jugadorExistente,parent)
+lobby::lobby(personaje* jugadorExistente, QWidget* parent)
+    : EscenaBase(jugadorExistente, parent)
 {
-
     this->resize(1280, 720);
     this->setWindowTitle("Lobby - Last hope");
 
     configurarEscena();
     configurarObstaculos();
 
-    jugador=jugadorExistente;
+    jugador = jugadorExistente;
     jugador->setParent(this);
     jugador->show();
     jugador->raise();
+
+    // dialogo NPC
+    dialogoNPC = new DialogoNPC(this);
+    dialogoNPC->hide();
 
     //aqui QLabel para mostrar los datos
     lblDatos = new QLabel(this);
@@ -30,7 +34,7 @@ lobby::lobby(personaje*jugadorExistente, QWidget* parent) : EscenaBase(jugadorEx
     lblDatos->raise();
     lblDatos->show();
 
-    //Actualizar los datos del jugador
+    // Actualizar los datos del jugador
     auto actualizarUI = [=]() {
         QMap<QString, int> datos = jugador->cargarDatosJugador();
         QString texto = QString("Energia: %1\nMuniciones: %2")
@@ -40,20 +44,13 @@ lobby::lobby(personaje*jugadorExistente, QWidget* parent) : EscenaBase(jugadorEx
     };
     actualizarUI();
 
-    //aqui QLabel para mostrar el dialogo
-    lblDialogo = new QLabel(this);
-    lblDialogo->setStyleSheet("background: black; color: white; padding: 15px; border-radius: 10px;");
-    lblDialogo->setAlignment(Qt::AlignLeft|Qt::AlignTop); //con este mejora alineacion mejor para textos largo
-    lblDialogo->setWordWrap(true); // Para que haga salto de linea automatico
-    lblDialogo->setGeometry(100, 100, 600, 150);
-    lblDialogo->hide();
-
-    labelPresionarR=new QLabel("PRESIONE R PARA EXPLORAR",this);
+    // Label para el hint de interaccion con puerta
+    labelPresionarR = new QLabel("PRESIONE R PARA EXPLORAR", this);
     labelPresionarR->setStyleSheet("background: rgba(0,0,0,180); color: white; padding: 5px; border-radius: 5px;");
     labelPresionarR->setAlignment(Qt::AlignCenter);
     labelPresionarR->setWordWrap(true);
     labelPresionarR->setFixedSize(200,30);
-    labelPresionarR->hide();//con este al inicio estara oculto
+    labelPresionarR->hide();
 
     // Boton para ver el mapa
     QPushButton *btnMapa = new QPushButton(this);
@@ -62,7 +59,7 @@ lobby::lobby(personaje*jugadorExistente, QWidget* parent) : EscenaBase(jugadorEx
     btnMapa->setIconSize(pixmap.size());
     btnMapa->setFixedSize(pixmap.size());
     btnMapa->setStyleSheet("QPushButton { border: white; background: transparent; }");
-    btnMapa->setFocusPolicy(Qt::NoFocus); //Para que el focus este en el teclado + la ventana
+    btnMapa->setFocusPolicy(Qt::NoFocus);
     btnMapa->move(640,150);
 
     connect(btnMapa, &QPushButton::clicked, this, [this]() {
@@ -73,16 +70,14 @@ lobby::lobby(personaje*jugadorExistente, QWidget* parent) : EscenaBase(jugadorEx
         this->setFocus();
     });
 
-
-    //aqui se crea y registrar los NPCs
+    // registro de NPCs
     NPC* npc2 = new NPC(NPC::Tipo::NPC2, this);
-    npc2->move(1100,390);
+    npc2->move(1100, 390);
     npc2->show();
-    npcs.append(npc2); //aqui se registra en el vector global
+    npcs.append(npc2);
 
-    //aqui obstaculo fisico del NPC
-    obstaculos.append(QRect(1151,468,17,60));
-
+    // Obstaculos npc
+    obstaculos.append(QRect(1151, 468, 17, 60));
 
     Movimientos();
 }
@@ -122,41 +117,34 @@ void lobby::configurarObstaculos()
 
 void lobby::onMovimientoUpdate()
 {
-
-    QRect rectJugador=jugador->geometry();
-    bool hayNpcCerca=false;
-    npcCercano=nullptr;
+    QRect rectJugador = jugador->geometry();
+    bool hayNpcCerca = false;
+    npcCercano = nullptr;
 
     for(NPC* npc : npcs)
     {
-
-        QRect rectNPC=npc->geometry();
-        QRect zonaProximidad=rectNPC.adjusted(-20,-20,20,20);
+        QRect rectNPC = npc->geometry();
+        QRect zonaProximidad = rectNPC.adjusted(-20, -20, 20, 20);
 
         if(rectJugador.intersects(zonaProximidad))
         {
-
             npc->mostrarHintInteractuar();
-            npcCercano=npc;
-            hayNpcCerca=true;
-
-        }else{
-
+            npcCercano = npc;
+            hayNpcCerca = true;
+        }
+        else
+        {
             npc->ocultarHintInteractuar();
-
         }
     }
 
     if(!hayNpcCerca)
     {
-
-        npcCercano=nullptr;
-
+        npcCercano = nullptr;
     }
 
     QRect zonaPuerta1(120, 280, 80, 120);
-
-    if (rectJugador.intersects(zonaPuerta1))
+    if(rectJugador.intersects(zonaPuerta1))
     {
         mostrarHintPuerta();
         hayPuertaCerca = true;
@@ -166,37 +154,33 @@ void lobby::onMovimientoUpdate()
         ocultarHintPuerta();
         hayPuertaCerca = false;
     }
-
 }
 
 void lobby::keyPressEvent(QKeyEvent* event)
 {
-
     EscenaBase::keyPressEvent(event);
 
-    //AQUI SE PROGRAMA LA ACCION DESPUES DE PRESIONAR UNA TECCLA EN ESPCIFICO DEL JUEGO
-    if(event->key()==Qt::Key_H&&npcCercano&&!npcCercano->estaHablando())
+    // Interaccion con NPC
+    if(event->key() == Qt::Key_H && npcCercano && !npcCercano->estaHablando())
     {
+        npcCercano->mostrarDialogo(dialogoNPC);
 
-        npcCercano->mostrarDialogo(lblDialogo);
-
+        connect(npcCercano, &NPC::dialogoTerminado, this, [this]() {
+            qDebug() << "Diálogo con NPC terminado";
+        });
     }
 
-    //si presiona R y esta cerca de la puerta
-    if(event->key()==Qt::Key_R&&labelPresionarR->isVisible())
+    // Interaccion con puerta
+    if(event->key() == Qt::Key_R && labelPresionarR->isVisible())
     {
-
-        qDebug()<<"Explorar la puerta.";
-        ResetearMovimiento();//para evitar errores
-
-        Caminos*caminos=new Caminos(jugador);
+        qDebug() << "Explorar la puerta.";
+        ResetearMovimiento();
+        Caminos* caminos = new Caminos(jugador);
         caminos->show();
-
         this->close();
-
     }
-
 }
+
 void lobby::mostrarHintPuerta()
 {
     if (!labelPresionarR->isVisible())

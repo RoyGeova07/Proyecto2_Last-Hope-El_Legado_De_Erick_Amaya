@@ -11,6 +11,7 @@ CONFIG += c++17
 SOURCES += \
     Ciudad.cpp \
     caminos.cpp \
+    dialogonpc.cpp \
     escenabase.cpp \
     gasolinera.cpp \
     grafo.cpp \
@@ -28,6 +29,7 @@ HEADERS += \
     Cola.h \
     Elemento.h \
     caminos.h \
+    dialogonpc.h \
     escenabase.h \
     gasolinera.h \
     grafo.h \

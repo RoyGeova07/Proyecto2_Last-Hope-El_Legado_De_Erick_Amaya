@@ -40,7 +40,7 @@ Mapa::Mapa(QWidget* parent) : QWidget(parent), jugador(nullptr) {
 
     visualizarGrafo(*grafoMapa);
 
-    // Botón para volver al lobby (manteniendo tu código original)
+    // Boton para volver al lobby
     QPushButton *btnVolver = new QPushButton(this);
     btnVolver->setText("⬅");
     btnVolver->setStyleSheet("QPushButton { border: none; background: transparent; font-size: 40px; }");
@@ -91,7 +91,7 @@ void Mapa::visualizarGrafo(const Grafo& grafo) {
         }
     }
 
-    // Dibujar nodos y hacerlos clickeables
+    // Dibujar nodos
     for (const QString& nodo : grafo.obtenerNodos()) {
         QPointF posicion = grafo.obtenerPosicionNodo(nodo);
 

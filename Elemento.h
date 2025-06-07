@@ -7,7 +7,7 @@ template <class T>
 
 struct Elemento {
     T dato;          // Prioridad distancia
-    QString nivel;  // nombre del nivel
+    QString nivel;  // Nombre del nivel
 
     Elemento(T datos, const QString& nombre) : dato(datos), nivel(nombre) {}
 };

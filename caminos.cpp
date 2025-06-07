@@ -154,6 +154,7 @@ void Caminos::onMovimientoUpdate()
     }
 
     //aqui ingresa a Gasolinera solo para que existan dos mapas para el avance
+    /*
     if (rutaActual == 2 && rectJugador.right() >= width() - 50 && rectJugador.top() <= 200)
     {
         qDebug() << "Cambiando de nivel...";
@@ -163,7 +164,7 @@ void Caminos::onMovimientoUpdate()
         this->close();
 
         return;
-    }
+    }*/
 
     //CON ESTO REGRESA AL LOBBY (zona de la puerta en RUTA_1)
     if (rutaActual == 1 && !regresandoAlLobby)

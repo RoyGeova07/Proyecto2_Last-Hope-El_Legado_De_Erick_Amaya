@@ -1,6 +1,8 @@
 #include "escenabase.h"
 #include "npc.h"
 #include"personaje.h"
+#include "dialogonpc.h"
+
 
 class lobby : public EscenaBase {
     Q_OBJECT
@@ -12,6 +14,7 @@ private:
     QList<NPC*> npcs;
     NPC* npcCercano;
     QLabel*labelPresionarR;
+    DialogoNPC *dialogoNPC;
     bool hayPuertaCerca = false;
 
     void mostrarHintPuerta();

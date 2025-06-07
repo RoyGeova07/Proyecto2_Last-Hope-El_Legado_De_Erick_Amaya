@@ -2,49 +2,47 @@
 #define NPC_H
 
 #include <QLabel>
-#include <QPixmap>
 #include <QTimer>
 #include <QVector>
+#include <QPixmap>
+#include <QStringList>
+
+class QLabel;
 
 class NPC : public QLabel
 {
     Q_OBJECT
-
 public:
-    enum class Tipo {
-        NPC1,
-        NPC2,
-        NPC3
-    };
+    enum class Tipo { NPC1, NPC2, NPC3 };
 
-    explicit NPC(Tipo tipo, QWidget* parent = nullptr);
-
-    //aqui para la animacion
+    NPC(Tipo tipo, QWidget* parent = nullptr);
     void SetAnimacion(const QString& ruta, int cantidadFrames);
-    void AvanzarFrame();
-
-    //aqui para Dialogo
-    void mostrarDialogo(QLabel* dialogoLabel);
+    void mostrarDialogo(class DialogoNPC* dialogoUI);  // Cambiado a DialogoNPC
+    void mostrarHintInteractuar();
+    void ocultarHintInteractuar();
     bool estaHablando() const { return hablando; }
 
-    // UI contextual
-    void mostrarHintInteractuar();       // Mostrar "Presiona H para hablar"
-    void ocultarHintInteractuar();       // Ocultar label de interacción
-    QLabel* getHintLabel() const { return labelPresionaH; }
+signals:
+    void dialogoTerminado();
+
+private slots:
+    void AvanzarFrame();
+    void manejarOpcionSeleccionada(int opcion);
 
 private:
     Tipo tipo;
     QVector<QPixmap> frames;
     int frameActual;
+    QStringList dialogos;
+    int indiceDialogo;
+    bool hablando;
     QTimer* animacionTimer;
     QTimer* dialogoTimer;
-
-    QVector<QString> dialogos;
-    int indiceDialogo;
+    QLabel* labelPresionaH;
     QString dialogoActual;
-    bool hablando;
 
-    QLabel* labelPresionaH = nullptr;
+    QPixmap obtenerImagenNPC() const;
+    QStringList obtenerOpcionesDialogo() const;
 };
 
 #endif // NPC_H
