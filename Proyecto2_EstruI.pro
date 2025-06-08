@@ -10,12 +10,14 @@ CONFIG += c++17
 
 SOURCES += \
     Ciudad.cpp \
+    Inventario.cpp \
     caminos.cpp \
     dialogonpc.cpp \
     escenabase.cpp \
     gasolinera.cpp \
     grafo.cpp \
     inicio.cpp \
+    inventariowidget.cpp \
     lobby.cpp \
     main.cpp \
     mainwindow.cpp \
@@ -28,12 +30,14 @@ HEADERS += \
     Ciudad.h \
     Cola.h \
     Elemento.h \
+    Inventario.h \
     caminos.h \
     dialogonpc.h \
     escenabase.h \
     gasolinera.h \
     grafo.h \
     inicio.h \
+    inventariowidget.h \
     lobby.h \
     mainwindow.h \
     mapa.h \

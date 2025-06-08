@@ -6,6 +6,7 @@
 #include <QVector>
 #include <QPixmap>
 #include <QStringList>
+#include"inventario.h"
 
 class QLabel;
 
@@ -21,6 +22,7 @@ public:
     void mostrarHintInteractuar();
     void ocultarHintInteractuar();
     bool estaHablando() const { return hablando; }
+    void setInventario(Inventario* inv) { inventarioRef = inv; }
 
 signals:
     void dialogoTerminado();
@@ -38,8 +40,16 @@ private:
     bool hablando;
     QTimer* animacionTimer;
     QTimer* dialogoTimer;
+    bool dialogoFinalizado;
     QLabel* labelPresionaH;
     QString dialogoActual;
+    DialogoNPC* dialogoActualUI = nullptr;
+    bool yaHabloCompleto = false;
+    Inventario* inventarioRef = nullptr;
+    QLabel* labelNotificacion = nullptr;
+
+    void mostrarNotificacion(const QString& texto);
+
 
     QPixmap obtenerImagenNPC() const;
     QStringList obtenerOpcionesDialogo() const;

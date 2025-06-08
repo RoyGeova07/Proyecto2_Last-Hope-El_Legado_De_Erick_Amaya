@@ -6,6 +6,8 @@
 #include <QKeyEvent>
 #include <QRect>
 #include "personaje.h"
+#include"inventario.h"
+#include"inventariowidget.h"
 
 class EscenaBase : public QWidget {
     Q_OBJECT
@@ -23,6 +25,8 @@ protected:
     bool abajoPresionado;
     bool ZPresionado;
 
+    InventarioWidget* inventarioWidget;
+
     //aqui Metodos virtuales
     virtual void configurarEscena() = 0;
     virtual void configurarObstaculos() = 0;
@@ -34,7 +38,6 @@ public:
     explicit EscenaBase(personaje*jugador,QWidget*parent=nullptr);
     virtual ~EscenaBase();
     void ResetearMovimiento();
-
     void inicializarJugador();
     void Movimientos();
     void keyPressEvent(QKeyEvent* event) override;

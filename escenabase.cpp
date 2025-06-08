@@ -3,11 +3,16 @@
 #include <QLabel>
 #include <QDebug>
 
-EscenaBase::EscenaBase(QWidget* parent) : QWidget(parent),
+EscenaBase::EscenaBase(QWidget* parent)
+    : QWidget(parent),
     jugador(nullptr), movimientoTimer(nullptr),
     shiftPresionado(false), izquierdaPresionada(false),
     derechaPresionada(false), arribaPresionado(false),
-    abajoPresionado(false), ZPresionado(false) {
+    abajoPresionado(false), ZPresionado(false)
+{
+
+    inventarioWidget=new InventarioWidget(Inventario::getInstance());
+
 }
 
 EscenaBase::EscenaBase(personaje *jugadorExistente, QWidget *parent):QWidget(parent),
@@ -15,7 +20,11 @@ EscenaBase::EscenaBase(personaje *jugadorExistente, QWidget *parent):QWidget(par
     jugador(jugadorExistente), movimientoTimer(nullptr),
     shiftPresionado(false), izquierdaPresionada(false),
     derechaPresionada(false), arribaPresionado(false),
-    abajoPresionado(false), ZPresionado(false) {
+    abajoPresionado(false), ZPresionado(false)
+
+{
+
+    inventarioWidget=new InventarioWidget(Inventario::getInstance());
 
 }
 
@@ -23,6 +32,7 @@ EscenaBase::~EscenaBase()
 {
 
     delete movimientoTimer;
+    delete inventarioWidget;
 
 }
 
@@ -90,6 +100,23 @@ void EscenaBase::Movimientos() {
 
 void EscenaBase::keyPressEvent(QKeyEvent* event) {
     if (!jugador) return;
+
+    //aqui tecla l para abrir y cerrar el inventario
+    if (event->key() == Qt::Key_L)
+    {
+        if (inventarioWidget)
+        {
+            if (inventarioWidget->isVisible())
+                inventarioWidget->hide();
+            else
+            {
+                inventarioWidget->actualizarVista();
+                inventarioWidget->show();
+                inventarioWidget->raise();
+                inventarioWidget->activateWindow();
+            }
+        }
+    }
 
     switch (event->key()) {
     case Qt::Key_Shift:

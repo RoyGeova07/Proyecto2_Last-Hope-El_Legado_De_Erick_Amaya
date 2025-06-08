@@ -32,7 +32,7 @@ NPC::NPC(Tipo tipo, QWidget* parent)
             "OOH vaya miren que sorpresa si es el mismisimo Militar Erick. Te habias perdido, se que fue dificil perder a tus amigos, pero no es hora de lamentarse.",
             "Es hora de eliminar a estos zombies para poder conseguir ese antitodoto y curar a todos.",
             "Oye escuche rumores que tambien quieres con ese antitodoto en vez de recuperar la humanidad es controlar a los zombies.",
-            "Espero tomes el camino correcto mi amigo."
+            "Espero tomes el camino correcto mi amigo, aqui te doy 2 botiquines usalos bien tu batalla."
         };
         break;
     case Tipo::NPC3:
@@ -82,21 +82,39 @@ void NPC::AvanzarFrame()
 
 void NPC::mostrarDialogo(DialogoNPC* dialogoUI)
 {
-    if(dialogos.isEmpty() || !dialogoUI || hablando) return;
+    if (dialogos.isEmpty() || !dialogoUI) return;
 
     hablando = true;
+    dialogoActualUI = dialogoUI;
+
+    //aqui si YA leyo completo, mostrar directamente el mensaje final
+    if (yaHabloCompleto)
+    {
+        QString textoFinal = "No tengo más botiquines, sigue el camino para encontrar más.";
+        dialogoActualUI->mostrarDialogo(textoFinal, obtenerImagenNPC(), {});
+
+        QTimer::singleShot(2000, dialogoActualUI, [this]() {
+            if (dialogoActualUI)
+                dialogoActualUI->ocultarDialogo();
+
+            hablando = false;
+            indiceDialogo = 0;
+            emit dialogoTerminado();
+        });
+
+        return; // salir
+    }
+
+    //aqui si es la primera vez, mostrar los dialogos normales
     dialogoActual = dialogos.at(indiceDialogo);
 
-    // Configurar el dialogo con imagen y opciones
     QPixmap imagenNPC = obtenerImagenNPC();
     QStringList opciones = obtenerOpcionesDialogo();
 
-    dialogoUI->mostrarDialogo(dialogoActual, imagenNPC, opciones);
+    dialogoActualUI->mostrarDialogo(dialogoActual, imagenNPC, opciones);
 
-    connect(dialogoUI, &DialogoNPC::opcionSeleccionada,
-            this, &NPC::manejarOpcionSeleccionada);
-
-    indiceDialogo = (indiceDialogo + 1) % dialogos.size();
+    disconnect(dialogoActualUI, &DialogoNPC::opcionSeleccionada, this, nullptr);
+    connect(dialogoActualUI, &DialogoNPC::opcionSeleccionada, this, &NPC::manejarOpcionSeleccionada);
 }
 
 void NPC::mostrarHintInteractuar()
@@ -128,23 +146,62 @@ void NPC::manejarOpcionSeleccionada(int opcion)
 {
     qDebug() << "Opcion seleccionada en NPC:" << opcion;
 
-    switch(tipo) {
-    case Tipo::NPC1:
-        if(opcion == 0) {
+    QStringList opcionesActuales = obtenerOpcionesDialogo();
+
+    if (opcion < 0 || opcion >= opcionesActuales.size())
+        return;
+
+    QString opcionTexto = opcionesActuales[opcion].toLower();
+
+    if (opcionTexto.contains("entendido"))
+    {
+        indiceDialogo++;
+
+        if (indiceDialogo < dialogos.size())
+        {
+            mostrarDialogo(dialogoActualUI);
         }
-        break;
-    case Tipo::NPC2:
-        if(opcion == 1) {
+        else
+        {
+            //aqui MARCAMOS que ya habla completo
+            yaHabloCompleto = true;
+
+            //si el npc2 se le agrega el botiquin
+            if(tipo==Tipo::NPC2&&inventarioRef)
+            {
+
+                inventarioRef->insertarObjeto("curar1",2,"Botiquin","Restaura vidaaa");
+                qDebug() << "Botiquines agregados al inventario";
+
+                mostrarNotificacion("¡Has obtenido un botiquín! Revisa tu inventario.");
+
+            }
+
+            // NO mostramos el mensaje final esta primera vez
+            if(dialogoActualUI)
+            {
+                dialogoActualUI->ocultarDialogo();
+            }
+
+            hablando = false;
+            indiceDialogo = 0;
+            emit dialogoTerminado();
         }
-        break;
-    case Tipo::NPC3:
-        break;
     }
 
-    hablando = false;
-    emit dialogoTerminado();
-}
+    else if (opcionTexto.contains("adios"))
+    {
+        if (dialogoActualUI)
+            dialogoActualUI->ocultarDialogo();
 
+        hablando = false;
+        indiceDialogo = 0;
+        emit dialogoTerminado();
+
+    }else{
+        qDebug() << "Opcion secundaria seleccionada:" << opcionTexto;
+    }
+}
 QPixmap NPC::obtenerImagenNPC() const
 {
     QPixmap imagenCompleta;
@@ -183,4 +240,27 @@ QStringList NPC::obtenerOpcionesDialogo() const
     default:
         return {"Entendido", "Adios"};
     }
+}
+
+void NPC::mostrarNotificacion(const QString& texto)
+{
+    if (!labelNotificacion)
+    {
+        labelNotificacion = new QLabel(texto, this->parentWidget());
+        labelNotificacion->setStyleSheet("background: rgba(0, 0, 0, 200); color: lime; font-size: 16px; padding: 10px; border-radius: 8px; border: 2px solid lime;");
+        labelNotificacion->setAlignment(Qt::AlignCenter);
+        labelNotificacion->setFixedSize(400,100);
+    }
+
+    labelNotificacion->setText(texto);
+
+    // centrar arriba
+    labelNotificacion->move((parentWidget()->width() - labelNotificacion->width()) / 2, 50);
+    labelNotificacion->show();
+    labelNotificacion->raise();
+
+    //aqui ocultar automaticamente después de 2.5 segundos
+    QTimer::singleShot(2500, labelNotificacion, [this]() {
+        labelNotificacion->hide();
+    });
 }

@@ -65,7 +65,7 @@ void DialogoNPC::mostrarDialogo(const QString &texto, const QPixmap &imagenNPC, 
 
         connect(btn, &QPushButton::clicked, this, [this, i]() {
             emit opcionSeleccionada(i); // Usando el nombre correcto de la señal
-            hide();
+
         });
 
         layoutOpciones->addWidget(btn);

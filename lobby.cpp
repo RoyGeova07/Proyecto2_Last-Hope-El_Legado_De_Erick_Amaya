@@ -75,6 +75,7 @@ lobby::lobby(personaje* jugadorExistente, QWidget* parent)
     npc2->move(1100, 390);
     npc2->show();
     npcs.append(npc2);
+    npc2->setInventario(Inventario::getInstance());
 
     // Obstaculos npc
     obstaculos.append(QRect(1151, 468, 17, 60));
@@ -167,6 +168,28 @@ void lobby::keyPressEvent(QKeyEvent* event)
 
         connect(npcCercano, &NPC::dialogoTerminado, this, [this]() {
             qDebug() << "Diálogo con NPC terminado";
+
+            // Resetear las flags de movimiento
+            shiftPresionado = false;
+            izquierdaPresionada = false;
+            derechaPresionada = false;
+            arribaPresionado = false;
+            abajoPresionado = false;
+            ZPresionado = false;
+
+            // Detener animacion
+            if (jugador) {
+                jugador->DetenerAnimacion();
+                jugador->SetAnimacion(":/imagenes/assets/protagonista/Idle.png", 7);
+            }
+
+            //reactivar movimiento del personaje despues de terminar la conversacion
+            if(movimientoTimer&&!movimientoTimer->isActive())
+                movimientoTimer->start();
+
+            this->activateWindow();
+            this->setFocus();
+
         });
     }
 
