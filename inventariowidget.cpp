@@ -72,7 +72,7 @@ void InventarioWidget::actualizarVista()
         QLabel*nombreLabel=new QLabel(QString("Nombre: %1").arg(nodo->nombre), itemWidget);
         QLabel*cantidadLabel=new QLabel(QString("Cantidad: %1").arg(nodo->cantidad), itemWidget);
         QLabel*tipoLabel=new QLabel(QString("Tipo: %1").arg(nodo->tipo), itemWidget);
-        QLabel*usoLabel=Wnew QLabel(QString("Uso: %1").arg(nodo->uso), itemWidget);
+        QLabel*usoLabel=new QLabel(QString("Uso: %1").arg(nodo->uso), itemWidget);
 
         nombreLabel->setStyleSheet("color: white;");
         cantidadLabel->setStyleSheet("color: white;");
