@@ -13,6 +13,27 @@ EscenaBase::EscenaBase(QWidget* parent)
 
     inventarioWidget=new InventarioWidget(Inventario::getInstance());
 
+    //barra de vida contenedor
+    barraVidaLabel = new QLabel(this);
+    barraVidaLabel->setStyleSheet("background-color: #333333; border: 2px solid black; border-radius: 5px; padding: 0px;");
+    barraVidaLabel->setGeometry(10, 90, 200, 30);
+    barraVidaLabel->show();
+
+    // 2️⃣ Barra rellena (acortable)
+    barraVidaInterna = new QWidget(barraVidaLabel);
+    barraVidaInterna->setStyleSheet("background-color: green; border-radius: 3px;");
+    barraVidaInterna->setGeometry(0, 0, 200, 30);
+    barraVidaInterna->show();
+
+    // 3️⃣ Texto encima
+    barraVidaTexto = new QLabel(barraVidaLabel);
+    barraVidaTexto->setAlignment(Qt::AlignCenter);
+    barraVidaTexto->setStyleSheet("color: white; font-weight: bold; font-size: 14px; background: transparent;");
+    barraVidaTexto->setGeometry(0, 0, 200, 30);
+    barraVidaTexto->show();
+    ActualizarBarraVida();
+    barraVidaLabel->raise();
+
 }
 
 EscenaBase::EscenaBase(personaje *jugadorExistente, QWidget *parent):QWidget(parent),
@@ -25,6 +46,28 @@ EscenaBase::EscenaBase(personaje *jugadorExistente, QWidget *parent):QWidget(par
 {
 
     inventarioWidget=new InventarioWidget(Inventario::getInstance());
+    //barra de vida contenedor
+    barraVidaLabel = new QLabel(this);
+    barraVidaLabel->setStyleSheet("background-color: #333333; border: 2px solid black; border-radius: 5px; padding: 0px;");
+    barraVidaLabel->setGeometry(10, 90, 200, 30);
+    barraVidaLabel->show();
+
+    // 2️⃣ Barra rellena (acortable)
+    barraVidaInterna = new QWidget(barraVidaLabel);
+    barraVidaInterna->setStyleSheet("background-color: green; border-radius: 3px;");
+    barraVidaInterna->setGeometry(0, 0, 200, 30);
+    barraVidaInterna->show();
+
+    // 3️⃣ Texto encima
+    barraVidaTexto = new QLabel(barraVidaLabel);
+    barraVidaTexto->setAlignment(Qt::AlignCenter);
+    barraVidaTexto->setStyleSheet("color: white; font-weight: bold; font-size: 14px; background: transparent;");
+    barraVidaTexto->setGeometry(0, 0, 200, 30);
+    barraVidaTexto->show();
+
+    ActualizarBarraVida();
+    barraVidaLabel->raise();
+
 
 }
 
@@ -92,6 +135,7 @@ void EscenaBase::Movimientos() {
             jugador->DetenerAnimacion();
             jugador->SetAnimacion(":/imagenes/assets/protagonista/Idle.png", 7);
         }
+        ActualizarBarraVida();
         onMovimientoUpdate();
     });
 
@@ -188,5 +232,86 @@ void EscenaBase::ResetearMovimiento()
         jugador->DetenerAnimacion();
         jugador->SetAnimacion(":/imagenes/assets/protagonista/Idle.png",7);
     }
+
+    ActualizarBarraVida();
+}
+
+void EscenaBase::ActualizarBarraVida()
+{
+
+    if(!jugador)return;
+
+    int vidaActual=jugador->getVidas();
+    int vidaMaxima=30;//valor maximo de vida
+
+    //con estas condicionales se asegura los limites
+    if(vidaActual>vidaMaxima)vidaActual=vidaMaxima;
+    if(vidaActual<0)vidaActual=0;
+
+    //aqui se calcula el porcentaje
+    float porcentaje=static_cast<float>(vidaActual)/vidaMaxima;
+    int anchoTotal=barraVidaLabel->contentsRect().width();
+    int altoTotal=barraVidaLabel->contentsRect().height();
+
+    int anchoBarra=static_cast<int>(porcentaje*anchoTotal);
+
+    QString colorBarra;
+    if(vidaActual>=18)
+    {
+
+        colorBarra="green";
+
+    }else if(vidaActual>=13){
+
+        colorBarra="orange";
+
+    }else{
+
+        colorBarra="red";
+
+    }
+
+    barraVidaInterna->setStyleSheet(QString("background-color: %1; border-radius: 3px;").arg(colorBarra));
+    barraVidaInterna->setGeometry(0,0,anchoBarra,altoTotal);
+
+
+    // // Estilo de la barra
+    // barraVidaLabel->setStyleSheet(QString(
+    //                                   "background-color: %1; "
+    //                                   "color: white; "
+    //                                   "font-weight: bold; "
+    //                                   "font-size: 14px; "
+    //                                   "padding: 5px; "
+    //                                   "border: 2px solid black; "
+    //                                   "border-radius: 5px; "
+    //                                   "text-align: center;")
+    //                                   .arg(colorBarra));
+
+
+    //aqui se hace el texto de la barra
+    QString texto = QString("VIDA: %1 / %2").arg(vidaActual).arg(vidaMaxima);
+    barraVidaTexto->setText(texto);
+
+    barraVidaLabel->raise();
+
+    //CON ESTO SE CURA 5 DE VIDA
+    // int nuevaVida = jugador->getVidas() + 5;
+    // if (nuevaVida > 30) nuevaVida = 30;
+    // jugador->setVidas(nuevaVida);
+    // actualizarBarraVida();
+
+
+    //SE CURA 10 DE VIDA
+    // int nuevaVida = jugador->getVidas() + 10;
+    // if (nuevaVida > 30) nuevaVida = 30;
+    // jugador->setVidas(nuevaVida);
+    // actualizarBarraVida();
+
+
+    //LE RESTAN 7 DE VIDA
+    // int nuevaVida = jugador->getVidas() - 7;
+    // if (nuevaVida < 0) nuevaVida = 0;
+    // jugador->setVidas(nuevaVida);
+    // actualizarBarraVida();
 
 }

@@ -23,6 +23,7 @@ private:
 
     void posicionarJugadorEnCalleRuta1();
     void posicionarJugadorEnCalleRuta2();
+    void posicionarJugadorEnCalleRuta3();
 
 protected:
 

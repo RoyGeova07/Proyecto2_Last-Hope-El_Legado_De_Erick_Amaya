@@ -33,6 +33,12 @@ protected:
     virtual void configurarNPCs() {}
     virtual void onMovimientoUpdate() {}
 
+    //aqui para la barra de vida
+    QLabel*barraVidaLabel;
+    QWidget* barraVidaInterna;
+    QLabel* barraVidaTexto;
+    void ActualizarBarraVida();
+
 public:
     explicit EscenaBase(QWidget* parent = nullptr);
     explicit EscenaBase(personaje*jugador,QWidget*parent=nullptr);

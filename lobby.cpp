@@ -44,6 +44,8 @@ lobby::lobby(personaje* jugadorExistente, QWidget* parent)
     };
     actualizarUI();
 
+    barraVidaLabel->raise();
+
     // Label para el hint de interaccion con puerta
     labelPresionarR = new QLabel("PRESIONE R PARA EXPLORAR", this);
     labelPresionarR->setStyleSheet("background: rgba(0,0,0,180); color: white; padding: 5px; border-radius: 5px;");
@@ -118,6 +120,9 @@ void lobby::configurarObstaculos()
 
 void lobby::onMovimientoUpdate()
 {
+
+    ActualizarBarraVida();
+
     QRect rectJugador = jugador->geometry();
     bool hayNpcCerca = false;
     npcCercano = nullptr;

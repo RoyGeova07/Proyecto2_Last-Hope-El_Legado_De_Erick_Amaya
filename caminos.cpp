@@ -65,6 +65,10 @@ void Caminos::configurarObstaculos()
        obstaculos.append(QRect(430, 220, 400, 170)); //PARTE MEDIA
        obstaculos.append(QRect(18, 600, 1000, 30)); //PARTE INFERIOR
 
+    }else if(rutaActual==3){
+
+        obstaculos.clear();//AQUI AGREGAR LOS OBSTACULOS DE LA RUTA 3
+
     }
 }
 
@@ -88,29 +92,46 @@ void Caminos::posicionarJugadorEnCalleRuta2()
 
 }
 
+void Caminos::posicionarJugadorEnCalleRuta3()
+{
+
+    int posX=35;
+    int posY=290;
+
+    jugador->move(posX,posY);
+
+}
+
 void Caminos::cambiarRuta(int nuevaRuta)
 {
     rutaActual = nuevaRuta;
 
     QString rutaImagen;
 
-    if (rutaActual == 1)
+    if(rutaActual==1)
     {
-        rutaImagen = ":/imagenes/assets/mapas/RUTA_1.jpg";
-    }
-    else if (rutaActual == 2)
-    {
-        rutaImagen = ":/imagenes/assets/mapas/RUTA_2.jpg";
+        rutaImagen=":/imagenes/assets/mapas/RUTA_1.jpg";
+
+    }else if(rutaActual==2){
+
+        rutaImagen=":/imagenes/assets/mapas/RUTA_2.jpg";
+
+    }else if(rutaActual==3){
+
+        rutaImagen=":/imagenes/assets/mapas/RUTA_3.jpg";
+
     }
 
     QPixmap fondoPixmap(rutaImagen);
-    if (fondoPixmap.isNull())
+    if(fondoPixmap.isNull())
     {
+
         qDebug() << "Error al cargar la imagen de la ruta:" << rutaImagen;
-    }
-    else
-    {
+
+    }else{
+
         fondoLabel->setPixmap(fondoPixmap.scaled(this->size(), Qt::KeepAspectRatioByExpanding));
+
     }
 
     if(jugador)
@@ -121,13 +142,12 @@ void Caminos::cambiarRuta(int nuevaRuta)
 
     }
 
-    //aqui llamaar funcion de configurar otro obstaculo
+
 }
 
 void Caminos::onMovimientoUpdate()
 {
     if (!jugador) return;
-
     QRect rectJugador = jugador->geometry();
 
     // aqui Cambiar a RUTA_2 cuando el jugador llegue al final de la carretera de arriba (borde derecho)
@@ -153,18 +173,24 @@ void Caminos::onMovimientoUpdate()
         return;
     }
 
-    //aqui ingresa a Gasolinera solo para que existan dos mapas para el avance
-    /*
-    if (rutaActual == 2 && rectJugador.right() >= width() - 50 && rectJugador.top() <= 200)
+    //CAMBIAR A RUTA_3 cuando el jugador toque borde izquierdo de RUTA_2
+                            //borde derecho             top exacto              buttom exacto
+    if(rutaActual==2&&rectJugador.right()>=width()-30&&rectJugador.top()>=46&&rectJugador.bottom()<=173)
     {
-        qDebug() << "Cambiando de nivel...";
-        jugador->move(100, height() - jugador->height() - 120);
-        Gasolinera* gaso = new Gasolinera();
-        gaso->show();
-        this->close();
+
+        obstaculos.clear();
+        cambiarRuta(3);
+        configurarObstaculos();
+
+        posicionarJugadorEnCalleRuta3();
+
+        qDebug() << "Cambiando a RUTA_3...";
 
         return;
-    }*/
+
+    }
+
+
 
     //CON ESTO REGRESA AL LOBBY (zona de la puerta en RUTA_1)
     if (rutaActual == 1 && !regresandoAlLobby)
@@ -207,6 +233,26 @@ void Caminos::onMovimientoUpdate()
 
     if (rutaActual == 2)
     {
+        //DEBUG PARA SABER COLOCAR EL CAMBIO DE RUTA
+        qDebug() << "Jugador en RUTA_2: LEFT =" << rectJugador.left()
+        << " TOP =" << rectJugador.top()
+        << " RIGHT =" << rectJugador.right()
+        << " BOTTOM =" << rectJugador.bottom();
+
+        // Intento de cambio a RUTA_3 (ajusta esta zona cuando veas las coords)
+        if (rectJugador.left() <= 30 && rectJugador.top() >= 50 && rectJugador.bottom() <= 150)
+        {
+            obstaculos.clear();
+            cambiarRuta(3);
+            configurarObstaculos();
+
+            posicionarJugadorEnCalleRuta3();
+
+            qDebug() << "Cambiando a RUTA_3...";
+
+            return;
+        }
+
         if (!labelPresionarT->isVisible())
         {
             // Lo coloco fijo debajo del texto
