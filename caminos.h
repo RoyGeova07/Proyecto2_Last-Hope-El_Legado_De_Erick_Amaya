@@ -24,6 +24,18 @@ private:
     void posicionarJugadorEnCalleRuta1();
     void posicionarJugadorEnCalleRuta2();
     void posicionarJugadorEnCalleRuta3();
+    void posicionarJugadorEnCalleRuta4();
+    void posicionarJugadorEnCalleRuta5();
+    void posicionarJugadroEnCalleRuta6();
+
+    void posicionarJugadorDeVueltaARuta2_Desde_Ruta3();
+    void posicionarJugadorDeVueltaA_Ruta1_Desde_Ruta4();
+    void posicionarJugadorDeVueltaA_Ruta4_Desde_Ruta5();
+    void posicionarJugadorDeVueltaA_Ruta2_Desde_Ruta6();
+    void posicionarJugadorDeVueltaA_Ruta6_Desde_Ruta3();
+    void posicionarJugadorDeVueltaA_Ruta3_Desde_Ruta6();
+    void posicionarJugadorDeVueltaA_Ruta5_Desde_Ruta6();
+    void posicionarJugadorDeVueltaA_Ruta6_Desde_Ruta5();
 
 protected:
 

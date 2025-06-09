@@ -23,14 +23,30 @@ Caminos::Caminos(personaje*jugadorExistente, QWidget* parent) : EscenaBase(jugad
 
     jugador->move(42,190);
 
-    labelPresionarT = new QLabel("PRESIONE T PARA ENTRAR", this);
+    labelPresionarT = new QLabel("¿Quieres entrar a la ciudad en ruinas?\nA. Sí    B. Ignorar",this);
     labelPresionarT->setStyleSheet("background: rgba(0,0,0,180); color: white; padding: 5px; border-radius: 5px;");
     labelPresionarT->setAlignment(Qt::AlignCenter);
     labelPresionarT->setWordWrap(true);
-    labelPresionarT->setFixedSize(200, 30);
+    labelPresionarT->setFixedSize(300,80);
     labelPresionarT->hide(); // Al inicio oculto
 
 }
+//NO BORRAR ESTO ===========================================================
+//son las coordenadas exactas para cambiar ENTRE LAS RUTAASSSSSZZZZ
+QRect zonaCambioRuta3(940,40,180,130); // X=940 a 1120, Y=40 a 170
+QRect zonaCambioRuta2(0,40,100,200);
+QRect zonaCambioRuta4(644,574,127,127);
+QRect zonaCambioRuta5(982,486,127,127);
+QRect zonaCambioRuta6(986,422,127,127);
+QRect zonaCambioRuta1_DesdeRuta4(-12,306,127,127);
+QRect zonaCambioRuta5_a_Ruta4(-24,398,127,127);
+QRect zonaCambioRuta6_a_Ruta2(-32,356,127,127);
+QRect zonaCambioRuta3_a_Desde_Ruta6(446,-72,127,127);
+QRect zonaCambioRuta6_desde_Ruta3(451,576,127,127);
+QRect zonaCambioRuta5_a_Desde_Ruta6(456,580,127,127);
+QRect zonaCambioRuta6_a_Desde_Ruta5(454,-66,127,127);
+// =========================================================================
+QRect zonaEntradaCiudad(236, 422, 131, 127);
 
 void Caminos::configurarEscena()
 {
@@ -69,6 +85,18 @@ void Caminos::configurarObstaculos()
 
         obstaculos.clear();//AQUI AGREGAR LOS OBSTACULOS DE LA RUTA 3
 
+    }else if(rutaActual==4){
+
+        obstaculos.clear();//AQUI AGREGAR LOS OBSTACULOS DE LA RUTA 4
+
+    }else if(rutaActual==5){
+
+        obstaculos.clear();//AQUI AGREGAR LOS OBSTACULOS DE LA RUTA 5
+
+    }else if(rutaActual==6){
+
+        obstaculos.clear();//AQUI AGREGAR LOS OBSTACULOS DE LA RUTA 6
+
     }
 }
 
@@ -102,6 +130,117 @@ void Caminos::posicionarJugadorEnCalleRuta3()
 
 }
 
+void Caminos::posicionarJugadorEnCalleRuta4()
+{
+
+    int posX=112;
+    int posY=354;
+
+    jugador->move(posX,posY);
+
+}
+
+void Caminos::posicionarJugadorEnCalleRuta5()
+{
+
+    int posX=144;
+    int posY=398;
+
+    jugador->move(posX,posY);
+
+}
+
+void Caminos::posicionarJugadroEnCalleRuta6()
+{
+
+    int posX=158;
+    int posY=358;
+
+    jugador->move(posX,posY);
+
+}
+
+void Caminos::posicionarJugadorDeVueltaARuta2_Desde_Ruta3()
+{
+
+    int posX=808;
+    int posY=40;
+
+    jugador->move(posX,posY);
+
+}
+void Caminos::posicionarJugadorDeVueltaA_Ruta1_Desde_Ruta4()
+{
+
+    int posX=552;
+    int posY=438;
+
+
+    jugador->move(posX,posY);
+
+}
+
+void Caminos::posicionarJugadorDeVueltaA_Ruta4_Desde_Ruta5()
+{
+
+    int posX=818;
+    int posY=480;
+
+    jugador->move(posX,posY);
+
+}
+
+void Caminos::posicionarJugadorDeVueltaA_Ruta2_Desde_Ruta6()
+{
+
+    int posX=826;
+    int posY=434;
+
+    jugador->move(posX,posY);
+
+}
+
+void Caminos::posicionarJugadorDeVueltaA_Ruta6_Desde_Ruta3()
+{
+
+    int posX=458;
+    int posY=96;
+
+    jugador->move(posX,posY);
+
+}
+
+void Caminos::posicionarJugadorDeVueltaA_Ruta3_Desde_Ruta6()
+{
+
+    int posX=447;
+    int posY=446;
+
+
+    jugador->move(posX,posY);
+
+}
+
+void Caminos::posicionarJugadorDeVueltaA_Ruta5_Desde_Ruta6()
+{
+
+    int posX=452;
+    int posY=76;
+
+    jugador->move(posX,posY);
+
+}
+
+void Caminos::posicionarJugadorDeVueltaA_Ruta6_Desde_Ruta5()
+{
+
+    int posX=458;
+    int posY=442;
+
+    jugador->move(posX,posY);
+
+}
+
 void Caminos::cambiarRuta(int nuevaRuta)
 {
     rutaActual = nuevaRuta;
@@ -119,6 +258,18 @@ void Caminos::cambiarRuta(int nuevaRuta)
     }else if(rutaActual==3){
 
         rutaImagen=":/imagenes/assets/mapas/RUTA_3.jpg";
+
+    }else if(rutaActual==4){
+
+        rutaImagen=":/imagenes/assets/mapas/RUTA_4.jpg";
+
+    }else if(rutaActual==5){
+
+        rutaImagen=":/imagenes/assets/mapas/RUTA_5.jpg";
+
+    }else if(rutaActual==6){
+
+        rutaImagen=":/imagenes/assets/mapas/RUTA_6.jpg";
 
     }
 
@@ -173,11 +324,8 @@ void Caminos::onMovimientoUpdate()
         return;
     }
 
-    //CAMBIAR A RUTA_3 cuando el jugador toque borde izquierdo de RUTA_2
-                            //borde derecho             top exacto              buttom exacto
-    if(rutaActual==2&&rectJugador.right()>=width()-30&&rectJugador.top()>=46&&rectJugador.bottom()<=173)
+    if (rutaActual == 2 && zonaCambioRuta3.intersects(rectJugador))
     {
-
         obstaculos.clear();
         cambiarRuta(3);
         configurarObstaculos();
@@ -187,7 +335,19 @@ void Caminos::onMovimientoUpdate()
         qDebug() << "Cambiando a RUTA_3...";
 
         return;
+    }
 
+    if (rutaActual == 3 && zonaCambioRuta2.intersects(rectJugador))
+    {
+        obstaculos.clear();
+        cambiarRuta(2);
+        configurarObstaculos();
+
+        posicionarJugadorDeVueltaARuta2_Desde_Ruta3();
+
+        qDebug() << "Regresando a RUTA_2...";
+
+        return;
     }
 
 
@@ -208,19 +368,19 @@ void Caminos::onMovimientoUpdate()
                 movimientoTimer->stop();
 
             // Resetear las teclas
-            shiftPresionado = false;
-            izquierdaPresionada = false;
-            derechaPresionada = false;
-            arribaPresionado = false;
-            abajoPresionado = false;
-            ZPresionado = false;
+            shiftPresionado=false;
+            izquierdaPresionada=false;
+            derechaPresionada=false;
+            arribaPresionado=false;
+            abajoPresionado=false;
+            ZPresionado=false;
 
             // Dejar el personaje en Idle
             jugador->DetenerAnimacion();
             jugador->SetAnimacion(":/imagenes/assets/protagonista/Idle.png",7);
 
 
-            lobby* lobbyWindow = new lobby(jugador);
+            lobby* lobbyWindow=new lobby(jugador);
             lobbyWindow->posicionarJugadorEnPuerta();
             lobbyWindow->show();
             this->close();
@@ -229,15 +389,160 @@ void Caminos::onMovimientoUpdate()
         }
     }
 
-
-
-    if (rutaActual == 2)
+    //AQUI CAMBIA DESDE LA RUTA_1 HACIA LA RUTA_4
+    if (rutaActual == 1 && zonaCambioRuta4.intersects(rectJugador))
     {
-        //DEBUG PARA SABER COLOCAR EL CAMBIO DE RUTA
-        qDebug() << "Jugador en RUTA_2: LEFT =" << rectJugador.left()
+        obstaculos.clear();
+
+        cambiarRuta(4); // Cuando implementes RUTA_4
+
+        posicionarJugadorEnCalleRuta4();
+        qDebug() << "Cambiando a RUTA_4...";
+
+        return;
+    }
+
+    if (rutaActual == 3)
+    {
+        qDebug() << "Jugador en RUTA_3: LEFT =" << rectJugador.left()
         << " TOP =" << rectJugador.top()
         << " RIGHT =" << rectJugador.right()
         << " BOTTOM =" << rectJugador.bottom();
+
+        // Cambio a RUTA_6 desde RUTA_3
+        if (zonaCambioRuta6_desde_Ruta3.intersects(rectJugador))
+        {
+            obstaculos.clear();
+
+            cambiarRuta(6); // RUTA_6
+
+            posicionarJugadorDeVueltaA_Ruta6_Desde_Ruta3();
+
+            qDebug() << "Cambiando a RUTA_6 desde RUTA_3...";
+
+            return;
+        }
+
+    }
+
+    if (rutaActual == 5)
+    {
+        qDebug() << "Jugador en RUTA_5: LEFT =" << rectJugador.left()
+        << " TOP =" << rectJugador.top()
+        << " RIGHT =" << rectJugador.right()
+        << " BOTTOM =" << rectJugador.bottom();
+
+        //Cambio a RUTA_6 desde RUTA_5
+        if(zonaCambioRuta6_a_Desde_Ruta5.intersects(rectJugador))
+        {
+            obstaculos.clear();
+
+            cambiarRuta(6); // RUTA_6
+
+            posicionarJugadorDeVueltaA_Ruta6_Desde_Ruta5();
+
+            qDebug() << "Regresando a RUTA_6 desde RUTA_5...";
+
+            return;
+        }
+
+    }
+
+    if(rutaActual==6)
+    {
+        qDebug() << "Jugador en RUTA_6: LEFT =" << rectJugador.left()
+        <<" TOP ="<<rectJugador.top()
+        <<" RIGHT ="<<rectJugador.right()
+        <<" BOTTOM ="<<rectJugador.bottom();
+
+        //  Cambio a RUTA_3 desde RUTA_6
+        if(zonaCambioRuta3_a_Desde_Ruta6.intersects(rectJugador))
+        {
+            obstaculos.clear();
+
+            cambiarRuta(3); // RUTA_3
+
+            posicionarJugadorDeVueltaA_Ruta3_Desde_Ruta6();
+
+            qDebug()<<"Regresando a RUTA_3 desde RUTA_6...";
+
+            return;
+        }
+
+        //  Cambio a RUTA_5 desde RUTA_6
+        if(zonaCambioRuta5_a_Desde_Ruta6.intersects(rectJugador))
+        {
+            obstaculos.clear();
+
+            cambiarRuta(5); // RUTA_5
+
+            posicionarJugadorDeVueltaA_Ruta5_Desde_Ruta6();
+
+            qDebug()<<"Regresando a RUTA_5 desde RUTA_6...";
+
+            return;
+        }
+
+    }
+
+    // Volver a RUTA_2 desde RUTA_6
+    if(rutaActual==6&&zonaCambioRuta6_a_Ruta2.intersects(rectJugador))
+    {
+        obstaculos.clear();
+
+        cambiarRuta(2); // Volvemos a RUTA_2
+
+        posicionarJugadorDeVueltaA_Ruta2_Desde_Ruta6();
+
+        qDebug()<<"Regresando a RUTA_2 desde RUTA_6...";
+
+        return;
+    }
+
+    // VOLVER A LA RUTA_4 DESDE LA RUTA_5
+    if(rutaActual==5&&zonaCambioRuta5_a_Ruta4.intersects(rectJugador))
+    {
+        obstaculos.clear();
+
+        cambiarRuta(4);
+
+        posicionarJugadorDeVueltaA_Ruta4_Desde_Ruta5();
+
+        qDebug()<<"Regresando a RUTA_4 desde RUTA_5...";
+
+        return;
+    }
+
+    //VOLVER A LA RUTA_1 DESDE LA RUTA_4
+    if(rutaActual==4&&zonaCambioRuta1_DesdeRuta4.intersects(rectJugador))
+    {
+        obstaculos.clear();
+
+        cambiarRuta(1);
+
+        posicionarJugadorDeVueltaA_Ruta1_Desde_Ruta4();
+
+        qDebug()<<"Regresando a RUTA_1 desde RUTA_4...";
+
+        return;
+    }
+
+    //AQUI CAMBIA A RUTA_5 desde RUTA_4
+    if(rutaActual==4&&zonaCambioRuta5.intersects(rectJugador))
+    {
+        obstaculos.clear();
+
+        cambiarRuta(5); // RUTA_5
+
+        posicionarJugadorEnCalleRuta5();
+
+        qDebug()<<"Cambiando a RUTA_5...";
+
+        return;
+    }
+
+    if (rutaActual == 2)
+    {
 
         // Intento de cambio a RUTA_3 (ajusta esta zona cuando veas las coords)
         if (rectJugador.left() <= 30 && rectJugador.top() >= 50 && rectJugador.bottom() <= 150)
@@ -253,13 +558,37 @@ void Caminos::onMovimientoUpdate()
             return;
         }
 
-        if (!labelPresionarT->isVisible())
+        // Cambio a RUTA_6 desde RUTA_2
+        if(zonaCambioRuta6.intersects(rectJugador))
         {
-            // Lo coloco fijo debajo del texto
-            labelPresionarT->move(width() / 2 - labelPresionarT->width() / 2, 690); // aprox debajo del texto
-            labelPresionarT->show();
-            labelPresionarT->raise();
+            obstaculos.clear();
+
+            cambiarRuta(6); // RUTA_6
+
+            posicionarJugadroEnCalleRuta6();
+
+            qDebug()<<"Cambiando a RUTA_6...";
+
+            return;
         }
+
+        //aqui se mustra menu entrada ciudad en la zona
+        if(zonaEntradaCiudad.intersects(rectJugador))
+        {
+            if(!labelPresionarT->isVisible())
+            {
+                labelPresionarT->move(width()/2-labelPresionarT->width()/2,height()-200);
+                labelPresionarT->show();
+                labelPresionarT->raise();
+            }
+        }else{
+
+            //si sale de la zona ocultar el label
+            labelPresionarT->hide();
+
+        }
+
+
     }else{
         labelPresionarT->hide();
     }
@@ -269,11 +598,11 @@ void Caminos::onMovimientoUpdate()
 void Caminos::keyPressEvent(QKeyEvent *event)
 {
 
-     // Primero siempre llamar a la base
+    // Primero siempre llamar a la base
     EscenaBase::keyPressEvent(event);
 
     //aqui accion con T para entrar a Ciudad (solo si estamos en ruta 2)
-    if (rutaActual == 2 && event->key() == Qt::Key_T && labelPresionarT->isVisible())
+    if (rutaActual == 2 && event->key() ==Qt::Key_A&&labelPresionarT->isVisible())
     {
         qDebug() << "Entrando a la Ciudad...";
 
