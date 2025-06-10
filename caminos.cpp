@@ -84,18 +84,36 @@ void Caminos::configurarObstaculos()
     }else if(rutaActual==3){
 
         obstaculos.clear();//AQUI AGREGAR LOS OBSTACULOS DE LA RUTA 3
+        obstaculos.append(QRect(20,20,1000,190)); //PARTE SUPERIOR
+        obstaculos.append(QRect(20,410,400,190)); //PARTE INFERIOR IZQUIERDA
+        obstaculos.append(QRect(620,410,400,190)); //PARTE INFERIOR DERECHA
 
     }else if(rutaActual==4){
 
         obstaculos.clear();//AQUI AGREGAR LOS OBSTACULOS DE LA RUTA 4
+        obstaculos.append(QRect(20,20,150,190)); //PARTE SUPERIOR
+        obstaculos.append(QRect(170,20,150,300));
+        obstaculos.append(QRect(320,20,150,360));
+        obstaculos.append(QRect(470,20,150,370));
+        obstaculos.append(QRect(620,20,400,390));
+        obstaculos.append(QRect(20,600,200,200)); //PARTE INFERIOR
+        obstaculos.append(QRect(220,630,800,200));
 
     }else if(rutaActual==5){
 
         obstaculos.clear();//AQUI AGREGAR LOS OBSTACULOS DE LA RUTA 5
+        obstaculos.append(QRect(20,20,400,310)); //PARTE SUPERIOR IZQUIERDA
+        obstaculos.append(QRect(600,20,400,310)); //PARTE SUPERIOR DERECHA
+        obstaculos.append(QRect(20,555,400,300)); //PARTE INFERIOR IZQUIERDA
+        obstaculos.append(QRect(600,555,400,300)); //PARTE INFERIOR DERECHA
 
     }else if(rutaActual==6){
 
         obstaculos.clear();//AQUI AGREGAR LOS OBSTACULOS DE LA RUTA 6
+        obstaculos.append(QRect(20,20,400,300)); //PARTE SUPERIOR IZQUIERDA
+        obstaculos.append(QRect(600,20,400,300)); //PARTE SUPERIOR DERECHA
+        obstaculos.append(QRect(20,520,400,300)); //PARTE INFERIOR IZQUIERDA
+        obstaculos.append(QRect(600,500,400,300)); //PARTE INFERIOR DERECHA
 
     }
 }
@@ -124,7 +142,7 @@ void Caminos::posicionarJugadorEnCalleRuta3()
 {
 
     int posX=35;
-    int posY=290;
+    int posY=260;
 
     jugador->move(posX,posY);
 
@@ -133,7 +151,7 @@ void Caminos::posicionarJugadorEnCalleRuta3()
 void Caminos::posicionarJugadorEnCalleRuta4()
 {
 
-    int posX=112;
+    int posX=132;
     int posY=354;
 
     jugador->move(posX,posY);
@@ -273,6 +291,8 @@ void Caminos::cambiarRuta(int nuevaRuta)
 
     }
 
+    configurarObstaculos();
+
     QPixmap fondoPixmap(rutaImagen);
     if(fondoPixmap.isNull())
     {
@@ -395,6 +415,7 @@ void Caminos::onMovimientoUpdate()
         obstaculos.clear();
 
         cambiarRuta(4); // Cuando implementes RUTA_4
+        configurarObstaculos();
 
         posicionarJugadorEnCalleRuta4();
         qDebug() << "Cambiando a RUTA_4...";
@@ -415,6 +436,7 @@ void Caminos::onMovimientoUpdate()
             obstaculos.clear();
 
             cambiarRuta(6); // RUTA_6
+            configurarObstaculos();
 
             posicionarJugadorDeVueltaA_Ruta6_Desde_Ruta3();
 
@@ -438,6 +460,7 @@ void Caminos::onMovimientoUpdate()
             obstaculos.clear();
 
             cambiarRuta(6); // RUTA_6
+            configurarObstaculos();
 
             posicionarJugadorDeVueltaA_Ruta6_Desde_Ruta5();
 
@@ -461,6 +484,7 @@ void Caminos::onMovimientoUpdate()
             obstaculos.clear();
 
             cambiarRuta(3); // RUTA_3
+            configurarObstaculos();
 
             posicionarJugadorDeVueltaA_Ruta3_Desde_Ruta6();
 
@@ -475,6 +499,7 @@ void Caminos::onMovimientoUpdate()
             obstaculos.clear();
 
             cambiarRuta(5); // RUTA_5
+            configurarObstaculos();
 
             posicionarJugadorDeVueltaA_Ruta5_Desde_Ruta6();
 
@@ -491,6 +516,7 @@ void Caminos::onMovimientoUpdate()
         obstaculos.clear();
 
         cambiarRuta(2); // Volvemos a RUTA_2
+        configurarObstaculos();
 
         posicionarJugadorDeVueltaA_Ruta2_Desde_Ruta6();
 
@@ -505,6 +531,7 @@ void Caminos::onMovimientoUpdate()
         obstaculos.clear();
 
         cambiarRuta(4);
+        configurarObstaculos();
 
         posicionarJugadorDeVueltaA_Ruta4_Desde_Ruta5();
 
@@ -519,6 +546,7 @@ void Caminos::onMovimientoUpdate()
         obstaculos.clear();
 
         cambiarRuta(1);
+        configurarObstaculos();
 
         posicionarJugadorDeVueltaA_Ruta1_Desde_Ruta4();
 
@@ -533,6 +561,7 @@ void Caminos::onMovimientoUpdate()
         obstaculos.clear();
 
         cambiarRuta(5); // RUTA_5
+        configurarObstaculos();
 
         posicionarJugadorEnCalleRuta5();
 
@@ -564,6 +593,7 @@ void Caminos::onMovimientoUpdate()
             obstaculos.clear();
 
             cambiarRuta(6); // RUTA_6
+            configurarObstaculos();
 
             posicionarJugadroEnCalleRuta6();
 
