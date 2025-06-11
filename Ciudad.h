@@ -1,8 +1,8 @@
-#include "escenabase.h"
+#include "AtributosPersonaje.h"
 #include "zombie.h"
 
 
-class Ciudad : public EscenaBase {
+class Ciudad : public AtributosPersonaje {
     Q_OBJECT
 
 private:

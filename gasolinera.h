@@ -1,11 +1,11 @@
 #ifndef GASOLINERA_H
 #define GASOLINERA_H
 
-#include "escenabase.h"
+#include "AtributosPersonaje.h"
 #include "zombie.h"
 
 
-class Gasolinera : public EscenaBase {
+class Gasolinera : public AtributosPersonaje {
     Q_OBJECT
 
 private:

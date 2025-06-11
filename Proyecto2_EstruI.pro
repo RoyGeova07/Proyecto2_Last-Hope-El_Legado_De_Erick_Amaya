@@ -9,11 +9,11 @@ CONFIG += c++17
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    AtributosPersonaje.cpp \
     Ciudad.cpp \
     Inventario.cpp \
     caminos.cpp \
     dialogonpc.cpp \
-    escenabase.cpp \
     gasolinera.cpp \
     grafo.cpp \
     inicio.cpp \
@@ -28,13 +28,13 @@ SOURCES += \
     zombie.cpp
 
 HEADERS += \
+    AtributosPersonaje.h \
     Ciudad.h \
     Cola.h \
     Elemento.h \
     Inventario.h \
     caminos.h \
     dialogonpc.h \
-    escenabase.h \
     gasolinera.h \
     grafo.h \
     inicio.h \

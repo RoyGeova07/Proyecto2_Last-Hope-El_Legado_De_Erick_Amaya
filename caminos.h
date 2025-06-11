@@ -2,11 +2,11 @@
 #define CAMINOS_H
 
 #include"personaje.h"
-#include"escenabase.h"
+#include"AtributosPersonaje.h"
 #include "dialogonpc.h"
 #include "npc.h"
 
-class Caminos:public EscenaBase
+class Caminos:public AtributosPersonaje
 {
 
     Q_OBJECT

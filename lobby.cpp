@@ -8,7 +8,7 @@
 #include"caminos.h"
 
 lobby::lobby(personaje* jugadorExistente, QWidget* parent)
-    : EscenaBase(jugadorExistente, parent)
+    : AtributosPersonaje(jugadorExistente, parent)
 {
     this->resize(1280, 720);
     this->setWindowTitle("Lobby - Last hope");
@@ -24,26 +24,6 @@ lobby::lobby(personaje* jugadorExistente, QWidget* parent)
     // dialogo NPC
     dialogoNPC = new DialogoNPC(this);
     dialogoNPC->hide();
-
-    //aqui QLabel para mostrar los datos
-    lblDatos = new QLabel(this);
-    lblDatos->setStyleSheet("background: black; color: white; padding: 15px; border-radius: 10px;");
-    lblDatos->setAlignment(Qt::AlignLeft|Qt::AlignTop);
-    lblDatos->setWordWrap(true);
-    lblDatos->setGeometry(10, 10, 120, 70);
-    lblDatos->raise();
-    lblDatos->show();
-
-    // Actualizar los datos del jugador
-    auto actualizarUI = [=]() {
-        QMap<QString, int> datos = jugador->cargarDatosJugador();
-        QString texto = QString("Energia: %1\nMuniciones: %2")
-                            .arg(datos["Energia"])
-                            .arg(datos["Municiones"]);
-        lblDatos->setText(texto);
-    };
-    actualizarUI();
-
     barraVidaLabel->raise();
 
     // Label para el hint de interaccion con puerta
@@ -164,7 +144,7 @@ void lobby::onMovimientoUpdate()
 
 void lobby::keyPressEvent(QKeyEvent* event)
 {
-    EscenaBase::keyPressEvent(event);
+    AtributosPersonaje::keyPressEvent(event);
 
     // Interaccion con NPC
     if(event->key() == Qt::Key_H && npcCercano && !npcCercano->estaHablando())

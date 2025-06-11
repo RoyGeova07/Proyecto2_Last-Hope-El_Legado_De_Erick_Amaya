@@ -1,9 +1,9 @@
-#include "escenabase.h"
+#include "AtributosPersonaje.h"
 #include <QPixmap>
 #include <QLabel>
 #include <QDebug>
 
-EscenaBase::EscenaBase(QWidget* parent)
+AtributosPersonaje::AtributosPersonaje(QWidget* parent)
     : QWidget(parent),
     jugador(nullptr), movimientoTimer(nullptr),
     shiftPresionado(false), izquierdaPresionada(false),
@@ -19,13 +19,13 @@ EscenaBase::EscenaBase(QWidget* parent)
     barraVidaLabel->setGeometry(10, 90, 200, 30);
     barraVidaLabel->show();
 
-    // 2️⃣ Barra rellena (acortable)
+    //Barra rellena (acortable)
     barraVidaInterna = new QWidget(barraVidaLabel);
     barraVidaInterna->setStyleSheet("background-color: green; border-radius: 3px;");
     barraVidaInterna->setGeometry(0, 0, 200, 30);
     barraVidaInterna->show();
 
-    // 3️⃣ Texto encima
+    //Texto encima
     barraVidaTexto = new QLabel(barraVidaLabel);
     barraVidaTexto->setAlignment(Qt::AlignCenter);
     barraVidaTexto->setStyleSheet("color: white; font-weight: bold; font-size: 14px; background: transparent;");
@@ -34,15 +34,33 @@ EscenaBase::EscenaBase(QWidget* parent)
     ActualizarBarraVida();
     barraVidaLabel->raise();
 
+    //etiqueta para mostrar las municiones
+    labelMuniciones=new QLabel(this);
+    labelMuniciones->setGeometry(10,45,300,40);
+    labelMuniciones->setStyleSheet(
+        "color: #FFD700;"
+        "font-size: 18px;"
+        "font-weight: bold;"
+        "background: rgba(0,0,0,100);"
+        "padding: 5px;"
+        );
+    labelMuniciones->show();
+
+    if(!puedeDisparar)
+    {
+
+        labelMuniciones->hide();//ocultar el label de municiones si no esta habilitado
+
+    }
+
 }
 
-EscenaBase::EscenaBase(personaje *jugadorExistente, QWidget *parent):QWidget(parent),
+AtributosPersonaje::AtributosPersonaje(personaje *jugadorExistente, QWidget *parent):QWidget(parent),
 
     jugador(jugadorExistente), movimientoTimer(nullptr),
     shiftPresionado(false), izquierdaPresionada(false),
     derechaPresionada(false), arribaPresionado(false),
     abajoPresionado(false), ZPresionado(false)
-
 {
 
     inventarioWidget=new InventarioWidget(Inventario::getInstance());
@@ -52,18 +70,31 @@ EscenaBase::EscenaBase(personaje *jugadorExistente, QWidget *parent):QWidget(par
     barraVidaLabel->setGeometry(10, 90, 200, 30);
     barraVidaLabel->show();
 
-    // 2️⃣ Barra rellena (acortable)
+    //Barra rellena (acortable
     barraVidaInterna = new QWidget(barraVidaLabel);
     barraVidaInterna->setStyleSheet("background-color: green; border-radius: 3px;");
     barraVidaInterna->setGeometry(0, 0, 200, 30);
     barraVidaInterna->show();
 
-    // 3️⃣ Texto encima
+    //Texto encima
     barraVidaTexto = new QLabel(barraVidaLabel);
     barraVidaTexto->setAlignment(Qt::AlignCenter);
     barraVidaTexto->setStyleSheet("color: white; font-weight: bold; font-size: 14px; background: transparent;");
     barraVidaTexto->setGeometry(0, 0, 200, 30);
     barraVidaTexto->show();
+
+    //etiqueta para mostrar las municiones
+    labelMuniciones=new QLabel(this);
+    labelMuniciones->setGeometry(10,45,300,40);
+    labelMuniciones->setStyleSheet(
+        "color: #FFD700;"
+        "font-size: 18px;"
+        "font-weight: bold;"
+        "text-shadow: 1px 1px black;"
+        "background: rgba(0,0,0,100);"
+        "padding: 5px;"
+        );
+    labelMuniciones->show();
 
     ActualizarBarraVida();
     barraVidaLabel->raise();
@@ -71,7 +102,7 @@ EscenaBase::EscenaBase(personaje *jugadorExistente, QWidget *parent):QWidget(par
 
 }
 
-EscenaBase::~EscenaBase()
+AtributosPersonaje::~AtributosPersonaje()
 {
 
     delete movimientoTimer;
@@ -79,7 +110,7 @@ EscenaBase::~EscenaBase()
 
 }
 
-void EscenaBase::inicializarJugador() {
+void AtributosPersonaje::inicializarJugador() {
     if(!jugador)
     {
 
@@ -96,14 +127,63 @@ void EscenaBase::inicializarJugador() {
 
 }
 
-void EscenaBase::Movimientos() {
+void AtributosPersonaje::Movimientos() {
     movimientoTimer = new QTimer(this);
     connect(movimientoTimer, &QTimer::timeout, this, [=]() {
         bool moviendo = false;
 
-        if (ZPresionado) {
-            jugador->SetAnimacion(":/imagenes/assets/protagonista/Shot_1.png", 4);
-            return;
+        if(ZPresionado&&puedeDisparar&&!disparandoAhora)
+        {
+            if(jugador->getMuniciones()>0)
+            {
+                disparandoAhora=true;
+                jugador->setMuniciones(jugador->getMuniciones()-1);
+                jugador->SetAnimacion(":/imagenes/assets/protagonista/Shot_1.png",4);
+                ActualizarMuniciones();
+
+                //Cancelar cualquier timer de disparo anterior
+                if(disparoTimer)
+                {
+
+                    disparoTimer->stop();
+                    delete disparoTimer;
+                    disparoTimer=nullptr;
+
+                }
+
+                //aqui se crea un nuevo timer y guardarlo para poder cancelarlo
+                disparoTimer=new QTimer(this);
+                disparoTimer->setSingleShot(true);
+                connect(disparoTimer,&QTimer::timeout,this,[=](){
+                    disparandoAhora=false;
+
+                    //si no hay mas municiones, forzar detener el disparo y desactivar el Zpresinodado
+                    if(jugador->getMuniciones()==0)
+                    {
+
+                        ZPresionado=false;
+
+                    }
+
+                    if(!ZPresionado&&!izquierdaPresionada&&!derechaPresionada&&!arribaPresionado&&!abajoPresionado)
+                    {
+
+                        jugador->SetAnimacion(":/imagenes/assets/protagonista/Idle.png",7);
+
+                    }
+                    delete disparoTimer;
+                    disparoTimer=nullptr;
+
+                });
+                disparoTimer->start(400);//duracion del disparo
+
+            }else{
+
+                //si no hay balas, el bool se asegura q no siga intentando disparar
+                ZPresionado=false;
+
+            }
+            return;//no se permite otras acciones mientras el personaje dispara
         }
 
         if (izquierdaPresionada) {
@@ -131,9 +211,17 @@ void EscenaBase::Movimientos() {
                 jugador->SetAnimacion(":/imagenes/assets/protagonista/Walk.png", 7);
             }
         } else {
+
             movimientoTimer->stop();
-            jugador->DetenerAnimacion();
-            jugador->SetAnimacion(":/imagenes/assets/protagonista/Idle.png", 7);
+
+            if(!disparandoAhora)
+            {
+
+                jugador->DetenerAnimacion();
+                jugador->SetAnimacion(":/imagenes/assets/protagonista/Idle.png", 7);
+
+            }
+
         }
         ActualizarBarraVida();
         onMovimientoUpdate();
@@ -142,7 +230,7 @@ void EscenaBase::Movimientos() {
     movimientoTimer->setInterval(30);
 }
 
-void EscenaBase::keyPressEvent(QKeyEvent* event) {
+void AtributosPersonaje::keyPressEvent(QKeyEvent* event) {
     if (!jugador) return;
 
     //aqui tecla l para abrir y cerrar el inventario
@@ -189,7 +277,7 @@ void EscenaBase::keyPressEvent(QKeyEvent* event) {
     }
 }
 
-void EscenaBase::keyReleaseEvent(QKeyEvent* event) {
+void AtributosPersonaje::keyReleaseEvent(QKeyEvent* event) {
     if (!jugador) return;
 
     switch (event->key()) {
@@ -214,7 +302,7 @@ void EscenaBase::keyReleaseEvent(QKeyEvent* event) {
     }
 }
 
-void EscenaBase::ResetearMovimiento()
+void AtributosPersonaje::ResetearMovimiento()
 {
 
     if (movimientoTimer && movimientoTimer->isActive())
@@ -236,7 +324,7 @@ void EscenaBase::ResetearMovimiento()
     ActualizarBarraVida();
 }
 
-void EscenaBase::ActualizarBarraVida()
+void AtributosPersonaje::ActualizarBarraVida()
 {
 
     if(!jugador)return;
@@ -274,20 +362,6 @@ void EscenaBase::ActualizarBarraVida()
     barraVidaInterna->setStyleSheet(QString("background-color: %1; border-radius: 3px;").arg(colorBarra));
     barraVidaInterna->setGeometry(0,0,anchoBarra,altoTotal);
 
-
-    // // Estilo de la barra
-    // barraVidaLabel->setStyleSheet(QString(
-    //                                   "background-color: %1; "
-    //                                   "color: white; "
-    //                                   "font-weight: bold; "
-    //                                   "font-size: 14px; "
-    //                                   "padding: 5px; "
-    //                                   "border: 2px solid black; "
-    //                                   "border-radius: 5px; "
-    //                                   "text-align: center;")
-    //                                   .arg(colorBarra));
-
-
     //aqui se hace el texto de la barra
     QString texto = QString("VIDA: %1 / %2").arg(vidaActual).arg(vidaMaxima);
     barraVidaTexto->setText(texto);
@@ -307,11 +381,16 @@ void EscenaBase::ActualizarBarraVida()
     // jugador->setVidas(nuevaVida);
     // actualizarBarraVida();
 
+}
 
-    //LE RESTAN 7 DE VIDA
-    // int nuevaVida = jugador->getVidas() - 7;
-    // if (nuevaVida < 0) nuevaVida = 0;
-    // jugador->setVidas(nuevaVida);
-    // actualizarBarraVida();
+void AtributosPersonaje::ActualizarMuniciones()
+{
+
+    if(!jugador)return;
+
+    int mun=jugador->getMuniciones();
+    QString texto=QString("MUNICIONES: %1").arg(mun);
+    labelMuniciones->setText(texto);
+    labelMuniciones->raise();
 
 }

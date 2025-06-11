@@ -1,5 +1,5 @@
-#ifndef ESCENABASE_H
-#define ESCENABASE_H
+#ifndef ATRIBUTOSPERSONAJE_H
+#define ATRIBUTOSPERSONAJE_H
 
 #include <QWidget>
 #include <QTimer>
@@ -9,7 +9,7 @@
 #include"inventario.h"
 #include"inventariowidget.h"
 
-class EscenaBase : public QWidget {
+class AtributosPersonaje : public QWidget {
     Q_OBJECT
 
 protected:
@@ -25,6 +25,10 @@ protected:
     bool abajoPresionado;
     bool ZPresionado;
 
+    bool disparandoAhora=false;//me servira para sincronizar los municiones con la animacion de disparo del personje
+    bool puedeDisparar=false;
+    QTimer*disparoTimer=nullptr;//para cancelar disparo si se suelta Z
+
     InventarioWidget* inventarioWidget;
 
     //aqui Metodos virtuales
@@ -37,17 +41,20 @@ protected:
     QLabel*barraVidaLabel;
     QWidget* barraVidaInterna;
     QLabel* barraVidaTexto;
+    QLabel*labelMuniciones;
     void ActualizarBarraVida();
 
 public:
-    explicit EscenaBase(QWidget* parent = nullptr);
-    explicit EscenaBase(personaje*jugador,QWidget*parent=nullptr);
-    virtual ~EscenaBase();
+    explicit AtributosPersonaje(QWidget* parent = nullptr);
+    explicit AtributosPersonaje(personaje*jugador,QWidget*parent=nullptr);
+    virtual ~AtributosPersonaje();
     void ResetearMovimiento();
     void inicializarJugador();
     void Movimientos();
     void keyPressEvent(QKeyEvent* event) override;
     void keyReleaseEvent(QKeyEvent* event) override;
+    void ActualizarMuniciones();
+
 };
 
-#endif // ESCENABASE_H
+#endif // ATRIBUTOSPERSONAJE_H

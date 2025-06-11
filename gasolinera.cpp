@@ -3,7 +3,7 @@
 #include <QLabel>
 #include <QDebug>
 
-Gasolinera::Gasolinera(QWidget* parent) : EscenaBase(parent) {
+Gasolinera::Gasolinera(QWidget* parent) : AtributosPersonaje(parent) {
     this->resize(1280, 720);
     this->setWindowTitle("Gasolinera - Last hope");
 

@@ -1,10 +1,10 @@
-#include "escenabase.h"
+#include "AtributosPersonaje.h"
 #include "npc.h"
 #include"personaje.h"
 #include "dialogonpc.h"
 
 
-class lobby : public EscenaBase {
+class lobby : public AtributosPersonaje {
     Q_OBJECT
 
 private:

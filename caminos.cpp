@@ -9,7 +9,7 @@
 #include "mall.h"
 
 
-Caminos::Caminos(personaje*jugadorExistente, QWidget* parent) : EscenaBase(jugadorExistente,parent), rutaActual(1)
+Caminos::Caminos(personaje*jugadorExistente, QWidget* parent) : AtributosPersonaje(jugadorExistente,parent), rutaActual(1)
 {
     this->resize(1078, 714);
     this->setWindowTitle("Caminos - Last hope");
@@ -713,7 +713,7 @@ void Caminos::keyPressEvent(QKeyEvent *event)
 {
 
     // Primero siempre llamar a la base
-    EscenaBase::keyPressEvent(event);
+    AtributosPersonaje::keyPressEvent(event);
 
     // Interacción con NPC
     if(event->key() == Qt::Key_H && npcCercano && !npcCercano->estaHablando()) {

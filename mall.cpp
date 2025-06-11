@@ -3,7 +3,7 @@
 #include <QLabel>
 #include <QDebug>
 
-Mall::Mall(QWidget* parent) : EscenaBase(parent) {
+Mall::Mall(QWidget* parent) : AtributosPersonaje(parent) {
     this->resize(1280, 720);
     this->setWindowTitle("Mall - Last hope");
 

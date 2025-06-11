@@ -2,7 +2,7 @@
 #include<QDebug>
 
 personaje::personaje(QWidget*parent):QLabel(parent),frameActual(0),velocidadMovimiento(10),miradoDerecha(true),ultimaDireccionDerecha(true),
-    vida(30),energia(10),municiones(20)
+    vida(30),energia(10),municiones(60)
 {
 
     this->resize(128,128);//aqui tamanio del frame

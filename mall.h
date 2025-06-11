@@ -1,9 +1,9 @@
 #ifndef MALL_H
 #define MALL_H
-#include "escenabase.h"
+#include "AtributosPersonaje.h"
 #include "zombie.h"
 
-class Mall : public EscenaBase {
+class Mall : public AtributosPersonaje {
     Q_OBJECT
 
 private:
