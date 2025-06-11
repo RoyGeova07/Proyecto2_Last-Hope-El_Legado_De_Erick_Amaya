@@ -15,6 +15,7 @@ SOURCES += \
     caminos.cpp \
     dialogonpc.cpp \
     gasolinera.cpp \
+    gimnasio.cpp \
     grafo.cpp \
     inicio.cpp \
     inventariowidget.cpp \
@@ -36,6 +37,7 @@ HEADERS += \
     caminos.h \
     dialogonpc.h \
     gasolinera.h \
+    gimnasio.h \
     grafo.h \
     inicio.h \
     inventariowidget.h \

@@ -7,6 +7,7 @@
 #include"Ciudad.h"
 #include "gasolinera.h"
 #include "mall.h"
+#include "gimnasio.h"
 
 
 Caminos::Caminos(personaje*jugadorExistente, QWidget* parent) : AtributosPersonaje(jugadorExistente,parent), rutaActual(1)
@@ -25,7 +26,7 @@ Caminos::Caminos(personaje*jugadorExistente, QWidget* parent) : AtributosPersona
 
     jugador->move(42,190);
 
-    labelPresionarT = new QLabel("¿Quieres entrar a la ciudad en ruinas?\nA. Sí    B. Ignorar",this);
+    labelPresionarT = new QLabel("¿Quieres entrar al nivel?\nA. Sí    B. Ignorar",this);
     labelPresionarT->setStyleSheet("background: rgba(0,0,0,180); color: white; padding: 5px; border-radius: 5px;");
     labelPresionarT->setAlignment(Qt::AlignCenter);
     labelPresionarT->setWordWrap(true);
@@ -64,6 +65,7 @@ QRect zonaCambioRuta6_a_Desde_Ruta5(454,-66,127,127);
 QRect zonaEntradaCiudad(236, 422, 131, 127);
 QRect zonaEntradaGasolinera(450, 350, 131, 127);
 QRect zonaEntradaMall(450, 400, 131, 40);
+QRect zonaEntradaGym(450, 500, 131, 40);
 
 void Caminos::configurarEscena()
 {
@@ -524,6 +526,21 @@ void Caminos::onMovimientoUpdate()
         << " RIGHT =" << rectJugador.right()
         << " BOTTOM =" << rectJugador.bottom();
 
+        if(zonaEntradaGym.intersects(rectJugador))
+        {
+            if(!labelPresionarT->isVisible())
+            {
+                labelPresionarT->move(450, 422);
+                labelPresionarT->show();
+                labelPresionarT->raise();
+            }
+        }else{
+
+            //si sale de la zona ocultar el label
+            labelPresionarT->hide();
+
+        }
+
         //Cambio a RUTA_6 desde RUTA_5
         if(zonaCambioRuta6_a_Desde_Ruta5.intersects(rectJugador))
         {
@@ -767,6 +784,21 @@ void Caminos::keyPressEvent(QKeyEvent *event)
 
         // Crear la ciudad y mostrarla
         Gasolinera* w = new Gasolinera();
+        w->show();
+
+        // Cerrar esta ventana
+        this->close();
+
+        return; // salir
+    }
+
+    //aqui accion con T para entrar a la Gasolinera (solo si estamos en ruta 3)
+    if (rutaActual == 5 && event->key() ==Qt::Key_A&&labelPresionarT->isVisible())
+    {
+        qDebug() << "Entrando al gimnasio...";
+
+        // Crear la ciudad y mostrarla
+        Gimnasio* w = new Gimnasio();
         w->show();
 
         // Cerrar esta ventana
