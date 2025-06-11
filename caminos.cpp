@@ -6,6 +6,8 @@
 #include"lobby.h"
 #include"Ciudad.h"
 #include "gasolinera.h"
+#include "mall.h"
+
 
 Caminos::Caminos(personaje*jugadorExistente, QWidget* parent) : EscenaBase(jugadorExistente,parent), rutaActual(1)
 {
@@ -30,7 +32,20 @@ Caminos::Caminos(personaje*jugadorExistente, QWidget* parent) : EscenaBase(jugad
     labelPresionarT->setFixedSize(300,80);
     labelPresionarT->hide(); // Al inicio oculto
 
-}
+    // dialogo NPC
+    dialogoNPC = new DialogoNPC(this);
+    dialogoNPC->hide();
+
+    // Crear NPC en Ruta 1
+    QList<NPC*> npcsRuta1;
+    NPC* npcRuta1 = new NPC(NPC::Tipo::NPC1, this);
+    npcRuta1->move(400, 300);  // Posición en Ruta 1
+    //npcRuta1->hide();  // Inicialmente oculto
+    npcsRuta1.append(npcRuta1);
+    npcRuta1->setInventario(Inventario::getInstance());
+    npcsPorRuta.insert(1, npcsRuta1);
+
+  }
 //NO BORRAR ESTO ===========================================================
 //son las coordenadas exactas para cambiar ENTRE LAS RUTAASSSSSZZZZ
 QRect zonaCambioRuta3(940,40,180,130); // X=940 a 1120, Y=40 a 170
@@ -47,6 +62,8 @@ QRect zonaCambioRuta5_a_Desde_Ruta6(456,580,127,127);
 QRect zonaCambioRuta6_a_Desde_Ruta5(454,-66,127,127);
 // =========================================================================
 QRect zonaEntradaCiudad(236, 422, 131, 127);
+QRect zonaEntradaGasolinera(450, 350, 131, 127);
+QRect zonaEntradaMall(450, 400, 131, 40);
 
 void Caminos::configurarEscena()
 {
@@ -73,6 +90,7 @@ void Caminos::configurarObstaculos()
         obstaculos.append(QRect(610, 300, 270, 60)); //PARTE INFERIOR DERECHA 3
         obstaculos.append(QRect(680, 360, 270, 80)); //PARTE INFERIOR DERECHA 3
         obstaculos.append(QRect(720, 440, 270, 80)); //PARTE INFERIOR DERECHA 4
+
 
     }else if (rutaActual == 2){
        obstaculos.clear();
@@ -105,7 +123,9 @@ void Caminos::configurarObstaculos()
         obstaculos.append(QRect(20,20,400,310)); //PARTE SUPERIOR IZQUIERDA
         obstaculos.append(QRect(600,20,400,310)); //PARTE SUPERIOR DERECHA
         obstaculos.append(QRect(20,555,400,300)); //PARTE INFERIOR IZQUIERDA
-        obstaculos.append(QRect(600,555,400,300)); //PARTE INFERIOR DERECHA
+        obstaculos.append(QRect(600,555
+
+                                ,400,300)); //PARTE INFERIOR DERECHA
 
     }else if(rutaActual==6){
 
@@ -263,6 +283,22 @@ void Caminos::cambiarRuta(int nuevaRuta)
 {
     rutaActual = nuevaRuta;
 
+    // Ocultar todos los NPCs primero
+    for (auto it = npcsPorRuta.begin(); it != npcsPorRuta.end(); ++it) {
+        for (NPC* npc : it.value()) {
+            npc->hide();
+            npc->ocultarHintInteractuar();
+        }
+    }
+
+    // Mostrar solo los NPCs de la ruta actual
+    if (npcsPorRuta.contains(rutaActual)) {
+        for (NPC* npc : npcsPorRuta[rutaActual]) {
+            npc->show();
+            npc->raise();
+        }
+    }
+
     QString rutaImagen;
 
     if(rutaActual==1)
@@ -320,6 +356,25 @@ void Caminos::onMovimientoUpdate()
 {
     if (!jugador) return;
     QRect rectJugador = jugador->geometry();
+
+    // Verificar NPCs solo de la ruta actual
+    npcCercano = nullptr;
+    if (npcsPorRuta.contains(rutaActual)) {
+        bool hayNpcCerca = false;
+
+        for(NPC* npc : npcsPorRuta[rutaActual]) {
+            QRect rectNPC = npc->geometry();
+            QRect zonaProximidad = rectNPC.adjusted(-20, -20, 20, 20);
+
+            if(rectJugador.intersects(zonaProximidad)) {
+                npc->mostrarHintInteractuar();
+                npcCercano = npc;
+                hayNpcCerca = true;
+            } else {
+                npc->ocultarHintInteractuar();
+            }
+        }
+    }
 
     // aqui Cambiar a RUTA_2 cuando el jugador llegue al final de la carretera de arriba (borde derecho)
     if (rutaActual == 1 && rectJugador.right() >= width() - 50 && rectJugador.top() <= 200)
@@ -430,6 +485,21 @@ void Caminos::onMovimientoUpdate()
         << " RIGHT =" << rectJugador.right()
         << " BOTTOM =" << rectJugador.bottom();
 
+        if(zonaEntradaGasolinera.intersects(rectJugador))
+        {
+            if(!labelPresionarT->isVisible())
+            {
+                labelPresionarT->move(450, 350);
+                labelPresionarT->show();
+                labelPresionarT->raise();
+            }
+        }else{
+
+            //si sale de la zona ocultar el label
+            labelPresionarT->hide();
+
+        }
+
         // Cambio a RUTA_6 desde RUTA_3
         if (zonaCambioRuta6_desde_Ruta3.intersects(rectJugador))
         {
@@ -478,6 +548,21 @@ void Caminos::onMovimientoUpdate()
         <<" RIGHT ="<<rectJugador.right()
         <<" BOTTOM ="<<rectJugador.bottom();
 
+        if(zonaEntradaMall.intersects(rectJugador))
+        {
+            if(!labelPresionarT->isVisible())
+            {
+                labelPresionarT->move(450, 422);
+                labelPresionarT->show();
+                labelPresionarT->raise();
+            }
+        }else{
+
+            //si sale de la zona ocultar el label
+            labelPresionarT->hide();
+
+        }
+
         //  Cambio a RUTA_3 desde RUTA_6
         if(zonaCambioRuta3_a_Desde_Ruta6.intersects(rectJugador))
         {
@@ -507,6 +592,7 @@ void Caminos::onMovimientoUpdate()
 
             return;
         }
+
 
     }
 
@@ -619,8 +705,6 @@ void Caminos::onMovimientoUpdate()
         }
 
 
-    }else{
-        labelPresionarT->hide();
     }
 
 }
@@ -631,6 +715,36 @@ void Caminos::keyPressEvent(QKeyEvent *event)
     // Primero siempre llamar a la base
     EscenaBase::keyPressEvent(event);
 
+    // Interacción con NPC
+    if(event->key() == Qt::Key_H && npcCercano && !npcCercano->estaHablando()) {
+        npcCercano->mostrarDialogo(dialogoNPC);
+
+        connect(npcCercano, &NPC::dialogoTerminado, this, [this]() {
+            qDebug() << "Diálogo con NPC terminado";
+
+            // Resetear flags de movimiento
+            shiftPresionado = false;
+            izquierdaPresionada = false;
+            derechaPresionada = false;
+            arribaPresionado = false;
+            abajoPresionado = false;
+            ZPresionado = false;
+
+            // Detener animación
+            if(jugador) {
+                jugador->DetenerAnimacion();
+                jugador->SetAnimacion(":/imagenes/assets/protagonista/Idle.png", 7);
+            }
+
+            // Reactivar movimiento
+            if(movimientoTimer && !movimientoTimer->isActive())
+                movimientoTimer->start();
+
+            this->activateWindow();
+            this->setFocus();
+        });
+    }
+
     //aqui accion con T para entrar a Ciudad (solo si estamos en ruta 2)
     if (rutaActual == 2 && event->key() ==Qt::Key_A&&labelPresionarT->isVisible())
     {
@@ -639,6 +753,36 @@ void Caminos::keyPressEvent(QKeyEvent *event)
         // Crear la ciudad y mostrarla
         Ciudad* ciudadWindow = new Ciudad();
         ciudadWindow->show();
+
+        // Cerrar esta ventana
+        this->close();
+
+        return; // salir
+    }
+
+    //aqui accion con T para entrar a la Gasolinera (solo si estamos en ruta 3)
+    if (rutaActual == 3 && event->key() ==Qt::Key_A&&labelPresionarT->isVisible())
+    {
+        qDebug() << "Entrando a la Ciudad...";
+
+        // Crear la ciudad y mostrarla
+        Gasolinera* w = new Gasolinera();
+        w->show();
+
+        // Cerrar esta ventana
+        this->close();
+
+        return; // salir
+    }
+
+    //aqui accion con T para entrar al Mall (solo si estamos en ruta 6)
+    if (rutaActual == 6 && event->key() ==Qt::Key_A&&labelPresionarT->isVisible())
+    {
+        qDebug() << "Entrando a la Ciudad...";
+
+        // Crear la ciudad y mostrarla
+        Mall* mallWindow = new Mall();
+        mallWindow->show();
 
         // Cerrar esta ventana
         this->close();

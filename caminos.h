@@ -3,6 +3,8 @@
 
 #include"personaje.h"
 #include"escenabase.h"
+#include "dialogonpc.h"
+#include "npc.h"
 
 class Caminos:public EscenaBase
 {
@@ -16,6 +18,10 @@ private:
     int rutaActual; // 1 = RUTA_1, 2 = RUTA_2
     QLabel* labelPresionarT;
     void keyPressEvent(QKeyEvent* event);
+
+    DialogoNPC* dialogoNPC;
+    QMap<int, QList<NPC*>> npcsPorRuta;
+    NPC* npcCercano;
 
     void configurarEscena() override;
     void configurarObstaculos() override;

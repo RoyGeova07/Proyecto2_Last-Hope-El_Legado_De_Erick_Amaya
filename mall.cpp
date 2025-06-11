@@ -1,11 +1,11 @@
-#include "Ciudad.h"
+#include "mall.h"
 #include <QPixmap>
 #include <QLabel>
 #include <QDebug>
 
-Ciudad::Ciudad(QWidget* parent) : EscenaBase(parent) {
+Mall::Mall(QWidget* parent) : EscenaBase(parent) {
     this->resize(1280, 720);
-    this->setWindowTitle("Ciudad en Ruinas - Last hope");
+    this->setWindowTitle("Mall - Last hope");
 
     configurarEscena();
     inicializarJugador();
@@ -31,8 +31,8 @@ Ciudad::Ciudad(QWidget* parent) : EscenaBase(parent) {
     zombies.append(z3); //aqui se registra en el vector global
 }
 
-void Ciudad::configurarEscena() {
-    QPixmap fondoPixmap(":/imagenes/assets/mapas/War.png");
+void Mall::configurarEscena() {
+    QPixmap fondoPixmap(":/imagenes/assets/mapas/Mall.jpeg");
     if (fondoPixmap.isNull()) {
         qDebug() << "Error al cargar imagen desde assets/mapas/War.png";
     } else {
@@ -42,7 +42,7 @@ void Ciudad::configurarEscena() {
     }
 }
 
-void Ciudad::configurarObstaculos() {
+void Mall::configurarObstaculos() {
     // OBSTÁCULOS FIJOS
     obstaculos.append(QRect(3, 2, 1334, 470));     // Muro superior
     obstaculos.append(QRect(5, 669, 1273, 47));    // Piso inferior

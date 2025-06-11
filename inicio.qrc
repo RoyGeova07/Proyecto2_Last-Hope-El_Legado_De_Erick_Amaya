@@ -41,11 +41,34 @@
         <file>assets/Zombies/Run_Z3.png</file>
         <file>assets/items/btnMapa.png</file>
         <file>assets/mapas/Mapa.jpg</file>
-	<file>assets/mapas/RUTA_1.jpg</file>
-	<file>assets/mapas/RUTA_2.jpg</file>
-	<file>assets/mapas/RUTA_3.jpg</file>
-	<file>assets/mapas/RUTA_4.jpg</file>
-	<file>assets/mapas/RUTA_5.jpg</file>
-	<file>assets/mapas/RUTA_6.jpg</file>
+        <file>assets/mapas/RUTA_1.jpg</file>
+        <file>assets/mapas/RUTA_2.jpg</file>
+        <file>assets/mapas/RUTA_3.jpg</file>
+        <file>assets/mapas/RUTA_4.jpg</file>
+        <file>assets/mapas/RUTA_5.jpg</file>
+        <file>assets/mapas/RUTA_6.jpg</file>
+        <file>assets/mapas/Mall.jpeg</file>
+        <file>assets/Zombies/Attack_Z4.png</file>
+        <file>assets/Zombies/Attack_Z5.png</file>
+        <file>assets/Zombies/Attack_Z6.png</file>
+        <file>assets/Zombies/Attack_Z7.png</file>
+        <file>assets/Zombies/Dead_Z4.png</file>
+        <file>assets/Zombies/Dead_Z5.png</file>
+        <file>assets/Zombies/Dead_Z6.png</file>
+        <file>assets/Zombies/Dead_Z7.png</file>
+        <file>assets/Zombies/Hurt_Z4.png</file>
+        <file>assets/Zombies/Hurt_Z5.png</file>
+        <file>assets/Zombies/Hurt_Z6.png</file>
+        <file>assets/Zombies/Hurt_Z7.png</file>
+        <file>assets/Zombies/Idle_Z4.png</file>
+        <file>assets/Zombies/Idle_Z5.png</file>
+        <file>assets/Zombies/Idle_Z6.png</file>
+        <file>assets/Zombies/Walk_Z4.png</file>
+        <file>assets/Zombies/Walk_Z5.png</file>
+        <file>assets/Zombies/Walk_Z6.png</file>
+        <file>assets/Zombies/Walk_Z7.png</file>
+        <file>assets/NPC/Idle_NPC4.png</file>
+        <file>assets/NPC/Idle_NPC5.png</file>
+        <file>assets/NPC/Idle_NPC6.png</file>
     </qresource>
 </RCC>

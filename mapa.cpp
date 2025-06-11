@@ -56,6 +56,15 @@ Mapa::Mapa(QWidget* parent) : QWidget(parent), jugador(nullptr) {
         this->close();
         qDebug() << "Volviendo al lobby...!";
     });
+
+
+    // Crear label para mostrar la distancia
+    labelDistancia = new QLabel(this);
+    labelDistancia->setStyleSheet("QLabel { background-color: rgba(0, 0, 0, 150); color: white; font-size: 16px; padding: 5px; border-radius: 5px; }");
+    labelDistancia->setAlignment(Qt::AlignCenter);
+    labelDistancia->setGeometry(width() - 200, 20, 180, 40);
+    labelDistancia->setText("Distancia: 0 km");
+    labelDistancia->raise();
 }
 
 void Mapa::visualizarGrafo(const Grafo& grafo) {
@@ -114,6 +123,9 @@ void Mapa::nodoSeleccionado() {
     }
     rutaActual.clear();
 
+    // Resetear distancia
+    labelDistancia->setText("Distancia: 0 km");
+
     QList<QGraphicsItem*> items = escena->selectedItems();
     if (!items.isEmpty()) {
         QGraphicsEllipseItem* nodoItem = dynamic_cast<QGraphicsEllipseItem*>(items.first());
@@ -136,6 +148,7 @@ void Mapa::nodoSeleccionado() {
 void Mapa::dibujarRuta(const QList<QString>& ruta) {
     QPen penRuta(Qt::yellow);
     penRuta.setWidth(4);
+    float distanciaTotal = 0.0f;
 
     for (int i = 0; i < ruta.size() - 1; i++) {
         QString nodoActual = ruta[i];
@@ -144,6 +157,8 @@ void Mapa::dibujarRuta(const QList<QString>& ruta) {
         // Buscar la arista entre estos nodos
         for (const Grafo::Arista& arista : grafoMapa->obtenerAristas(nodoActual)) {
             if (arista.destino == nodoSiguiente) {
+                distanciaTotal += arista.peso;
+
                 QPointF puntoInicio = grafoMapa->obtenerPosicionNodo(nodoActual);
                 QPointF puntoFinal = grafoMapa->obtenerPosicionNodo(nodoSiguiente);
 
@@ -184,4 +199,7 @@ void Mapa::dibujarRuta(const QList<QString>& ruta) {
         escena->addItem(nodoResaltado);
         rutaActual.append(nodoResaltado);
     }
+
+    // Actualizar label con la distancia total
+    labelDistancia->setText(QString("Distancia: %1 km").arg(distanciaTotal));
 }

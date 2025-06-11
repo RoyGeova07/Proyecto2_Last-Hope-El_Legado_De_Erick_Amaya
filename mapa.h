@@ -31,6 +31,8 @@ private:
     QGraphicsView* vista;
     QList<QGraphicsItem*> rutaActual;
 
+    QLabel* labelDistancia;
+
 };
 
 #endif // INICIO_H

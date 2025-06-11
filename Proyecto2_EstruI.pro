@@ -21,6 +21,7 @@ SOURCES += \
     lobby.cpp \
     main.cpp \
     mainwindow.cpp \
+    mall.cpp \
     mapa.cpp \
     npc.cpp \
     personaje.cpp \
@@ -40,6 +41,7 @@ HEADERS += \
     inventariowidget.h \
     lobby.h \
     mainwindow.h \
+    mall.h \
     mapa.h \
     npc.h \
     personaje.h \
