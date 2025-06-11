@@ -32,13 +32,13 @@ public:
 
     void SetAnimacionMovimientoZombie();
     bool mirandoALaDerecha=false;
+    void recibirDanio(int cantidad);
 
 signals:
 
     void ColisionConJugador();
 
 private slots:
-
     void moverHaciaJugador();
 
 private:
@@ -55,6 +55,15 @@ private:
     bool danioEmitido=false;
     int frameAtaqueFinal=0;
     void realizarAtaque();
+
+    int vida=10;
+    const int vidaMaxima=10;
+
+    QLabel*barraFondo=nullptr;
+    QLabel*barraVida=nullptr;
+
+    void inicializarBarraVida();
+    void actualizarBarraVida();
 
     QLabel* labelPresionaA = nullptr;
 };

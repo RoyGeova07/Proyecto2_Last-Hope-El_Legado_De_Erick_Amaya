@@ -77,3 +77,6 @@ void Ciudad::configurarObstaculos() {
     obstaculos.append(QRect(3, 278, 5, 388));      // Pared izquierda
     obstaculos.append(QRect(1272, 282, 3, 324));   // Pared derecha
 }
+
+//cuando se le dispare el zombie se hace esto:
+//z->recibirDanio(2);  // Quitarle 2 puntos de vida

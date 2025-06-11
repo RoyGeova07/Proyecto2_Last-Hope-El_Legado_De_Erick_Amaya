@@ -25,6 +25,9 @@ Zombie::Zombie(Tipo tipo, QWidget* parent)
         SetAnimacion(":/imagenes/assets/Zombies/Idle_Z3.png", 5);
         break;
     }
+
+    inicializarBarraVida();
+
 }
 
 void Zombie::SetAnimacion(const QString& ruta, int cantidadFrames)
@@ -133,7 +136,11 @@ void Zombie::perseguirJugador(QWidget *objetivo)
     }
 
 }
-
+//Como funciona esta funcion?
+//la clase personaje hereda de un Qlabel y QLabel hereda de QWidget
+//Entonces se hace esto: zombie->perseguirJugador(jugador);
+//es valido porque jugador (de tipo personaje*) tambien es un QWidget* gracias a la herencia.
+//Qt permite tratar cualquier subclase como su clase base.
 void Zombie::moverHaciaJugador()
 {
 
@@ -172,6 +179,7 @@ void Zombie::moverHaciaJugador()
     }
 
     this->move(x()+dx,y()+dy);
+    actualizarBarraVida();
 
 }
 
@@ -265,5 +273,53 @@ void Zombie::realizarAtaque()
         SetAnimacionMovimientoZombie();
 
     });
+
+}
+
+void Zombie::inicializarBarraVida()
+{
+
+    barraFondo=new QLabel(this->parentWidget());
+    barraFondo->setStyleSheet("background-color: gray; border: 1px solid black");
+    barraFondo->setFixedSize(50,6);
+
+    barraVida=new QLabel(barraFondo);
+    barraVida->setStyleSheet("background-color: red");
+    barraVida->setGeometry(0,0,50,6);
+
+    barraFondo->show();
+    barraVida->show();
+
+}
+
+void Zombie::actualizarBarraVida()
+{
+
+    int ancho=(static_cast<float>(vida)/vidaMaxima)*barraFondo->width();
+    barraVida->setFixedWidth(ancho);
+
+    //posiciona la barra de encima del zombie
+    QPoint posZombie=this->pos();
+    barraFondo->move(posZombie.x()+(width()-barraFondo->width())/2,posZombie.y()-15);
+    barraFondo->raise();
+
+}
+
+void Zombie::recibirDanio(int cantidad)
+{
+
+    vida-=cantidad;
+    if(vida<0)vida=0;
+
+    actualizarBarraVida();
+
+    if(vida==0)
+    {
+
+        this->hide();
+        barraFondo->hide();
+        //AQUI PONER UNA SEÑAL PARA CUANDO EL ZOMBIE RECIBA EL DANIO PONER EL SPRITE DE QUE LO ESTAN HIRIENDO
+
+    }
 
 }
