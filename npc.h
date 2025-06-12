@@ -14,7 +14,7 @@ class NPC : public QLabel
 {
     Q_OBJECT
 public:
-    enum class Tipo { NPC1, NPC2, NPC3 };
+    enum class Tipo { NPC1, NPC2, NPC3, NPC4, NPC5, NPC6 };
 
     NPC(Tipo tipo, QWidget* parent = nullptr);
     void SetAnimacion(const QString& ruta, int cantidadFrames);

@@ -41,10 +41,27 @@ Caminos::Caminos(personaje*jugadorExistente, QWidget* parent) : AtributosPersona
     QList<NPC*> npcsRuta1;
     NPC* npcRuta1 = new NPC(NPC::Tipo::NPC1, this);
     npcRuta1->move(400, 300);  // Posición en Ruta 1
-    //npcRuta1->hide();  // Inicialmente oculto
     npcsRuta1.append(npcRuta1);
     npcRuta1->setInventario(Inventario::getInstance());
     npcsPorRuta.insert(1, npcsRuta1);
+
+    // Crear NPC en Ruta 2
+    QList<NPC*> npcsRuta2;
+    NPC* npcRuta2 = new NPC(NPC::Tipo::NPC4, this);
+    npcRuta2->move(210, 45);  // Posición en Ruta 1
+    npcRuta2->hide();
+    npcsRuta2.append(npcRuta2);
+    npcRuta2->setInventario(Inventario::getInstance());
+    npcsPorRuta.insert(2, npcsRuta2);
+
+    // Crear NPC en Ruta 4
+    QList<NPC*> npcsRuta4;
+    NPC* npcRuta4 = new NPC(NPC::Tipo::NPC3, this);
+    npcRuta4->move(400, 300);
+    npcRuta4->hide();  // Inicialmente oculto
+    npcsRuta4.append(npcRuta4);
+    npcRuta4->setInventario(Inventario::getInstance());
+    npcsPorRuta.insert(4, npcsRuta4);
 
   }
 //NO BORRAR ESTO ===========================================================

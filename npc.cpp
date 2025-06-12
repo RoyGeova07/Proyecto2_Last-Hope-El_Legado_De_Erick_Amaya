@@ -22,21 +22,41 @@ NPC::NPC(Tipo tipo, QWidget* parent)
     case Tipo::NPC1:
         SetAnimacion(":/imagenes/assets/NPC/Hablar1_NPC1.png", 7);
         dialogos = {
-            "¡Bienvenido, Erick!",
-            "Ten 3 de Vida"
+            "Oye, perdí mis llaves en la Ciudad en Ruinas. ¿Me ayudas a buscarlas?",
+            "Ten cuidado, esta llena de zombies..."
         };
         break;
     case Tipo::NPC2:
         SetAnimacion(":/imagenes/assets/NPC/Hablar1_NPC2.png", 4);
         dialogos = {
-            "OOH vaya miren que sorpresa si es el mismisimo Militar Erick. Te habias perdido, se que fue dificil perder a tus amigos, pero no es hora de lamentarse.",
-            "Es hora de eliminar a estos zombies para poder conseguir ese antitodoto y curar a todos.",
-            "Oye escuche rumores que tambien quieres con ese antitodoto en vez de recuperar la humanidad es controlar a los zombies.",
-            "Espero tomes el camino correcto mi amigo, aqui te doy 2 botiquines usalos bien tu batalla."
+            "¡OOH, vaya! Miren que sorpresa... si no es el mismísimo militar Erick. Te habías perdido, sé que fue difícil perder a tus amigos, pero no es hora de lamentarse.",
+            "Es hora de eliminar a estos zombies para poder conseguir ese antídoto y curar a todos.",
+            "Oye, escuché rumores que también quieres ese antídoto, pero en lugar de recuperar a la humanidad, quieres controlar a los zombies.",
+            "Espero tomes el camino correcto mi amigo, aquí te doy 2 botiquines, úsalos bien en tu batalla."
         };
         break;
     case Tipo::NPC3:
         SetAnimacion(":/imagenes/assets/NPC/Hablar1_NPC3.png", 6);
+        dialogos = {
+            "Ten cuidado con los enemigos",
+            "El gimnasio tiene municiones!!"
+        };
+        break;
+    case Tipo::NPC4:
+    SetAnimacion(":/imagenes/assets/NPC/Idle_NPC4.png", 6);
+    dialogos = {
+        "Ayudame! Secuestraron a mi perro en el mall!!"
+    };
+    break;
+    case Tipo::NPC5:
+        SetAnimacion(":/imagenes/assets/NPC/Idle_NPC5.png", 6);
+        dialogos = {
+            "Ten cuidado con los enemigos",
+            "Callejón C tiene municiones!!"
+        };
+        break;
+    case Tipo::NPC6:
+        SetAnimacion(":/imagenes/assets/NPC/Idle_NPC6.png", 6);
         dialogos = {
             "Ten cuidado con los enemigos",
             "Callejón C tiene municiones!!"
@@ -90,7 +110,22 @@ void NPC::mostrarDialogo(DialogoNPC* dialogoUI)
     //aqui si YA leyo completo, mostrar directamente el mensaje final
     if (yaHabloCompleto)
     {
-        QString textoFinal = "No tengo más botiquines, sigue el camino para encontrar más.";
+        QString textoFinal;
+        switch(tipo) {
+        case Tipo::NPC1:
+            textoFinal = "...Lo encontraste?";
+            break;
+        case Tipo::NPC2:
+            textoFinal = "No tengo más botiquines, sigue el camino para encontrar más.";
+            break;
+        case Tipo::NPC4:
+            textoFinal = "¿Recuperaste a mi perro?";
+            break;
+        default:
+            textoFinal = "No tengo nada más que decirte...";
+            break;
+        }
+
         dialogoActualUI->mostrarDialogo(textoFinal, obtenerImagenNPC(), {});
 
         QTimer::singleShot(2000, dialogoActualUI, [this]() {
@@ -104,6 +139,7 @@ void NPC::mostrarDialogo(DialogoNPC* dialogoUI)
 
         return; // salir
     }
+
 
     //aqui si es la primera vez, mostrar los dialogos normales
     dialogoActual = dialogos.at(indiceDialogo);
@@ -210,7 +246,7 @@ QPixmap NPC::obtenerImagenNPC() const
     switch(tipo) {
     case Tipo::NPC1:
         imagenCompleta = QPixmap(":/imagenes/assets/NPC/Hablar1_NPC1.png");
-        areaCara = QRect(30, 10, 70, 70); // x, y, width, height
+        areaCara = QRect(26, 40, 70, 70); // x, y, width, height
         break;
     case Tipo::NPC2:
         imagenCompleta = QPixmap(":/imagenes/assets/NPC/Hablar1_NPC2.png");
@@ -218,7 +254,19 @@ QPixmap NPC::obtenerImagenNPC() const
         break;
     case Tipo::NPC3:
         imagenCompleta = QPixmap(":/imagenes/assets/NPC/Hablar1_NPC3.png");
-        areaCara = QRect(35, 15, 60, 60);
+        areaCara = QRect(26, 40, 60, 60);
+        break;
+    case Tipo::NPC4:
+        imagenCompleta = QPixmap(":/imagenes/assets/NPC/Idle_NPC4.png");
+        areaCara = QRect(26, 40, 60, 60);
+        break;
+    case Tipo::NPC5:
+        imagenCompleta = QPixmap(":/imagenes/assets/NPC/Idle_NPC5.png");
+        areaCara = QRect(26, 40, 60, 60);
+        break;
+    case Tipo::NPC6:
+        imagenCompleta = QPixmap(":/imagenes/assets/NPC/Idle_NPC6.png");
+        areaCara = QRect(26, 40, 60, 60);
         break;
     default:
         return QPixmap();
@@ -232,11 +280,9 @@ QStringList NPC::obtenerOpcionesDialogo() const
 {
     switch(tipo) {
     case Tipo::NPC1:
-        return {"Entendido", "¿Donde estan las armas?", "Gracias", "Adios"};
+        return {"Entendido", "Adios"};
     case Tipo::NPC2:
         return {"Entendido!", "Adios"};
-    case Tipo::NPC3:
-        return {"Gracias", "¿Donde hay municiones?", "Adios"};
     default:
         return {"Entendido", "Adios"};
     }
