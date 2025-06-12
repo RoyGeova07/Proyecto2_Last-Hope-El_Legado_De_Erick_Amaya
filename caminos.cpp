@@ -7,6 +7,8 @@
 #include"Ciudad.h"
 #include "gasolinera.h"
 #include "mall.h"
+#include "gimnasio.h"
+#include <QPainter>
 
 
 Caminos::Caminos(personaje*jugadorExistente, QWidget* parent) : AtributosPersonaje(jugadorExistente,parent), rutaActual(1)
@@ -25,17 +27,25 @@ Caminos::Caminos(personaje*jugadorExistente, QWidget* parent) : AtributosPersona
 
     jugador->move(42,190);
 
-    labelPresionarT = new QLabel("¿Quieres entrar a la ciudad en ruinas?\nA. Sí    B. Ignorar",this);
-    labelPresionarT->setStyleSheet("background: rgba(0,0,0,180); color: white; padding: 5px; border-radius: 5px;");
-    labelPresionarT->setAlignment(Qt::AlignCenter);
-    labelPresionarT->setWordWrap(true);
-    labelPresionarT->setFixedSize(300,80);
-    labelPresionarT->hide(); // Al inicio oculto
+    labelPresionarT = new QLabel(this);
+    labelPresionarT->setText("¿Quieres entrar al nivel?\nA. Sí    B. Ignorar");
 
-    // dialogo NPC
-    dialogoNPC = new DialogoNPC(this);
-    dialogoNPC->hide();
+    QPixmap letreroPixmap("C:/Users/moiza/Documents/QT/Proyecto2_Last-Hope-El_Legado_De_Erick_Amaya/assets/mapas/LetreroEntrar.png");
+    if (!letreroPixmap.isNull()) {
+        QPixmap letreroEscalado = letreroPixmap.scaled(300, 80, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
 
+        QPainter painter(&letreroEscalado);
+        painter.setPen(QPen(Qt::white));
+        painter.setFont(QFont("Arial", 10, QFont::Bold));
+        painter.drawText(letreroEscalado.rect(), Qt::AlignCenter | Qt::TextWordWrap,
+                         "¿Quieres entrar al nivel?\nA. Sí    B. Ignorar");
+
+        labelPresionarT->setPixmap(letreroEscalado);
+        labelPresionarT->setText("");
+    }
+
+    labelPresionarT->setFixedSize(300, 80);
+    labelPresionarT->hide();
     // Crear NPC en Ruta 1
     QList<NPC*> npcsRuta1;
     NPC* npcRuta1 = new NPC(NPC::Tipo::NPC1, this);
