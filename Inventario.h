@@ -25,6 +25,7 @@ class Inventario
 
 private:
 
+    int balas = 60;
     NodoInventario* raiz;
 
     //aqui funciones auxiliares recursivos
@@ -50,6 +51,9 @@ public:
     void eliminarObjeto(const QString& nombre);
     void buscarObjeto(const QString& nombre);
     void listarInventario();
+    void setBalas(int cantidad);
+    int getBalas() const;
+
 
     NodoInventario* obtenerRaiz() { return raiz; }
 

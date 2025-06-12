@@ -151,6 +151,14 @@ void Inventario::listarInventario()
     qDebug() << "======================";
 }
 
+int Inventario::getBalas() const {
+    return balas;
+}
+
+void Inventario::setBalas(int cantidad) {
+    balas = cantidad;
+}
+
 
 
 void Inventario::listarInOrden(NodoInventario* nodo)

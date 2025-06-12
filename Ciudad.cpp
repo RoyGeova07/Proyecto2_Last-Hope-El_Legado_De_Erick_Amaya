@@ -6,6 +6,7 @@
 #include"lobby.h"
 #include"inicio.h"
 #include"caminos.h"
+#include "Inventario.h"
 
 Ciudad::Ciudad(QWidget* parent) : AtributosPersonaje(parent) {
     this->resize(1280, 720);
@@ -13,6 +14,7 @@ Ciudad::Ciudad(QWidget* parent) : AtributosPersonaje(parent) {
 
     configurarEscena();
     inicializarJugador();
+    jugador->setMuniciones(Inventario::getInstance()->getBalas());
     jugador->move(16,538);
     configurarObstaculos();
 
@@ -203,6 +205,8 @@ void Ciudad::keyPressEvent(QKeyEvent* event)
 
                 QTimer::singleShot(3000, this, [=]() {
                     mostrarNotificacion("🏃 Volviendo al camino...");
+
+                     Inventario::getInstance()->setBalas(jugador->getMuniciones());
 
                     Caminos* c = new Caminos(jugador);
                     c->cambiarRuta(2); // ← Ciudad termina en Ruta 2

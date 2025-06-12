@@ -5,6 +5,7 @@
 #include <QMessageBox>
 #include "caminos.h"
 #include "inicio.h"
+#include "Inventario.h"
 
 Gasolinera::Gasolinera(QWidget* parent) : AtributosPersonaje(parent) {
     this->resize(1280, 720);
@@ -12,6 +13,7 @@ Gasolinera::Gasolinera(QWidget* parent) : AtributosPersonaje(parent) {
 
     configurarEscena();
     inicializarJugador();
+    jugador->setMuniciones(Inventario::getInstance()->getBalas());
     jugador->move(16, 538);
     configurarObstaculos();
 
@@ -172,6 +174,7 @@ void Gasolinera::keyPressEvent(QKeyEvent* event) {
                 QTimer::singleShot(3000, this, [=]() {
                     mostrarNotificacion("⛽ Nivel completado...");
                     Caminos* c = new Caminos(jugador);
+                    Inventario::getInstance()->setBalas(jugador->getMuniciones());
                     c->cambiarRuta(3); // ← Gasolinera termina en Ruta 3
                     c->posicionarJugadorEnCalleRuta3();
                     c->show();
