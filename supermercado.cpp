@@ -1,9 +1,9 @@
-#include "gimnasio.h"
+#include "supermercado.h"
 #include <QPixmap>
 #include <QLabel>
 #include <QDebug>
 
-Gimnasio::Gimnasio(QWidget* parent) : AtributosPersonaje(parent) {
+supermercado::supermercado(QWidget* parent) : AtributosPersonaje(parent) {
     this->resize(1280, 720);
     this->setWindowTitle("Gasolinera - Last hope");
 
@@ -31,10 +31,10 @@ Gimnasio::Gimnasio(QWidget* parent) : AtributosPersonaje(parent) {
     zombies.append(z3); //aqui se registra en el vector global
 }
 
-void Gimnasio::configurarEscena() {
+void supermercado::configurarEscena() {
     QPixmap fondoPixmap(":/imagenes/assets/mapas/Gimnasio.jpeg");
     if (fondoPixmap.isNull()) {
-        qDebug() << "Error al cargar imagen desde assets/mapas/gym.jpeg";
+        qDebug() << "Error al cargar imagen desde assets/mapas/War2.png";
     } else {
         QLabel* fondo = new QLabel(this);
         fondo->setPixmap(fondoPixmap.scaled(this->size()));
@@ -42,7 +42,7 @@ void Gimnasio::configurarEscena() {
     }
 }
 
-void Gimnasio::configurarObstaculos() {
+void supermercado::configurarObstaculos() {
     // OBSTÁCULOS FIJOS
     obstaculos.append(QRect(3, 2, 1334, 470));     // Muro superior
     obstaculos.append(QRect(5, 669, 1273, 47));    // Piso inferior

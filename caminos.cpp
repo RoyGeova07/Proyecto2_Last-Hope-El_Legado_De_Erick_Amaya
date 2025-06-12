@@ -8,6 +8,8 @@
 #include "gasolinera.h"
 #include "mall.h"
 #include "gimnasio.h"
+#include "supermercado.h"
+#include "laboratorio.h"
 
 
 Caminos::Caminos(personaje*jugadorExistente, QWidget* parent) : AtributosPersonaje(jugadorExistente,parent), rutaActual(1)
@@ -83,6 +85,8 @@ QRect zonaEntradaCiudad(236, 422, 131, 127);
 QRect zonaEntradaGasolinera(450, 350, 131, 127);
 QRect zonaEntradaMall(450, 400, 131, 40);
 QRect zonaEntradaGym(450, 500, 131, 40);
+QRect zonaEntradaSuper(700, 400, 131, 100);
+QRect zonaEntradaLab(500, 400, 131, 40);
 
 void Caminos::configurarEscena()
 {
@@ -649,6 +653,41 @@ void Caminos::onMovimientoUpdate()
 
     }
 
+    if (rutaActual==9){
+        if(zonaEntradaSuper.intersects(rectJugador))
+        {
+            if(!labelPresionarT->isVisible())
+            {
+                labelPresionarT->move(450, 422);
+                labelPresionarT->show();
+                labelPresionarT->raise();
+            }
+        }else{
+
+            //si sale de la zona ocultar el label
+            labelPresionarT->hide();
+
+        }
+    }
+
+    if (rutaActual==10){
+        if(zonaEntradaLab.intersects(rectJugador))
+        {
+            if(!labelPresionarT->isVisible())
+            {
+                labelPresionarT->move(450, 422);
+                labelPresionarT->show();
+                labelPresionarT->raise();
+            }
+        }else{
+
+            //si sale de la zona ocultar el label
+            labelPresionarT->hide();
+
+        }
+    }
+
+
     // Volver a RUTA_2 desde RUTA_6
     if(rutaActual==6&&zonaCambioRuta6_a_Ruta2.intersects(rectJugador))
     {
@@ -1028,6 +1067,36 @@ void Caminos::keyPressEvent(QKeyEvent *event)
 
         // Crear la ciudad y mostrarla
         Mall* mallWindow = new Mall();
+        mallWindow->show();
+
+        // Cerrar esta ventana
+        this->close();
+
+        return; // salir
+    }
+
+    //aqui accion con T para entrar al Super (solo si estamos en ruta 9)
+    if (rutaActual == 9 && event->key() ==Qt::Key_A&&labelPresionarT->isVisible())
+    {
+        qDebug() << "Entrando a la Ciudad...";
+
+        // Crear la ciudad y mostrarla
+        supermercado* mallWindow = new supermercado();
+        mallWindow->show();
+
+        // Cerrar esta ventana
+        this->close();
+
+        return; // salir
+    }
+
+    //aqui accion con T para entrar al lab (solo si estamos en ruta 10)
+    if (rutaActual == 10 && event->key() ==Qt::Key_A&&labelPresionarT->isVisible())
+    {
+        qDebug() << "Entrando a la Ciudad...";
+
+        // Crear la ciudad y mostrarla
+        laboratorio* mallWindow = new laboratorio();
         mallWindow->show();
 
         // Cerrar esta ventana

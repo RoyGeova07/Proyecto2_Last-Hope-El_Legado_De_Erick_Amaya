@@ -19,6 +19,7 @@ SOURCES += \
     grafo.cpp \
     inicio.cpp \
     inventariowidget.cpp \
+    laboratorio.cpp \
     lobby.cpp \
     main.cpp \
     mainwindow.cpp \
@@ -26,6 +27,7 @@ SOURCES += \
     mapa.cpp \
     npc.cpp \
     personaje.cpp \
+    supermercado.cpp \
     zombie.cpp
 
 HEADERS += \
@@ -41,12 +43,14 @@ HEADERS += \
     grafo.h \
     inicio.h \
     inventariowidget.h \
+    laboratorio.h \
     lobby.h \
     mainwindow.h \
     mall.h \
     mapa.h \
     npc.h \
     personaje.h \
+    supermercado.h \
     zombie.h
 
 FORMS += \

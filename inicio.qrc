@@ -75,5 +75,7 @@
         <file>assets/mapas/RUTA_8.png</file>
         <file>assets/mapas/RUTA_9.png</file>
         <file>assets/mapas/RUTA_10.png</file>
+        <file>assets/gym.jpeg</file>
+        <file>assets/lab.jpeg</file>
     </qresource>
 </RCC>
