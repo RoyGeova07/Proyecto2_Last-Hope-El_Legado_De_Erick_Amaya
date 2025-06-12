@@ -204,7 +204,9 @@ void Ciudad::keyPressEvent(QKeyEvent* event)
                 QTimer::singleShot(3000, this, [=]() {
                     mostrarNotificacion("🏃 Volviendo al camino...");
 
-                    Caminos*c=new Caminos(jugador);
+                    Caminos* c = new Caminos(jugador);
+                    c->cambiarRuta(2); // ← Ciudad termina en Ruta 2
+                    c->posicionarJugadorEnCalleRuta2();
                     c->show();
                     this->close();
 

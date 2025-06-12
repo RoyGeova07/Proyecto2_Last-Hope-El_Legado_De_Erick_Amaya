@@ -7,7 +7,6 @@
 #include"Ciudad.h"
 #include "gasolinera.h"
 #include "mall.h"
-#include "gimnasio.h"
 #include <QPainter>
 
 
@@ -58,8 +57,8 @@ Caminos::Caminos(personaje*jugadorExistente, QWidget* parent) : AtributosPersona
   }
 //NO BORRAR ESTO ===========================================================
 //son las coordenadas exactas para cambiar ENTRE LAS RUTAASSSSSZZZZ
-QRect zonaCambioRuta3(940,40,180,130); // X=940 a 1120, Y=40 a 170
-QRect zonaCambioRuta2(0,40,100,200);
+QRect zonaCambioRuta3(940, 40, 200, 300);
+QRect zonaCambioRuta2(0, 40, 100, 300);
 QRect zonaCambioRuta4(644,574,127,127);
 QRect zonaCambioRuta5(982,486,127,127);
 QRect zonaCambioRuta6(986,422,127,127);
@@ -171,7 +170,7 @@ void Caminos::posicionarJugadorEnCalleRuta2()
 void Caminos::posicionarJugadorEnCalleRuta3()
 {
 
-    int posX=35;
+    int posX=200;
     int posY=260;
 
     jugador->move(posX,posY);
