@@ -13,7 +13,10 @@ public:
     enum class Tipo {
         Z1,
         Z2,
-        Z3
+        Z3,
+        Z4,
+        Z5,
+        Z6
     };
 
     void perseguirJugador(QWidget*objetivo);

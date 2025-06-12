@@ -24,6 +24,20 @@ Zombie::Zombie(Tipo tipo, QWidget* parent)
     case Tipo::Z3:
         SetAnimacion(":/imagenes/assets/Zombies/Idle_Z3.png", 5,true);
         break;
+
+    case Tipo::Z4:
+        SetAnimacion(":/imagenes/assets/Zombies/Idle_Z4.png",6,true);
+        break;
+
+    case Tipo::Z5:
+        SetAnimacion(":/imagenes/assets/Zombies/Idle_Z5.png", 6,true);
+        break;
+
+    case Tipo::Z6:
+        SetAnimacion(":/imagenes/assets/Zombies/Idle_Z6.png", 6,true);
+        break;
+
+
     }
 
     inicializarBarraVida();
@@ -233,6 +247,25 @@ void Zombie::SetAnimacionMovimientoZombie()
         frames=7;
         break;
 
+    case Tipo::Z4:
+
+        ruta=":/imagenes/assets/Zombies/Walk_Z4.png";
+        frames=10;
+        break;
+
+    case Tipo::Z5:
+
+        ruta=":/imagenes/assets/Zombies/Walk_Z5.png";
+        frames=10;
+        break;
+
+    case Tipo::Z6:
+
+        ruta=":/imagenes/assets/Zombies/Walk_Z6.png";
+        frames=10;
+        break;
+
+
     }
 
     SetAnimacion(ruta,frames,true);
@@ -277,8 +310,23 @@ void Zombie::realizarAtaque()
         rutaAtaque=ataqueRandom==1?":/imagenes/assets/Zombies/Attack_1_Z3.png":":/imagenes/assets/Zombies/Attack_2_Z3.png";
         break;
 
-    }
+    case Tipo::Z4:
+        rutaAtaque = ":/imagenes/assets/Zombies/Attack_Z4.png";
+        cantidadFrames = 5;
+        break;
 
+    case Tipo::Z5:
+        rutaAtaque = ":/imagenes/assets/Zombies/Attack_Z5.png";
+        cantidadFrames = 5;
+        break;
+
+    case Tipo::Z6:
+        rutaAtaque = ":/imagenes/assets/Zombies/Attack_Z6.png";
+        cantidadFrames = 4;
+        break;
+
+
+    }
     SetAnimacion(rutaAtaque,cantidadFrames,true);
 
     //emitir danio solo una vez por ataque
@@ -354,6 +402,9 @@ void Zombie::recibirDanio(int cantidad)
             case Tipo::Z1: rutaMuerte=":/imagenes/assets/Zombies/Dead_Z1.png";break;
             case Tipo::Z2: rutaMuerte=":/imagenes/assets/Zombies/Dead_Z2.png";break;
             case Tipo::Z3: rutaMuerte=":/imagenes/assets/Zombies/Dead_Z3.png";break;
+            case Tipo::Z4: rutaMuerte=":/imagenes/assets/Zombies/Dead_Z4.png";break;
+            case Tipo::Z5: rutaMuerte=":/imagenes/assets/Zombies/Dead_Z5.png";break;
+            case Tipo::Z6: rutaMuerte=":/imagenes/assets/Zombies/Dead_Z6.png";break;
 
         }
 
@@ -399,6 +450,25 @@ void Zombie::setAnimacionHerido()
         ruta=":/imagenes/assets/Zombies/Hurt_Z3.png";
         frames=3;
         break;
+
+    case Tipo::Z4:
+
+        ruta=":/imagenes/assets/Zombies/Hurt_Z4.png";
+        frames=4;
+        break;
+
+    case Tipo::Z5:
+
+        ruta=":/imagenes/assets/Zombies/Hurt_Z5.png";
+        frames=4;
+        break;
+
+    case Tipo::Z6:
+
+        ruta=":/imagenes/assets/Zombies/Hurt_Z6.png";
+        frames=4;
+        break;
+
 
     }
 

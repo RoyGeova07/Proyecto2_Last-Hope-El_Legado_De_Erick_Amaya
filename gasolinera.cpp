@@ -29,6 +29,22 @@ Gasolinera::Gasolinera(QWidget* parent) : AtributosPersonaje(parent) {
     z3->move(900,500);
     z3->show();
     zombies.append(z3); //aqui se registra en el vector global
+
+    Zombie* z4 = new Zombie(Zombie::Tipo::Z4, this);
+    z3->move(1000,500);
+    z3->show();
+    zombies.append(z3); //aqui se registra en el vector global
+
+    Zombie* z5 = new Zombie(Zombie::Tipo::Z5, this);
+    z3->move(1100,500);
+    z3->show();
+    zombies.append(z3); //aqui se registra en el vector global
+
+    Zombie* z6 = new Zombie(Zombie::Tipo::Z6, this);
+    z3->move(1200,500);
+    z3->show();
+    zombies.append(z3); //aqui se registra en el vector global
+
 }
 
 void Gasolinera::configurarEscena() {

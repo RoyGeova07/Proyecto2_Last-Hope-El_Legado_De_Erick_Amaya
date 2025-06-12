@@ -124,8 +124,6 @@ void Ciudad::onMovimientoUpdate() {
     if (jugador)
     {
 
-        qDebug()<<"📍 Jugador en coordenadas: (" << jugador->x() << "," << jugador->y() << ")";
-
         //aqui verifica si el jugador esta cerca del cofre distancia<80
         int distancia=std::abs(jugador->x()-1142);
         if (jugador->x() >= 1104 && jugador->x() <= 1144 && jugador->y() == 538 && !cofreAbiertoYa)
