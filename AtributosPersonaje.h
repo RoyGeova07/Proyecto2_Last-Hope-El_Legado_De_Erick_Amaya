@@ -2,12 +2,14 @@
 #define ATRIBUTOSPERSONAJE_H
 
 #include <QWidget>
+#include <QTabWidget>
 #include <QTimer>
 #include <QKeyEvent>
 #include <QRect>
 #include "personaje.h"
 #include"inventario.h"
 #include"inventariowidget.h"
+#include "mapa.h"
 
 class AtributosPersonaje : public QWidget {
     Q_OBJECT
@@ -29,7 +31,13 @@ protected:
     bool puedeDisparar=false;
     QTimer*disparoTimer=nullptr;//para cancelar disparo si se suelta Z
 
+
+    // Widgets de interfaz
+    QTabWidget* tabWidget;
+    Mapa* mapaWidget;
+    QWidget* mapaTab;
     InventarioWidget* inventarioWidget;
+    void inicializarTabWidget();
 
     //aqui Metodos virtuales
     virtual void configurarEscena() = 0;

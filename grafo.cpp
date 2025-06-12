@@ -5,6 +5,7 @@
 #include <unordered_map>
 #include <queue>
 
+
 Grafo::Grafo() {}
 
 void Grafo::agregarNodo(const QString& nombre, const QPointF& posicion) {
@@ -117,4 +118,13 @@ QList<QString> Grafo::dijkstra(const QString& origen, const QString& destino) {
     }
 
     return ruta;
+}
+
+QRectF Grafo::obtenerRectanguloDelimitar() const {
+    QRectF rect;
+    for (const QString& nodo : obtenerNodos()) {
+        QPointF pos = obtenerPosicionNodo(nodo);
+        rect |= QRectF(pos - QPointF(30, 30), QSizeF(60, 60));
+    }
+    return rect;
 }
