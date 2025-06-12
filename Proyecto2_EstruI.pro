@@ -11,6 +11,7 @@ CONFIG += c++17
 SOURCES += \
     AtributosPersonaje.cpp \
     Ciudad.cpp \
+    Gimnasio.cpp \
     Inventario.cpp \
     bala.cpp \
     caminos.cpp \
@@ -19,6 +20,7 @@ SOURCES += \
     grafo.cpp \
     inicio.cpp \
     inventariowidget.cpp \
+    laboratorio.cpp \
     lobby.cpp \
     main.cpp \
     mainwindow.cpp \
@@ -26,6 +28,7 @@ SOURCES += \
     mapa.cpp \
     npc.cpp \
     personaje.cpp \
+    supermercado.cpp \
     zombie.cpp
 
 HEADERS += \
@@ -33,6 +36,7 @@ HEADERS += \
     Ciudad.h \
     Cola.h \
     Elemento.h \
+    Gimnasio.h \
     Inventario.h \
     bala.h \
     caminos.h \
@@ -41,12 +45,14 @@ HEADERS += \
     grafo.h \
     inicio.h \
     inventariowidget.h \
+    laboratorio.h \
     lobby.h \
     mainwindow.h \
     mall.h \
     mapa.h \
     npc.h \
     personaje.h \
+    supermercado.h \
     zombie.h
 
 FORMS += \

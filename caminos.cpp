@@ -7,7 +7,10 @@
 #include"Ciudad.h"
 #include "gasolinera.h"
 #include "mall.h"
-#include <QPainter>
+#include "gimnasio.h"
+#include<QPainter>
+#include"supermercado.h"
+#include"laboratorio.h"
 
 
 Caminos::Caminos(personaje*jugadorExistente, QWidget* parent) : AtributosPersonaje(jugadorExistente,parent), rutaActual(1)
@@ -29,7 +32,7 @@ Caminos::Caminos(personaje*jugadorExistente, QWidget* parent) : AtributosPersona
     labelPresionarT = new QLabel(this);
     labelPresionarT->setText("¿Quieres entrar al nivel?\nA. Sí    B. Ignorar");
 
-    QPixmap letreroPixmap("C:/Users/moiza/Documents/QT/Proyecto2_Last-Hope-El_Legado_De_Erick_Amaya/assets/mapas/LetreroEntrar.png");
+    QPixmap letreroPixmap(":/imagenes/assets/mapas/LetreroEntrar.png");
     if (!letreroPixmap.isNull()) {
         QPixmap letreroEscalado = letreroPixmap.scaled(300, 80, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
 
@@ -41,20 +44,39 @@ Caminos::Caminos(personaje*jugadorExistente, QWidget* parent) : AtributosPersona
 
         labelPresionarT->setPixmap(letreroEscalado);
         labelPresionarT->setText("");
+        labelPresionarT->hide();
     }
+    // dialogo NPC
+    dialogoNPC = new DialogoNPC(this);
+    dialogoNPC->hide();
 
-    labelPresionarT->setFixedSize(300, 80);
-    labelPresionarT->hide();
     // Crear NPC en Ruta 1
     QList<NPC*> npcsRuta1;
     NPC* npcRuta1 = new NPC(NPC::Tipo::NPC1, this);
     npcRuta1->move(400, 300);  // Posición en Ruta 1
-    //npcRuta1->hide();  // Inicialmente oculto
     npcsRuta1.append(npcRuta1);
     npcRuta1->setInventario(Inventario::getInstance());
     npcsPorRuta.insert(1, npcsRuta1);
 
-  }
+    // Crear NPC en Ruta 2
+    QList<NPC*> npcsRuta2;
+    NPC* npcRuta2 = new NPC(NPC::Tipo::NPC4, this);
+    npcRuta2->move(210, 45);  // Posición en Ruta 1
+    npcRuta2->hide();
+    npcsRuta2.append(npcRuta2);
+    npcRuta2->setInventario(Inventario::getInstance());
+    npcsPorRuta.insert(2, npcsRuta2);
+
+    // Crear NPC en Ruta 4
+    QList<NPC*> npcsRuta4;
+    NPC* npcRuta4 = new NPC(NPC::Tipo::NPC3, this);
+    npcRuta4->move(400, 300);
+    npcRuta4->hide();  // Inicialmente oculto
+    npcsRuta4.append(npcRuta4);
+    npcRuta4->setInventario(Inventario::getInstance());
+    npcsPorRuta.insert(4, npcsRuta4);
+
+}
 //NO BORRAR ESTO ===========================================================
 //son las coordenadas exactas para cambiar ENTRE LAS RUTAASSSSSZZZZ
 QRect zonaCambioRuta3(940, 40, 200, 300);
@@ -73,6 +95,9 @@ QRect zonaCambioRuta6_a_Desde_Ruta5(454,-66,127,127);
 QRect zonaEntradaCiudad(236, 422, 131, 127);
 QRect zonaEntradaGasolinera(450, 350, 131, 127);
 QRect zonaEntradaMall(450, 400, 131, 40);
+QRect zonaEntradaGym(450, 500, 131, 40);
+QRect zonaEntradaSuper(700, 400, 131, 100);
+QRect zonaEntradaLab(500, 400, 131, 40);
 
 void Caminos::configurarEscena()
 {
@@ -334,7 +359,23 @@ void Caminos::cambiarRuta(int nuevaRuta)
 
         rutaImagen=":/imagenes/assets/mapas/RUTA_6.jpg";
 
+    }else if(rutaActual==7){
+
+        rutaImagen=":/imagenes/assets/mapas/RUTA_7.png";
+    }else if(rutaActual==8){
+
+        rutaImagen=":/imagenes/assets/mapas/RUTA_8.png";
+
+    }else if(rutaActual==9){
+
+        rutaImagen=":/imagenes/assets/mapas/RUTA_9.png";
+
+    }else if(rutaActual==10){
+
+        rutaImagen=":/imagenes/assets/mapas/RUTA_10.png";
+
     }
+
 
     configurarObstaculos();
 
@@ -533,6 +574,21 @@ void Caminos::onMovimientoUpdate()
         << " RIGHT =" << rectJugador.right()
         << " BOTTOM =" << rectJugador.bottom();
 
+        if(zonaEntradaGym.intersects(rectJugador))
+        {
+            if(!labelPresionarT->isVisible())
+            {
+                labelPresionarT->move(450, 422);
+                labelPresionarT->show();
+                labelPresionarT->raise();
+            }
+        }else{
+
+            //si sale de la zona ocultar el label
+            labelPresionarT->hide();
+
+        }
+
         //Cambio a RUTA_6 desde RUTA_5
         if(zonaCambioRuta6_a_Desde_Ruta5.intersects(rectJugador))
         {
@@ -604,6 +660,41 @@ void Caminos::onMovimientoUpdate()
 
 
     }
+
+    if (rutaActual==9){
+        if(zonaEntradaSuper.intersects(rectJugador))
+        {
+            if(!labelPresionarT->isVisible())
+            {
+                labelPresionarT->move(450, 422);
+                labelPresionarT->show();
+                labelPresionarT->raise();
+            }
+        }else{
+
+            //si sale de la zona ocultar el label
+            labelPresionarT->hide();
+
+        }
+    }
+
+    if (rutaActual==10){
+        if(zonaEntradaLab.intersects(rectJugador))
+        {
+            if(!labelPresionarT->isVisible())
+            {
+                labelPresionarT->move(450, 422);
+                labelPresionarT->show();
+                labelPresionarT->raise();
+            }
+        }else{
+
+            //si sale de la zona ocultar el label
+            labelPresionarT->hide();
+
+        }
+    }
+
 
     // Volver a RUTA_2 desde RUTA_6
     if(rutaActual==6&&zonaCambioRuta6_a_Ruta2.intersects(rectJugador))
@@ -712,9 +803,187 @@ void Caminos::onMovimientoUpdate()
             labelPresionarT->hide();
 
         }
-
-
     }
+
+    // Cambio a RUTA_7 desde RUTA_3
+    if(rutaActual == 3 && rectJugador.intersects(QRect(830, 250, 100, 500)))
+    {
+        obstaculos.clear();
+
+        cambiarRuta(7);
+        configurarObstaculos();
+
+        jugador->move(230,150);
+
+        qDebug()<<"Cambiando a RUTA_7...";
+
+        return;
+    }
+
+    // Cambio a RUTA_3 desde RUTA_7
+    if(rutaActual == 7 && rectJugador.intersects(QRect(20, 250, 70, 300)))
+    {
+        obstaculos.clear();
+
+        cambiarRuta(3);
+        configurarObstaculos();
+
+        jugador->move(700,250);
+
+        qDebug()<<"Cambiando a RUTA_3...";
+
+        return;
+    }
+    // Cambio a RUTA_9 desde RUTA_7
+    if(rutaActual == 7 && rectJugador.intersects(QRect(800, 550, 200, 60)))
+    {
+        obstaculos.clear();
+
+        cambiarRuta(9);
+        configurarObstaculos();
+
+        jugador->move(700,230);
+
+        qDebug()<<"Cambiando a RUTA_3...";
+
+        return;
+    }
+
+    // Cambio a RUTA_9 desde RUTA_6
+    if(rutaActual == 6 && rectJugador.intersects(QRect(830, 400, 60, 200)))
+    {
+        obstaculos.clear();
+
+        cambiarRuta(9);
+        configurarObstaculos();
+
+        jugador->move(200,300);
+
+        qDebug()<<"Cambiando a RUTA_7...";
+
+        return;
+    }
+
+    // Cambio a RUTA_9 desde RUTA_8
+    if(rutaActual == 8 && rectJugador.intersects(QRect(830, 60, 200, 60)))
+    {
+        obstaculos.clear();
+
+        cambiarRuta(9);
+        configurarObstaculos();
+
+        jugador->move(600,400);
+
+        qDebug()<<"Cambiando a RUTA_3...";
+
+        return;
+    }
+
+    // Cambio a RUTA_5 desde RUTA_8
+    if(rutaActual == 8 && rectJugador.intersects(QRect(50, 400, 60, 200)))
+    {
+        obstaculos.clear();
+
+        cambiarRuta(5);
+        configurarObstaculos();
+
+        jugador->move(650,400);
+
+        qDebug()<<"Cambiando a RUTA_3...";
+
+        return;
+    }
+
+    // Cambio a RUTA_8 desde RUTA_5
+    if(rutaActual == 5 && rectJugador.intersects(QRect(800, 400, 60, 200)))
+    {
+        obstaculos.clear();
+
+        cambiarRuta(8);
+        configurarObstaculos();
+
+        jugador->move(200,400);
+
+        qDebug()<<"Cambiando a RUTA_3...";
+
+        return;
+    }
+
+    // Cambio a RUTA_7 desde RUTA_9
+    if(rutaActual == 9 && rectJugador.intersects(QRect(800, 40, 200, 80)))
+    {
+        obstaculos.clear();
+
+        cambiarRuta(7);
+        configurarObstaculos();
+
+        jugador->move(770,340);
+
+        qDebug()<<"Cambiando a RUTA_7...";
+
+        return;
+    }
+
+    // Cambio a RUTA_8 desde RUTA_9
+    if(rutaActual == 9 && rectJugador.intersects(QRect(800, 550, 200, 60)))
+    {
+        obstaculos.clear();
+
+        cambiarRuta(8);
+        configurarObstaculos();
+
+        jugador->move(780,220);
+
+        qDebug()<<"Cambiando a RUTA_7...";
+
+        return;
+    }
+
+    // Cambio a RUTA_6 desde RUTA_9
+    if(rutaActual == 9 && rectJugador.intersects(QRect(80, 400, 60, 200)))
+    {
+        obstaculos.clear();
+
+        cambiarRuta(6);
+        configurarObstaculos();
+
+        jugador->move(700,350);
+
+        qDebug()<<"Cambiando a RUTA_7...";
+
+        return;
+    }
+
+    // Cambio a RUTA_10 desde RUTA_9
+    if(rutaActual == 9 && rectJugador.intersects(QRect(920, 400, 60, 200)))
+    {
+        obstaculos.clear();
+
+        cambiarRuta(10);
+        configurarObstaculos();
+
+        jugador->move(150,320);
+
+        qDebug()<<"Cambiando a RUTA_7...";
+
+        return;
+    }
+
+    // Cambio a RUTA_9 desde RUTA_10
+    if(rutaActual == 10 && rectJugador.intersects(QRect(50, 400, 60, 200)))
+    {
+        obstaculos.clear();
+
+        cambiarRuta(9);
+        configurarObstaculos();
+
+        jugador->move(750,320);
+
+        qDebug()<<"Cambiando a RUTA_7...";
+
+        return;
+    }
+
 
 }
 
@@ -784,6 +1053,21 @@ void Caminos::keyPressEvent(QKeyEvent *event)
         return; // salir
     }
 
+    //aqui accion con T para entrar a la Gasolinera (solo si estamos en ruta 3)
+    if (rutaActual == 5 && event->key() ==Qt::Key_A&&labelPresionarT->isVisible())
+    {
+        qDebug() << "Entrando al gimnasio...";
+
+        // Crear la ciudad y mostrarla
+        Gimnasio* w = new Gimnasio();
+        w->show();
+
+        // Cerrar esta ventana
+        this->close();
+
+        return; // salir
+    }
+
     //aqui accion con T para entrar al Mall (solo si estamos en ruta 6)
     if (rutaActual == 6 && event->key() ==Qt::Key_A&&labelPresionarT->isVisible())
     {
@@ -791,6 +1075,36 @@ void Caminos::keyPressEvent(QKeyEvent *event)
 
         // Crear la ciudad y mostrarla
         Mall* mallWindow = new Mall();
+        mallWindow->show();
+
+        // Cerrar esta ventana
+        this->close();
+
+        return; // salir
+    }
+
+    //aqui accion con T para entrar al Super (solo si estamos en ruta 9)
+    if (rutaActual == 9 && event->key() ==Qt::Key_A&&labelPresionarT->isVisible())
+    {
+        qDebug() << "Entrando a la Ciudad...";
+
+        // Crear la ciudad y mostrarla
+        supermercado* mallWindow = new supermercado();
+        mallWindow->show();
+
+        // Cerrar esta ventana
+        this->close();
+
+        return; // salir
+    }
+
+    //aqui accion con T para entrar al lab (solo si estamos en ruta 10)
+    if (rutaActual == 10 && event->key() ==Qt::Key_A&&labelPresionarT->isVisible())
+    {
+        qDebug() << "Entrando a la Ciudad...";
+
+        // Crear la ciudad y mostrarla
+        laboratorio* mallWindow = new laboratorio();
         mallWindow->show();
 
         // Cerrar esta ventana

@@ -5,6 +5,9 @@
 #include"bala.h"
 #include"zombie.h"
 #include"Ciudad.h"
+#include <QMessageBox>
+#include<QPainter>
+#include <QStackedLayout>
 
 AtributosPersonaje::AtributosPersonaje(QWidget* parent)
     : QWidget(parent),
@@ -14,7 +17,7 @@ AtributosPersonaje::AtributosPersonaje(QWidget* parent)
     abajoPresionado(false), ZPresionado(false)
 {
 
-    inventarioWidget=new InventarioWidget(Inventario::getInstance());
+    inicializarTabWidget();
 
     //barra de vida contenedor
     barraVidaLabel = new QLabel(this);
@@ -67,6 +70,7 @@ AtributosPersonaje::AtributosPersonaje(personaje *jugadorExistente, QWidget *par
 {
 
     inventarioWidget=new InventarioWidget(Inventario::getInstance());
+    inicializarTabWidget();
     //barra de vida contenedor
     barraVidaLabel = new QLabel(this);
     barraVidaLabel->setStyleSheet("background-color: #333333; border: 2px solid black; border-radius: 5px; padding: 0px;");
@@ -252,18 +256,19 @@ void AtributosPersonaje::keyPressEvent(QKeyEvent* event)
     if(!jugador)return;
 
     //aqui tecla l para abrir y cerrar el inventario
-    if (event->key() == Qt::Key_L)
-    {
-        if (inventarioWidget)
-        {
-            if (inventarioWidget->isVisible())
-                inventarioWidget->hide();
-            else
-            {
+    if (event->key() == Qt::Key_L) {
+        if (tabWidget) {
+            if (tabWidget->isVisible()) {
+                tabWidget->hide();
+            } else {
+                // Centrado preciso considerando la geometría de la ventana
+                QPoint center = mapToGlobal(rect().center());
+                tabWidget->move(center.x() - tabWidget->width()/2,
+                                center.y() - tabWidget->height()/2);
+
                 inventarioWidget->actualizarVista();
-                inventarioWidget->show();
-                inventarioWidget->raise();
-                inventarioWidget->activateWindow();
+                tabWidget->show();
+                tabWidget->raise();
             }
         }
     }
@@ -411,5 +416,85 @@ void AtributosPersonaje::ActualizarMuniciones()
     QString texto=QString("MUNICIONES: %1").arg(mun);
     labelMuniciones->setText(texto);
     labelMuniciones->raise();
+}
+
+void AtributosPersonaje::inicializarTabWidget() {
+    // Crear el tab widget
+    tabWidget = new QTabWidget(this);
+    tabWidget->setWindowFlags(Qt::Window | Qt::FramelessWindowHint);
+    tabWidget->setStyleSheet(
+        "QTabWidget::pane { border: 2px solid #444; background: #222; border-radius: 5px; }"
+        "QTabBar::tab { background: #333; color: white; padding: 8px; border-top-left-radius: 5px; border-top-right-radius: 5px; }"
+        "QTabBar::tab:selected { background: #555; }"
+        "QTabBar::tab:hover { background: #444; }"
+        );
+
+    // Configurar pestaña del mapa
+    mapaTab = new QWidget();
+
+    // SOLUCIÓN MEJORADA - Usar un QLabel como contenedor de fondo
+    QLabel* backgroundLabel = new QLabel(mapaTab);
+    backgroundLabel->setAlignment(Qt::AlignCenter);
+    backgroundLabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+
+    QPixmap background(":/imagenes/assets/mapas/Mapa.jpg");
+    if(!background.isNull()) {
+        backgroundLabel->setPixmap(background);
+        backgroundLabel->setScaledContents(true); // Escalar manteniendo aspecto
+    }
+
+    mapaWidget = new Mapa(mapaTab);
+    mapaWidget->setStyleSheet("background: transparent;");
+    mapaWidget->setAttribute(Qt::WA_TranslucentBackground);
+
+    // Conectar señal de selección de nodo
+    connect(mapaWidget, &Mapa::nodoSeleccionadoDesdeCompacto, this, [this](const QString& nodo) {
+        QMessageBox::information(this, "Nodo seleccionado",
+                                 QString("Has seleccionado: %1").arg(nodo));
+    });
+
+    mapaWidget->setModoCompacto(true);
+    mapaWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+
+    // Usar un layout apilado para superponer widgets
+    QStackedLayout* stackedLayout = new QStackedLayout(mapaTab);
+    stackedLayout->setStackingMode(QStackedLayout::StackAll);
+    stackedLayout->addWidget(backgroundLabel); // Capa inferior: fondo
+    stackedLayout->addWidget(mapaWidget);      // Capa superior: mapa interactivo
+    stackedLayout->setContentsMargins(0, 0, 0, 0);
+
+    backgroundLabel->lower();
+    mapaWidget->raise();
+
+    // Configurar pestaña de inventario
+    inventarioWidget = new InventarioWidget(Inventario::getInstance());
+
+    // Añadir pestañas
+    tabWidget->addTab(mapaTab, "Mapa");
+    tabWidget->addTab(inventarioWidget, "Inventario");
+
+    // Tamaño adecuado
+    tabWidget->resize(700, 450);
+
+    // Botón de cerrar
+    QPushButton* closeButton = new QPushButton("×", tabWidget);
+    closeButton->setStyleSheet(
+        "QPushButton {"
+        "   background: #ff5555;"
+        "   color: white;"
+        "   border: none;"
+        "   border-radius: 10px;"
+        "   min-width: 20px;"
+        "   max-width: 20px;"
+        "   min-height: 20px;"
+        "   max-height: 20px;"
+        "}"
+        "QPushButton:hover {"
+        "   background: #ff3333;"
+        "}"
+        );
+    closeButton->move(tabWidget->width() - 30, 10);
+    connect(closeButton, &QPushButton::clicked, tabWidget, &QWidget::hide);
+
 
 }

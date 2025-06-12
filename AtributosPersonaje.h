@@ -9,6 +9,8 @@
 #include"inventario.h"
 #include"inventariowidget.h"
 #include"bala.h"
+#include "mapa.h"
+#include <QTabWidget>
 
 class AtributosPersonaje : public QWidget {
     Q_OBJECT
@@ -29,6 +31,12 @@ protected:
     bool disparandoAhora=false;//me servira para sincronizar los municiones con la animacion de disparo del personje
     bool puedeDisparar=false;
     QTimer*disparoTimer=nullptr;//para cancelar disparo si se suelta Z
+
+    // Widgets de interfazAdd commentMore actions
+    QTabWidget* tabWidget;
+    Mapa* mapaWidget;
+    QWidget* mapaTab;
+     void inicializarTabWidget();
 
     InventarioWidget* inventarioWidget;
 

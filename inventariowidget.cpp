@@ -2,27 +2,6 @@
 #include <QPixmap>
 #include <QDebug>
 
-InventarioWidget::InventarioWidget(Inventario* inventario, QWidget *parent)
-    : QWidget(parent), inventarioRef(inventario)
-{
-    setWindowTitle("Inventario");
-    setFixedSize(600, 500);
-
-    layoutPrincipal = new QVBoxLayout(this);
-    gridInventario = new QGridLayout();
-
-    // Espaciado bonito xd
-    gridInventario->setSpacing(10);
-    gridInventario->setContentsMargins(10, 10, 10, 10);
-
-    btnRefrescar = new QPushButton("Refrescar", this);
-    connect(btnRefrescar, &QPushButton::clicked, this, &InventarioWidget::actualizarVista);
-
-    layoutPrincipal->addLayout(gridInventario);
-    layoutPrincipal->addWidget(btnRefrescar);
-
-    actualizarVista();
-}
 
 void InventarioWidget::limpiarGrid()
 {
@@ -36,11 +15,34 @@ void InventarioWidget::limpiarGrid()
     }
 }
 
+InventarioWidget::InventarioWidget(Inventario* inventario, QWidget *parent)
+    : QWidget(parent), inventarioRef(inventario)
+{
+    setWindowTitle("Inventario");
+    // Eliminar setFixedSize y dejar que el layout maneje el tamaño
+
+    layoutPrincipal = new QVBoxLayout(this);
+    gridInventario = new QGridLayout();
+
+    // Ajustar espaciado para versión compacta
+    gridInventario->setSpacing(5);  // Reducido de 10 a 5
+    gridInventario->setContentsMargins(5, 5, 5, 5);  // Reducido de 10 a 5
+
+    btnRefrescar = new QPushButton("Refrescar", this);
+    btnRefrescar->setFixedHeight(25);  // Botón más compacto
+    connect(btnRefrescar, &QPushButton::clicked, this, &InventarioWidget::actualizarVista);
+
+    layoutPrincipal->addLayout(gridInventario);
+    layoutPrincipal->addWidget(btnRefrescar);
+    layoutPrincipal->setContentsMargins(0, 0, 0, 0);  // Eliminar márgenes externos
+
+    actualizarVista();
+}
+
 void InventarioWidget::actualizarVista()
 {
     limpiarGrid();
 
-    // Recorrer el ABB manualmente
     int fila = 0;
     int columna = 0;
 
@@ -50,47 +52,48 @@ void InventarioWidget::actualizarVista()
 
         recorrerInOrden(nodo->izquierda);
 
-        // Crear un widget para mostrar el objeto
         QWidget* itemWidget = new QWidget(this);
         itemWidget->setStyleSheet("background-color: rgba(50,50,50,180); border: 1px solid white; border-radius: 5px;");
+        itemWidget->setFixedSize(120, 150);  // Tamaño fijo para cada ítem
 
         QVBoxLayout* itemLayout = new QVBoxLayout(itemWidget);
+        itemLayout->setContentsMargins(5, 5, 5, 5);  // Márgenes internos reducidos
 
-        // Cargar imagen si existe
         QLabel* imagenLabel = new QLabel(itemWidget);
         QString rutaImagen = QString(":/imagenes/assets/items/%1.png").arg(nodo->nombre);
 
         QPixmap pixmap(rutaImagen);
         if (!pixmap.isNull())
-            imagenLabel->setPixmap(pixmap.scaled(64, 64, Qt::KeepAspectRatio, Qt::SmoothTransformation));
+            imagenLabel->setPixmap(pixmap.scaled(48, 48, Qt::KeepAspectRatio, Qt::SmoothTransformation));  // Imagen más pequeña
         else
             imagenLabel->setText("[Sin imagen]");
 
         imagenLabel->setAlignment(Qt::AlignCenter);
 
-        // Etiquetas de detalles
-        QLabel*nombreLabel=new QLabel(QString("Nombre: %1").arg(nodo->nombre), itemWidget);
-        QLabel*cantidadLabel=new QLabel(QString("Cantidad: %1").arg(nodo->cantidad), itemWidget);
-        QLabel*tipoLabel=new QLabel(QString("Tipo: %1").arg(nodo->tipo), itemWidget);
-        QLabel*usoLabel=new QLabel(QString("Uso: %1").arg(nodo->uso), itemWidget);
+        // Etiquetas más compactas
+        QLabel* nombreLabel = new QLabel(QString("%1").arg(nodo->nombre), itemWidget);
+        QLabel* cantidadLabel = new QLabel(QString("x%1").arg(nodo->cantidad), itemWidget);
+
+        // Fuentes más pequeñas
+        QFont smallFont;
+        smallFont.setPointSize(8);
+
+        nombreLabel->setFont(smallFont);
+        cantidadLabel->setFont(smallFont);
 
         nombreLabel->setStyleSheet("color: white;");
         cantidadLabel->setStyleSheet("color: white;");
-        tipoLabel->setStyleSheet("color: white;");
-        usoLabel->setStyleSheet("color: white;");
 
-        // Agregar al layout
+        // Layout más compacto
         itemLayout->addWidget(imagenLabel);
         itemLayout->addWidget(nombreLabel);
         itemLayout->addWidget(cantidadLabel);
-        itemLayout->addWidget(tipoLabel);
-        itemLayout->addWidget(usoLabel);
         itemLayout->addStretch();
 
         gridInventario->addWidget(itemWidget, fila, columna);
 
         columna++;
-        if (columna >= 4) // 4 columnas por fila
+        if (columna >= 3)  // Reducir columnas de 4 a 3
         {
             columna = 0;
             fila++;

@@ -5,6 +5,8 @@
 #include <QMap>
 #include <QList>
 #include <QPointF>
+#include <QRectF>
+
 
 class Grafo {
 public:
@@ -29,6 +31,7 @@ public:
     QPointF obtenerPosicionNodo(const QString& nodo) const;
     bool existeNodo(const QString& nodo) const;
     QList<QString> dijkstra(const QString& origen, const QString& destino);
+    QRectF obtenerRectanguloDelimitar() const;
 
     void crearGrafoCiudad();
 
