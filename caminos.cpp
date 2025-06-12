@@ -92,12 +92,12 @@ QRect zonaCambioRuta6_desde_Ruta3(451,576,127,127);
 QRect zonaCambioRuta5_a_Desde_Ruta6(456,580,127,127);
 QRect zonaCambioRuta6_a_Desde_Ruta5(454,-66,127,127);
 // =========================================================================
-QRect zonaEntradaCiudad(236, 422, 131, 127);
-QRect zonaEntradaGasolinera(450, 350, 131, 127);
-QRect zonaEntradaMall(450, 400, 131, 40);
-QRect zonaEntradaGym(450, 500, 131, 40);
-QRect zonaEntradaSuper(700, 400, 131, 100);
-QRect zonaEntradaLab(500, 400, 131, 40);
+QRect zonaEntradaCiudad(236,422,131,127);
+QRect zonaEntradaGasolinera(450,350,131,127);
+QRect zonaEntradaMall(450,400,131,40);
+QRect zonaEntradaGym(450,500,131,40);
+QRect zonaEntradaSuper(700,400,131,100);
+QRect zonaEntradaLab(500,400,131,40);
 
 void Caminos::configurarEscena()
 {
@@ -962,7 +962,7 @@ void Caminos::onMovimientoUpdate()
         cambiarRuta(10);
         configurarObstaculos();
 
-        jugador->move(150,320);
+        jugador->move(240,320);
 
         qDebug()<<"Cambiando a RUTA_7...";
 
