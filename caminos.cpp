@@ -63,7 +63,7 @@ Caminos::Caminos(personaje*jugadorExistente, QWidget* parent) : AtributosPersona
     npcRuta4->setInventario(Inventario::getInstance());
     npcsPorRuta.insert(4, npcsRuta4);
 
-  }
+}
 //NO BORRAR ESTO ===========================================================
 //son las coordenadas exactas para cambiar ENTRE LAS RUTAASSSSSZZZZ
 QRect zonaCambioRuta3(940,40,180,130); // X=940 a 1120, Y=40 a 170
@@ -112,11 +112,11 @@ void Caminos::configurarObstaculos()
 
 
     }else if (rutaActual == 2){
-       obstaculos.clear();
-       obstaculos.append(QRect(18, 20, 205, 330)); //PARTE SUPERIOR IZQUIERDA
-       obstaculos.append(QRect(223, 20, 800, 20)); //PARTE SUPERIOR DERECHA
-       obstaculos.append(QRect(430, 220, 400, 170)); //PARTE MEDIA
-       obstaculos.append(QRect(18, 600, 1000, 30)); //PARTE INFERIOR
+        obstaculos.clear();
+        obstaculos.append(QRect(18, 20, 205, 330)); //PARTE SUPERIOR IZQUIERDA
+        obstaculos.append(QRect(223, 20, 800, 20)); //PARTE SUPERIOR DERECHA
+        obstaculos.append(QRect(430, 220, 400, 170)); //PARTE MEDIA
+        obstaculos.append(QRect(18, 600, 1000, 30)); //PARTE INFERIOR
 
     }else if(rutaActual==3){
 
@@ -322,27 +322,46 @@ void Caminos::cambiarRuta(int nuevaRuta)
 
     if(rutaActual==1)
     {
-        rutaImagen=":/imagenes/assets/mapas/RUTA_1.jpg";
+        rutaImagen=":/imagenes/assets/mapas/RUTA_1.png";
 
     }else if(rutaActual==2){
 
-        rutaImagen=":/imagenes/assets/mapas/RUTA_2.jpg";
+        rutaImagen=":/imagenes/assets/mapas/RUTA_2.png";
 
     }else if(rutaActual==3){
 
-        rutaImagen=":/imagenes/assets/mapas/RUTA_3.jpg";
+        rutaImagen=":/imagenes/assets/mapas/RUTA_3.png";
 
     }else if(rutaActual==4){
 
-        rutaImagen=":/imagenes/assets/mapas/RUTA_4.jpg";
+        rutaImagen=":/imagenes/assets/mapas/RUTA_4.png";
 
     }else if(rutaActual==5){
 
-        rutaImagen=":/imagenes/assets/mapas/RUTA_5.jpg";
+        rutaImagen=":/imagenes/assets/mapas/RUTA_5.png";
 
     }else if(rutaActual==6){
 
-        rutaImagen=":/imagenes/assets/mapas/RUTA_6.jpg";
+        rutaImagen=":/imagenes/assets/mapas/RUTA_6.png";
+
+    }else if(rutaActual==6){
+
+        rutaImagen=":/imagenes/assets/mapas/RUTA_6.png";
+
+    }else if(rutaActual==7){
+
+        rutaImagen=":/imagenes/assets/mapas/RUTA_7.png";
+    }else if(rutaActual==8){
+
+        rutaImagen=":/imagenes/assets/mapas/RUTA_8.png";
+
+    }else if(rutaActual==9){
+
+        rutaImagen=":/imagenes/assets/mapas/RUTA_9.png";
+
+    }else if(rutaActual==10){
+
+        rutaImagen=":/imagenes/assets/mapas/RUTA_10.png";
 
     }
 
@@ -737,9 +756,187 @@ void Caminos::onMovimientoUpdate()
             labelPresionarT->hide();
 
         }
-
-
     }
+
+    // Cambio a RUTA_7 desde RUTA_3
+    if(rutaActual == 3 && rectJugador.intersects(QRect(830, 250, 100, 500)))
+    {
+        obstaculos.clear();
+
+        cambiarRuta(7);
+        configurarObstaculos();
+
+        jugador->move(230,150);
+
+        qDebug()<<"Cambiando a RUTA_7...";
+
+        return;
+    }
+
+    // Cambio a RUTA_3 desde RUTA_7
+    if(rutaActual == 7 && rectJugador.intersects(QRect(20, 250, 70, 300)))
+    {
+        obstaculos.clear();
+
+        cambiarRuta(3);
+        configurarObstaculos();
+
+        jugador->move(700,250);
+
+        qDebug()<<"Cambiando a RUTA_3...";
+
+        return;
+    }
+    // Cambio a RUTA_9 desde RUTA_7
+    if(rutaActual == 7 && rectJugador.intersects(QRect(800, 550, 200, 60)))
+    {
+        obstaculos.clear();
+
+        cambiarRuta(9);
+        configurarObstaculos();
+
+        jugador->move(700,230);
+
+        qDebug()<<"Cambiando a RUTA_3...";
+
+        return;
+    }
+
+    // Cambio a RUTA_9 desde RUTA_6
+    if(rutaActual == 6 && rectJugador.intersects(QRect(830, 400, 60, 200)))
+    {
+        obstaculos.clear();
+
+        cambiarRuta(9);
+        configurarObstaculos();
+
+        jugador->move(200,300);
+
+        qDebug()<<"Cambiando a RUTA_7...";
+
+        return;
+    }
+
+    // Cambio a RUTA_9 desde RUTA_8
+    if(rutaActual == 8 && rectJugador.intersects(QRect(830, 60, 200, 60)))
+    {
+        obstaculos.clear();
+
+        cambiarRuta(9);
+        configurarObstaculos();
+
+        jugador->move(600,400);
+
+        qDebug()<<"Cambiando a RUTA_3...";
+
+        return;
+    }
+
+    // Cambio a RUTA_5 desde RUTA_8
+    if(rutaActual == 8 && rectJugador.intersects(QRect(50, 400, 60, 200)))
+    {
+        obstaculos.clear();
+
+        cambiarRuta(5);
+        configurarObstaculos();
+
+        jugador->move(650,400);
+
+        qDebug()<<"Cambiando a RUTA_3...";
+
+        return;
+    }
+
+    // Cambio a RUTA_8 desde RUTA_5
+    if(rutaActual == 5 && rectJugador.intersects(QRect(800, 400, 60, 200)))
+    {
+        obstaculos.clear();
+
+        cambiarRuta(8);
+        configurarObstaculos();
+
+        jugador->move(200,400);
+
+        qDebug()<<"Cambiando a RUTA_3...";
+
+        return;
+    }
+
+    // Cambio a RUTA_7 desde RUTA_9
+    if(rutaActual == 9 && rectJugador.intersects(QRect(800, 40, 200, 80)))
+    {
+        obstaculos.clear();
+
+        cambiarRuta(7);
+        configurarObstaculos();
+
+        jugador->move(770,340);
+
+        qDebug()<<"Cambiando a RUTA_7...";
+
+        return;
+    }
+
+    // Cambio a RUTA_8 desde RUTA_9
+    if(rutaActual == 9 && rectJugador.intersects(QRect(800, 550, 200, 60)))
+    {
+        obstaculos.clear();
+
+        cambiarRuta(8);
+        configurarObstaculos();
+
+        jugador->move(780,220);
+
+        qDebug()<<"Cambiando a RUTA_7...";
+
+        return;
+    }
+
+    // Cambio a RUTA_6 desde RUTA_9
+    if(rutaActual == 9 && rectJugador.intersects(QRect(80, 400, 60, 200)))
+    {
+        obstaculos.clear();
+
+        cambiarRuta(6);
+        configurarObstaculos();
+
+        jugador->move(700,350);
+
+        qDebug()<<"Cambiando a RUTA_7...";
+
+        return;
+    }
+
+    // Cambio a RUTA_10 desde RUTA_9
+    if(rutaActual == 9 && rectJugador.intersects(QRect(920, 400, 60, 200)))
+    {
+        obstaculos.clear();
+
+        cambiarRuta(10);
+        configurarObstaculos();
+
+        jugador->move(150,320);
+
+        qDebug()<<"Cambiando a RUTA_7...";
+
+        return;
+    }
+
+    // Cambio a RUTA_9 desde RUTA_10
+    if(rutaActual == 10 && rectJugador.intersects(QRect(50, 400, 60, 200)))
+    {
+        obstaculos.clear();
+
+        cambiarRuta(9);
+        configurarObstaculos();
+
+        jugador->move(750,320);
+
+        qDebug()<<"Cambiando a RUTA_7...";
+
+        return;
+    }
+
 
 }
 

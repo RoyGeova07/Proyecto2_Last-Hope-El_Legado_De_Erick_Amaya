@@ -68,7 +68,7 @@ lobby::lobby(personaje* jugadorExistente, QWidget* parent)
 void lobby::configurarEscena()
 {
 
-    QPixmap fondoPixmap(":/imagenes/assets/mapas/lobby.jpg");
+    QPixmap fondoPixmap(":/imagenes/assets/mapas/lobby.jpeg");
     if(fondoPixmap.isNull())
     {
 

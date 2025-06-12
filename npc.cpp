@@ -213,6 +213,16 @@ void NPC::manejarOpcionSeleccionada(int opcion)
 
             }
 
+            if(tipo==Tipo::NPC3&&inventarioRef)
+            {
+
+                inventarioRef->insertarObjeto("curar2",1,"Botiquin","Restaura vidaaa");
+                qDebug() << "Botiquines agregados al inventario";
+
+                mostrarNotificacion("¡Has obtenido un botiquín grande! Revisa tu inventario.");
+
+            }
+
             // NO mostramos el mensaje final esta primera vez
             if(dialogoActualUI)
             {
