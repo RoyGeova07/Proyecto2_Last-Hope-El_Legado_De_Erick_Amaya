@@ -2,6 +2,9 @@
 #include <QPixmap>
 #include <QLabel>
 #include <QDebug>
+#include"bala.h"
+#include"zombie.h"
+#include"Ciudad.h"
 
 AtributosPersonaje::AtributosPersonaje(QWidget* parent)
     : QWidget(parent),
@@ -140,6 +143,20 @@ void AtributosPersonaje::Movimientos() {
                 jugador->setMuniciones(jugador->getMuniciones()-1);
                 jugador->SetAnimacion(":/imagenes/assets/protagonista/Shot_1.png",4);
                 ActualizarMuniciones();
+
+                //crea la bala
+                Bala*bala=new Bala(this);
+
+                int offsetX=jugador->miradoDerecha?213:(128-213-10);// derecha o izquierda del arma
+                int offsetY=90;// altura a la mitad
+
+                bala->move(jugador->x()+offsetX,jugador->y()+offsetY);
+                bala->Disparar(jugador->miradoDerecha);
+                balasActivas.append(bala);
+                connect(bala, &Bala::impactoBala, this, [=](Bala* b) {
+                    balasActivas.removeOne(b);
+                    b->deleteLater();  // esto elimina la bala una vez que termine de ejecutarse
+                });
 
                 //Cancelar cualquier timer de disparo anterior
                 if(disparoTimer)

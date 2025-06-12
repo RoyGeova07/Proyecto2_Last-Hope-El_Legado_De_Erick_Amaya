@@ -13,16 +13,16 @@ Zombie::Zombie(Tipo tipo, QWidget* parent)
     animacionTimer = new QTimer(this);
     connect(animacionTimer, &QTimer::timeout, this, &Zombie::AvanzarFrame);
 
-    // Definición por tipo de zombie
+    // Definicion por tipo de zombie
     switch(tipo) {
     case Tipo::Z1:
-        SetAnimacion(":/imagenes/assets/Zombies/Idle_Z1.png", 9);
+        SetAnimacion(":/imagenes/assets/Zombies/Idle_Z1.png", 9,true);
         break;
     case Tipo::Z2:
-        SetAnimacion(":/imagenes/assets/Zombies/Idle_Z2.png", 8);
+        SetAnimacion(":/imagenes/assets/Zombies/Idle_Z2.png", 8,true);
         break;
     case Tipo::Z3:
-        SetAnimacion(":/imagenes/assets/Zombies/Idle_Z3.png", 5);
+        SetAnimacion(":/imagenes/assets/Zombies/Idle_Z3.png", 5,true);
         break;
     }
 
@@ -30,10 +30,12 @@ Zombie::Zombie(Tipo tipo, QWidget* parent)
 
 }
 
-void Zombie::SetAnimacion(const QString& ruta, int cantidadFrames)
+//AGREGO OTRO PARAMETRO PARA PODER CONTROLAR SI UNA ANIMACION DEBE REPETIRSE O NO
+void Zombie::SetAnimacion(const QString& ruta, int cantidadFrames,bool loop)
 {
     QPixmap spriteSheet(ruta);
-    if (spriteSheet.isNull()) {
+    if(spriteSheet.isNull())
+    {
         qDebug() << "Error al cargar animacion:" << ruta;
         return;
     }
@@ -68,13 +70,34 @@ void Zombie::SetAnimacion(const QString& ruta, int cantidadFrames)
     danioEmitido=false;
     frameAtaqueFinal=cantidadFrames-1;
 
+    //guardar si esta animacion debe repetirse
+    animacionLoop=loop;
+
 }
 
 void Zombie::AvanzarFrame()
 {
     if(frames.isEmpty()||frames.size()<=1) return;
 
-    frameActual=(frameActual+1)%frames.size();
+    frameActual++;
+
+    //si se llega al final de una animacion NO loop, mostrar el ultimo frame y detener el timer
+    if(frameActual>=frames.size())
+    {
+
+        if(!animacionLoop)
+        {
+
+            frameActual=frames.size()-1;
+            animacionTimer->stop();//detener la animacion de muerte
+            setPixmap(frames[frameActual]);
+            return;
+
+        }
+
+        frameActual=0;//reiniciar si es loop
+    }
+
     setPixmap(frames[frameActual]);
 
     //si es animacion de ataque y estamos en el ultimo frame
@@ -144,7 +167,7 @@ void Zombie::perseguirJugador(QWidget *objetivo)
 void Zombie::moverHaciaJugador()
 {
 
-    if(!objetivo)return;
+    if(!objetivo||muerto)return;
 
     //aqui calculamos la distancia
     int distanciaX=std::abs(objetivo->x()-this->x());
@@ -212,14 +235,14 @@ void Zombie::SetAnimacionMovimientoZombie()
 
     }
 
-    SetAnimacion(ruta,frames);
+    SetAnimacion(ruta,frames,true);
 
 }
 
 void Zombie::realizarAtaque()
 {
 
-    if(atacando||!objetivo)return;
+    if(atacando||muerto||!objetivo)return;
 
     atacando=true;
 
@@ -256,7 +279,7 @@ void Zombie::realizarAtaque()
 
     }
 
-    SetAnimacion(rutaAtaque,cantidadFrames);
+    SetAnimacion(rutaAtaque,cantidadFrames,true);
 
     //emitir danio solo una vez por ataque
     if(this->geometry().intersects(objetivo->geometry()))
@@ -308,18 +331,85 @@ void Zombie::actualizarBarraVida()
 void Zombie::recibirDanio(int cantidad)
 {
 
+    if(muerto)return;//si ya esta muerto, ignorar el daño
+
     vida-=cantidad;
     if(vida<0)vida=0;
 
     actualizarBarraVida();
 
-    if(vida==0)
+    if(vida==0&&!muerto)
     {
 
-        this->hide();
-        barraFondo->hide();
-        //AQUI PONER UNA SEÑAL PARA CUANDO EL ZOMBIE RECIBA EL DANIO PONER EL SPRITE DE QUE LO ESTAN HIRIENDO
+        muerto=true;//se marca como muerto
+        if(movimientoTimer)movimientoTimer->stop();//detener el movimiento
+
+        //aqui se muestra la animacion de muerte segun el tipo de zombie
+        QString rutaMuerte;
+        int framesMuerte=5;
+
+        switch(tipo)
+        {
+
+            case Tipo::Z1: rutaMuerte=":/imagenes/assets/Zombies/Dead_Z1.png";break;
+            case Tipo::Z2: rutaMuerte=":/imagenes/assets/Zombies/Dead_Z2.png";break;
+            case Tipo::Z3: rutaMuerte=":/imagenes/assets/Zombies/Dead_Z3.png";break;
+
+        }
+
+        SetAnimacion(rutaMuerte,framesMuerte,false);
+
+        //aqui ocultar barra de vida despues de animacion de muerte
+        QTimer::singleShot(800,this,[=](){
+
+           barraFondo->hide();
+
+        });
+
+        return;//no hacer animacion de herido
 
     }
+
+    //si sigue vivo, mostrar animacion de herido
+    setAnimacionHerido();
+
+}
+
+void Zombie::setAnimacionHerido()
+{
+
+    QString ruta;
+    int frames=0;
+
+    switch (tipo) {
+    case Tipo::Z1:
+
+        ruta=":/imagenes/assets/Zombies/Hurt_Z1.png";
+        frames=5;
+        break;
+
+    case Tipo::Z2:
+
+        ruta=":/imagenes/assets/Zombies/Hurt_Z2.png";
+        frames=3;
+        break;
+
+    case Tipo::Z3:
+
+        ruta=":/imagenes/assets/Zombies/Hurt_Z3.png";
+        frames=3;
+        break;
+
+    }
+
+    //aqui se muestra la animacion de herido
+    SetAnimacion(ruta,frames,true);
+
+    //despues de 300ms, vuelve al movimiento
+    QTimer::singleShot(300,this,[this](){
+
+        if(vida>0)SetAnimacionMovimientoZombie();
+
+    });
 
 }

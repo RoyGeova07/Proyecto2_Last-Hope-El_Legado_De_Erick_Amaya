@@ -9,6 +9,7 @@ Ciudad::Ciudad(QWidget* parent) : AtributosPersonaje(parent) {
 
     configurarEscena();
     inicializarJugador();
+    jugador->move(16,538);
     configurarObstaculos();
 
 
@@ -70,13 +71,12 @@ void Ciudad::configurarEscena() {
     }
 }
 
-void Ciudad::configurarObstaculos() {
-    // OBSTÁCULOS FIJOS
-    obstaculos.append(QRect(3, 2, 1334, 470));     // Muro superior
-    obstaculos.append(QRect(5, 669, 1273, 47));    // Piso inferior
-    obstaculos.append(QRect(3, 278, 5, 388));      // Pared izquierda
-    obstaculos.append(QRect(1272, 282, 3, 324));   // Pared derecha
+void Ciudad::configurarObstaculos()
+{
+    // OBSTACULOS FIJOS
+    obstaculos.append(QRect(3,2,1334,470));     // Muro superior
+    obstaculos.append(QRect(5,669,1273,47));    // Piso inferior
+    obstaculos.append(QRect(3,278,5,388));      // Pared izquierda
+    obstaculos.append(QRect(1272,282,3,324));   // Pared derecha
 }
 
-//cuando se le dispare el zombie se hace esto:
-//z->recibirDanio(2);  // Quitarle 2 puntos de vida

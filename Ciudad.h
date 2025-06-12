@@ -1,5 +1,6 @@
 #include "AtributosPersonaje.h"
 #include "zombie.h"
+#include"bala.h"
 
 
 class Ciudad : public AtributosPersonaje {

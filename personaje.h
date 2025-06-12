@@ -27,6 +27,7 @@ class personaje:public QLabel
 public:
    explicit personaje(QWidget*parent=nullptr);
 
+    bool miradoDerecha;
     void SetAnimacion(const QString&ruta,int cantidadFrames);
     void AvanzarFrame();
     void MoverIzquierda();
@@ -65,7 +66,6 @@ private:
     int frameActual;
     QTimer*timer;
     int velocidadMovimiento;
-    bool miradoDerecha;
     //aqui si la direccion cambio la ultima vez que se dibujo
     bool ultimaDireccionDerecha;
 

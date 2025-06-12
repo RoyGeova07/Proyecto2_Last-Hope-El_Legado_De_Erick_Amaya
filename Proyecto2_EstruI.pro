@@ -12,6 +12,7 @@ SOURCES += \
     AtributosPersonaje.cpp \
     Ciudad.cpp \
     Inventario.cpp \
+    bala.cpp \
     caminos.cpp \
     dialogonpc.cpp \
     gasolinera.cpp \
@@ -33,6 +34,7 @@ HEADERS += \
     Cola.h \
     Elemento.h \
     Inventario.h \
+    bala.h \
     caminos.h \
     dialogonpc.h \
     gasolinera.h \

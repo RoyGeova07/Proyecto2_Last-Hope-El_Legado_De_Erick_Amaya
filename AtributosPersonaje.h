@@ -8,6 +8,7 @@
 #include "personaje.h"
 #include"inventario.h"
 #include"inventariowidget.h"
+#include"bala.h"
 
 class AtributosPersonaje : public QWidget {
     Q_OBJECT
@@ -42,6 +43,7 @@ protected:
     QWidget* barraVidaInterna;
     QLabel* barraVidaTexto;
     QLabel*labelMuniciones;
+    QList<Bala*>balasActivas;
     void ActualizarBarraVida();
 
 public:

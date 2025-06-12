@@ -22,7 +22,7 @@ public:
     explicit Zombie(Tipo tipo, QWidget* parent = nullptr);
 
     //aqui para la animacion
-    void SetAnimacion(const QString& ruta, int cantidadFrames);
+    void SetAnimacion(const QString& ruta, int cantidadFrames,bool loop);
     void AvanzarFrame();
 
     // UI contextual
@@ -33,6 +33,9 @@ public:
     void SetAnimacionMovimientoZombie();
     bool mirandoALaDerecha=false;
     void recibirDanio(int cantidad);
+    void setAnimacionHerido();
+    bool muerto=false;
+    bool animacionLoop=true;
 
 signals:
 
