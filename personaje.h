@@ -38,6 +38,7 @@ public:
     void SetAnimacionMovimiento(int velocidad);
     void MoverSiNoColisiona(int dx,int dy,const QVector<QRect>&obstaculos);
     int getVelocidadMoviento()const{return velocidadMovimiento;}
+    void Morir();
 
     QString animacionActual;//bandera para evitar que se reinicie una animacion si ya esta en curso
 

@@ -259,7 +259,7 @@ void NPC::mostrarNotificacion(const QString& texto)
     labelNotificacion->show();
     labelNotificacion->raise();
 
-    //aqui ocultar automaticamente después de 2.5 segundos
+    //aqui ocultar automaticamente despues de 2.5 segundos
     QTimer::singleShot(2500, labelNotificacion, [this]() {
         labelNotificacion->hide();
     });

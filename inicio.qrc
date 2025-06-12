@@ -70,5 +70,10 @@
         <file>assets/NPC/Idle_NPC4.png</file>
         <file>assets/NPC/Idle_NPC5.png</file>
         <file>assets/NPC/Idle_NPC6.png</file>
+	<file>assets/protagonista/Dead.png</file>
+	<file>assets/items/cofre_abierto.png</file>
+	<file>assets/items/cofre_cerrado.png</file>
+	<file>assets/items/cofre_cerrado2.png</file>
+	<file>assets/items/cofre_abierto2.png</file>
     </qresource>
 </RCC>

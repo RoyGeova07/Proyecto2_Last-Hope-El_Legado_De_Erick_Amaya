@@ -147,7 +147,7 @@ void AtributosPersonaje::Movimientos() {
                 //crea la bala
                 Bala*bala=new Bala(this);
 
-                int offsetX=jugador->miradoDerecha?213:(128-213-10);// derecha o izquierda del arma
+                int offsetX=jugador->miradoDerecha?130:(128-130-10);// derecha o izquierda del arma
                 int offsetY=90;// altura a la mitad
 
                 bala->move(jugador->x()+offsetX,jugador->y()+offsetY);
@@ -247,8 +247,9 @@ void AtributosPersonaje::Movimientos() {
     movimientoTimer->setInterval(30);
 }
 
-void AtributosPersonaje::keyPressEvent(QKeyEvent* event) {
-    if (!jugador) return;
+void AtributosPersonaje::keyPressEvent(QKeyEvent* event)
+{
+    if(!jugador)return;
 
     //aqui tecla l para abrir y cerrar el inventario
     if (event->key() == Qt::Key_L)
@@ -291,6 +292,7 @@ void AtributosPersonaje::keyPressEvent(QKeyEvent* event) {
         ZPresionado = true;
         if (!movimientoTimer->isActive()) movimientoTimer->start();
         break;
+
     }
 }
 
