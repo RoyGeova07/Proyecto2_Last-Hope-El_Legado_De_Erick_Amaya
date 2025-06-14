@@ -22,10 +22,10 @@ Ciudad::Ciudad(QWidget* parent) : AtributosPersonaje(parent) {
     cofreAbierto=QPixmap(":/imagenes/assets/items/cofre_abierto.png");
 
     cofreLabel=new QLabel(this);
-    cofreLabel->setPixmap(cofreCerrado.scaled(64,64));
-    cofreLabel->setGeometry(1142, 538, 104, 104); // posicion del cofre
+    cofreLabel->setGeometry(1112, 508, 164, 164);
+    cofreLabel->setPixmap(cofreCerrado.scaled(64,64)); // Puedes ajustar el tamaño visual según tu preferencia
     cofreLabel->show();
-
+    cofreLabel->installEventFilter(this);
     //obstaculos.append(QRect(1142,538,64,64));
 
     //etiqueta de estado del estado del cofre
@@ -128,7 +128,7 @@ void Ciudad::onMovimientoUpdate() {
 
         //aqui verifica si el jugador esta cerca del cofre distancia<80
         int distancia=std::abs(jugador->x()-1142);
-        if (jugador->x() >= 1104 && jugador->x() <= 1144 && jugador->y() == 538 && !cofreAbiertoYa)
+        if (std::abs(jugador->x() - 1142) <= 50 && std::abs(jugador->y() - 538) <= 50 && !cofreAbiertoYa)
 
         {
 
@@ -153,7 +153,7 @@ void Ciudad::onMovimientoUpdate() {
 
             }else{
 
-                mensajeCofre->setText("✅ Presiona T para abrir");
+                mensajeCofre->setText("✅ Haz click para abrir");
 
             }
             mensajeCofre->show();
@@ -172,56 +172,8 @@ void Ciudad::onMovimientoUpdate() {
 
 void Ciudad::keyPressEvent(QKeyEvent* event)
 {
-    if (event->key() == Qt::Key_T && !cofreAbiertoYa)
-    {
-        // Verificar que el jugador está cerca del cofre
-        if (jugador->x() >= 1104 && jugador->x() <= 1144 && jugador->y() == 538)
-        {
-            // Verificar que todos los zombies estén eliminados
-            bool zombiesVivos = false;
-            for (Zombie* z : zombies)
-            {
-                if (!z->muerto)
-                {
-                    zombiesVivos = true;
-                    break;
-                }
-            }
-
-            if (!zombiesVivos)
-            {
-                // Abrir el cofre
-                cofreAbiertoYa = true;
-                cofreLabel->setPixmap(cofreAbierto.scaled(64, 64));
-                mensajeCofre->setText("🎁 Cofre abierto");
-                mensajeCofre->show();
-
-                // Aumentar municiones
-                jugador->setMuniciones(jugador->getMuniciones() + 30);
-                ActualizarMuniciones();
-
-                // Mostrar notificación: "Recibiste municiones"
-                mostrarNotificacion("🎯 Recibiste 30 municiones");
-
-                QTimer::singleShot(3000, this, [=]() {
-                    mostrarNotificacion("🏃 Volviendo al camino...");
-
-                     Inventario::getInstance()->setBalas(jugador->getMuniciones());
-
-                    Caminos* c = new Caminos(jugador);
-                    c->cambiarRuta(2); // ← Ciudad termina en Ruta 2
-                    c->posicionarJugadorEnCalleRuta2();
-                    c->show();
-                    this->close();
-
-                });
-
-            }
-        }
-    }
-
-    // Llamar al comportamiento por defecto del jugador (movimiento, etc.)
-    AtributosPersonaje::keyPressEvent(event);
+    // (tu lógica personalizada aquí, si la hay)
+    AtributosPersonaje::keyPressEvent(event); // <--- SIEMPRE AL FINAL O AL PRINCIPIO
 }
 
 void Ciudad::mostrarNotificacion(const QString& texto)
@@ -243,6 +195,81 @@ void Ciudad::mostrarNotificacion(const QString& texto)
         labelNotificacion->hide();
     });
 }
+
+bool Ciudad::eventFilter(QObject* obj, QEvent* event) {
+    if (obj == cofreLabel) {
+        // Mostrar mensaje al entrar
+        if (event->type() == QEvent::Enter) {
+            if (cofreAbiertoYa) {
+                mensajeCofre->setText("🎁 Cofre abierto");
+            } else {
+                bool zombiesVivos = false;
+                for (Zombie* z : zombies) {
+                    if (!z->muerto) {
+                        zombiesVivos = true;
+                        break;
+                    }
+                }
+                if (zombiesVivos) {
+                    mensajeCofre->setText("🔒 Cofre bloqueado");
+                } else {
+                    mensajeCofre->setText("✅ Haz click para abrir");
+                }
+            }
+            mensajeCofre->show();
+        }
+        // Ocultar mensaje al salir
+        else if (event->type() == QEvent::Leave) {
+            mensajeCofre->hide();
+        }
+        // Clic en el cofre
+        else if (event->type() == QEvent::MouseButtonPress) {
+            // Solo abrir si NO está abierto y NO hay zombies vivos
+            if (!cofreAbiertoYa) {
+                bool zombiesVivos = false;
+                for (Zombie* z : zombies) {
+                    if (!z->muerto) {
+                        zombiesVivos = true;
+                        break;
+                    }
+                }
+                if (!zombiesVivos) {
+                    // Lógica exacta de abrir el cofre (igual que con la T)
+                    cofreAbiertoYa = true;
+                    cofreLabel->setPixmap(cofreAbierto.scaled(64, 64));
+                    mensajeCofre->setText("🎁 Cofre abierto");
+                    mensajeCofre->show();
+
+                    jugador->setMuniciones(jugador->getMuniciones() + 30);
+                    ActualizarMuniciones();
+
+                    mostrarNotificacion("🎯 Recibiste 30 municiones");
+
+                    QTimer::singleShot(3000, this, [=]() {
+                        mostrarNotificacion("🏃 Volviendo al camino...");
+
+                        Inventario::getInstance()->setBalas(jugador->getMuniciones());
+
+                        Caminos* c = new Caminos(jugador);
+                        c->cambiarRuta(2);
+                        c->posicionarJugadorEnCalleRuta2();
+                        c->show();
+                        this->close();
+                    });
+                    return true; // Consumimos el evento
+                }
+                // Si hay zombies vivos, el mensaje ya está visible
+                return true;
+            }
+            // Si ya está abierto, no hacemos nada extra (mensaje de abierto ya visible)
+            return true;
+        }
+    }
+
+    return QWidget::eventFilter(obj, event);
+
+}
+
 
 void Ciudad::verificarZombiesYMostrarMensaje()
 {
@@ -266,4 +293,6 @@ void Ciudad::verificarZombiesYMostrarMensaje()
         mostrarNotificacion("🏆 ¡Felicidades! Has pasado el Nivel 1.\nPuedes reclamar el cofre.");
     }
 }
+
+
 

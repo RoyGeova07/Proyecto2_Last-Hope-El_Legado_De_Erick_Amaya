@@ -29,6 +29,9 @@ public:
     QPixmap cofreAbierto;
     QLabel* labelNotificacion = nullptr;
     bool cofreAbiertoYa = false;
+
+protected:
+    bool eventFilter(QObject* obj, QEvent* event) override;
 };
 
 #endif // GASOLINERA_H

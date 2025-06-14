@@ -21,8 +21,10 @@ Gasolinera::Gasolinera(QWidget* parent) : AtributosPersonaje(parent) {
     cofreAbierto = QPixmap(":/imagenes/assets/items/cofre_abierto.png");
 
     cofreLabel = new QLabel(this);
+    cofreLabel->setGeometry(1112, 508, 164, 164); // hitbox grande
     cofreLabel->setPixmap(cofreCerrado.scaled(64, 64));
-    cofreLabel->setGeometry(1142, 538, 104, 104);
+    cofreLabel->show();
+    cofreLabel->installEventFilter(this); // <- habilita eventos de mouse
     cofreLabel->show();
 
     mensajeCofre = new QLabel(this);
@@ -150,40 +152,68 @@ void Gasolinera::onMovimientoUpdate() {
 
     verificarZombiesYMostrarMensaje();
 }
-
-void Gasolinera::keyPressEvent(QKeyEvent* event) {
-    if (event->key() == Qt::Key_T && !cofreAbiertoYa) {
-        if (jugador->x() >= 1104 && jugador->x() <= 1144 && jugador->y() == 538) {
-            bool zombiesVivos = false;
-            for (Zombie* z : zombies) {
-                if (!z->muerto) {
-                    zombiesVivos = true;
-                    break;
+bool Gasolinera::eventFilter(QObject* obj, QEvent* event) {
+    if (obj == cofreLabel) {
+        if (event->type() == QEvent::Enter) {
+            if (cofreAbiertoYa) {
+                mensajeCofre->setText("🎁 Cofre abierto");
+            } else {
+                bool zombiesVivos = false;
+                for (Zombie* z : zombies) {
+                    if (!z->muerto) {
+                        zombiesVivos = true;
+                        break;
+                    }
+                }
+                if (zombiesVivos) {
+                    mensajeCofre->setText("🔒 Cofre bloqueado");
+                } else {
+                    mensajeCofre->setText("✅ Haz click para abrir");
                 }
             }
-
-            if (!zombiesVivos) {
-                cofreAbiertoYa = true;
-                cofreLabel->setPixmap(cofreAbierto.scaled(64, 64));
-                mensajeCofre->setText("🎁 Cofre abierto");
-                mensajeCofre->show();
-                jugador->setMuniciones(jugador->getMuniciones() + 30);
-                ActualizarMuniciones();
-                mostrarNotificacion("🎯 Recibiste 30 municiones");
-
-                QTimer::singleShot(3000, this, [=]() {
-                    mostrarNotificacion("⛽ Nivel completado...");
-                    Caminos* c = new Caminos(jugador);
-                    Inventario::getInstance()->setBalas(jugador->getMuniciones());
-                    c->cambiarRuta(3); // ← Gasolinera termina en Ruta 3
-                    c->posicionarJugadorEnCalleRuta3();
-                    c->show();
-                    this->close();
-                });
+            mensajeCofre->show();
+        }
+        else if (event->type() == QEvent::Leave) {
+            mensajeCofre->hide();
+        }
+        else if (event->type() == QEvent::MouseButtonPress) {
+            if (!cofreAbiertoYa) {
+                bool zombiesVivos = false;
+                for (Zombie* z : zombies) {
+                    if (!z->muerto) {
+                        zombiesVivos = true;
+                        break;
+                    }
+                }
+                if (!zombiesVivos) {
+                    cofreAbiertoYa = true;
+                    cofreLabel->setPixmap(cofreAbierto.scaled(104, 104));
+                    mensajeCofre->setText("🎁 Cofre abierto");
+                    mensajeCofre->show();
+                    jugador->setMuniciones(jugador->getMuniciones() + 30);
+                    ActualizarMuniciones();
+                    mostrarNotificacion("🎯 Recibiste 30 municiones");
+                    QTimer::singleShot(3000, this, [=]() {
+                        mostrarNotificacion("⛽ Nivel completado...");
+                        Caminos* c = new Caminos(jugador);
+                        Inventario::getInstance()->setBalas(jugador->getMuniciones());
+                        c->cambiarRuta(3);
+                        c->posicionarJugadorEnCalleRuta3();
+                        c->show();
+                        this->close();
+                    });
+                    return true;
+                }
+                return true; // Si aún hay zombies, solo muestra el mensaje
             }
+            return true; // Si ya está abierto, no hace nada
         }
     }
+    return QWidget::eventFilter(obj, event);
+}
 
+void Gasolinera::keyPressEvent(QKeyEvent* event)
+{
     AtributosPersonaje::keyPressEvent(event);
 }
 

@@ -27,4 +27,7 @@ public:
     QLabel* labelNotificacion = nullptr;
     void mostrarNotificacion(const QString& texto);
 
+protected:
+     bool eventFilter(QObject* obj, QEvent* event) override;
+
 };
