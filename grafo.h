@@ -32,6 +32,8 @@ public:
     bool existeNodo(const QString& nodo) const;
     QList<QString> dijkstra(const QString& origen, const QString& destino);
     QRectF obtenerRectanguloDelimitar() const;
+    QList<QString> encontrarSegundaMejorRuta(const QString& origen, const QString& destino, const QList<QString>& rutaMasCorta);
+    float calcularDistanciaRuta(const QList<QString>& ruta);
 
     void crearGrafoCiudad();
 

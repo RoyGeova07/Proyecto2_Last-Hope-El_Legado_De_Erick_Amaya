@@ -64,7 +64,7 @@ void Grafo::crearGrafoCiudad()
     agregarArista("Supermercado","Laboratorio",10);
     agregarArista("Supermercado","Gimnasio",20,{QPointF(450, 500)});
     agregarArista("Supermercado","Gasolinera", 25, {QPointF(450, 100)});
-    agregarArista("Gimnasio","Lobby",25,{QPointF(-300,500)});
+    agregarArista("Gimnasio","Lobby",30,{QPointF(-300,500)});
     agregarArista("Gimnasio","Mall",5);
     agregarArista("Gasolinera", "Mall", 5);
 }
@@ -127,4 +127,56 @@ QRectF Grafo::obtenerRectanguloDelimitar() const {
         rect |= QRectF(pos - QPointF(30, 30), QSizeF(60, 60));
     }
     return rect;
+}
+
+QList<QString> Grafo::encontrarSegundaMejorRuta(const QString& origen, const QString& destino, const QList<QString>& rutaMasCorta) {
+    // Almacenar todas las rutas posibles
+    QList<QList<QString>> todasLasRutas;
+
+    // Función recursiva para encontrar todas las rutas
+    std::function<void(QString, QList<QString>, float)> buscarRutas;
+    buscarRutas = [&](QString actual, QList<QString> caminoActual, float distanciaActual) {
+        caminoActual.append(actual);
+
+        if (actual == destino) {
+            todasLasRutas.append(caminoActual);
+            return;
+        }
+
+        for (const auto& arista : listaAdyacencia[actual]) {
+            if (!caminoActual.contains(arista.destino)) {
+                buscarRutas(arista.destino, caminoActual, distanciaActual + arista.peso);
+            }
+        }
+    };
+
+    buscarRutas(origen, QList<QString>(), 0.0f);
+
+    // Ordenar rutas por distancia (necesitaríamos calcular la distancia de cada una)
+    std::sort(todasLasRutas.begin(), todasLasRutas.end(),
+              [this](const QList<QString>& a, const QList<QString>& b) {
+                  return calcularDistanciaRuta(a) < calcularDistanciaRuta(b);
+              });
+
+    // Encontrar la primera ruta que no sea igual a la ruta más corta
+    for (const auto& ruta : todasLasRutas) {
+        if (ruta != rutaMasCorta) {
+            return ruta;
+        }
+    }
+
+    return QList<QString>(); // Retorna lista vacía si no hay segunda ruta
+}
+
+float Grafo::calcularDistanciaRuta(const QList<QString>& ruta) {
+    float distancia = 0.0f;
+    for (int i = 0; i < ruta.size() - 1; i++) {
+        for (const auto& arista : listaAdyacencia[ruta[i]]) {
+            if (arista.destino == ruta[i+1]) {
+                distancia += arista.peso;
+                break;
+            }
+        }
+    }
+    return distancia;
 }

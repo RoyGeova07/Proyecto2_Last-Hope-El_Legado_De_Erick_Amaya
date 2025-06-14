@@ -2,6 +2,7 @@
 #define ATRIBUTOSPERSONAJE_H
 
 #include <QWidget>
+#include <QLabel>
 #include <QTimer>
 #include <QKeyEvent>
 #include <QRect>
@@ -19,6 +20,8 @@ protected:
     personaje* jugador;
     QTimer* movimientoTimer;
     QList<QRect> obstaculos;
+
+    QLabel* labelDistancias;
 
     // Estado de teclas
     bool shiftPresionado;

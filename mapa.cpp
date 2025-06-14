@@ -2,7 +2,6 @@
 #include "mapa.h"
 #include <lobby.h>
 #include <QPixmap>
-#include <QLabel>
 #include <QDebug>
 #include <QPainter>
 #include <QPushButton>
@@ -16,7 +15,6 @@
 Mapa::Mapa(QWidget* parent) : QWidget(parent), jugador(nullptr) {
     this->setWindowTitle("Mapa - Last hope");
 
-    // Layout principal
     QVBoxLayout *mainLayout = new QVBoxLayout(this);
     mainLayout->setContentsMargins(0, 0, 0, 0);
 
@@ -48,7 +46,7 @@ Mapa::Mapa(QWidget* parent) : QWidget(parent), jugador(nullptr) {
         fondoItem->setZValue(-1);
     }
 
-    // Inicialización del grafo
+    // Inicializacion del grafo
     grafoMapa = new Grafo();
     grafoMapa->crearGrafoCiudad();
     visualizarGrafo(*grafoMapa);
@@ -70,12 +68,11 @@ Mapa::Mapa(QWidget* parent) : QWidget(parent), jugador(nullptr) {
         this->deleteLater();
     });
 
-    // Label de distancia
-    labelDistancia = new QLabel(this);
-    labelDistancia->setStyleSheet("QLabel { background-color: rgba(0, 0, 0, 150); color: white; font-size: 16px; padding: 5px; border-radius: 5px; }");
-    labelDistancia->setAlignment(Qt::AlignCenter);
-    labelDistancia->setGeometry(width() - 200, 20, 180, 40);
-    labelDistancia->setText("Distancia: 0 km");
+    labelDistancia = new QLabel(vista);
+    labelDistancia->setStyleSheet("/* mismo estilo */");
+    labelDistancia->setGeometry(20, 20, 180, 50);
+    labelDistancia->setText("Distancias");
+    labelDistancia->show();
     labelDistancia->raise();
 }
 
@@ -129,10 +126,15 @@ void Mapa::visualizarGrafo(const Grafo& grafo) {
 }
 
 void Mapa::nodoSeleccionado() {
+    // Limpiar rutas anteriores
     for (auto item : rutaActual) {
         escena->removeItem(item);
     }
+    for (auto item : segundaRuta) {
+        escena->removeItem(item);
+    }
     rutaActual.clear();
+    segundaRuta.clear();
     labelDistancia->setText("Distancia: 0 km");
 
     QList<QGraphicsItem*> items = escena->selectedItems();
@@ -143,18 +145,32 @@ void Mapa::nodoSeleccionado() {
             QString origen = "Lobby";
 
             if (destino != origen) {
-                QList<QString> ruta = grafoMapa->dijkstra(origen, destino);
-                if (!ruta.isEmpty()) {
-                    dibujarRuta(ruta);
+                QList<QString> rutaCorta = grafoMapa->dijkstra(origen, destino);
+                QList<QString> rutaAlternativa = grafoMapa->encontrarSegundaMejorRuta(origen, destino, rutaCorta);
+
+                float distanciaPrincipal = 0.0f;
+                float distanciaAlternativa = 0.0f;
+
+                if (!rutaAlternativa.isEmpty()) {
+                    distanciaAlternativa = dibujarRuta(rutaAlternativa, Qt::blue, segundaRuta, false);
                 }
+
+                if (!rutaCorta.isEmpty()) {
+                    distanciaPrincipal = dibujarRuta(rutaCorta, Qt::yellow, rutaActual, true);
+                }
+
+                emit actualizarDistancias(distanciaPrincipal, distanciaAlternativa);
+
+                procesarDistancias(distanciaPrincipal, distanciaAlternativa);
             }
         }
     }
 }
 
-void Mapa::dibujarRuta(const QList<QString>& ruta) {
-    QPen penRuta(Qt::yellow);
-    penRuta.setWidth(4);
+
+float Mapa::dibujarRuta(const QList<QString>& ruta, const QColor& color, QList<QGraphicsItem*>& itemsList, bool esPrincipal) {
+    QPen penRuta(color);
+    penRuta.setWidth(esPrincipal ? 4 : 3);
     float distanciaTotal = 0.0f;
 
     for (int i = 0; i < ruta.size() - 1; i++) {
@@ -179,32 +195,41 @@ void Mapa::dibujarRuta(const QList<QString>& ruta) {
 
                 QGraphicsPathItem* lineaRuta = new QGraphicsPathItem(camino);
                 lineaRuta->setPen(penRuta);
+                lineaRuta->setZValue(esPrincipal ? 1 : 0);
                 escena->addItem(lineaRuta);
-                rutaActual.append(lineaRuta);
+                itemsList.append(lineaRuta);
                 break;
             }
         }
 
         QPointF posicion = grafoMapa->obtenerPosicionNodo(nodoActual);
         QGraphicsEllipseItem* nodoResaltado = new QGraphicsEllipseItem(
-            posicion.x() - 25, posicion.y() - 25, 50, 50);
-        nodoResaltado->setPen(QPen(Qt::yellow, 3));
+            posicion.x() - (esPrincipal ? 25 : 22),
+            posicion.y() - (esPrincipal ? 25 : 22),
+            esPrincipal ? 50 : 44,
+            esPrincipal ? 50 : 44);
+        nodoResaltado->setPen(QPen(color, esPrincipal ? 3 : 2));
         nodoResaltado->setBrush(Qt::NoBrush);
+        nodoResaltado->setZValue(esPrincipal ? 1 : 0);
         escena->addItem(nodoResaltado);
-        rutaActual.append(nodoResaltado);
+        itemsList.append(nodoResaltado);
     }
 
     if (!ruta.isEmpty()) {
         QPointF posicion = grafoMapa->obtenerPosicionNodo(ruta.last());
         QGraphicsEllipseItem* nodoResaltado = new QGraphicsEllipseItem(
-            posicion.x() - 25, posicion.y() - 25, 50, 50);
-        nodoResaltado->setPen(QPen(Qt::yellow, 3));
+            posicion.x() - (esPrincipal ? 25 : 22),
+            posicion.y() - (esPrincipal ? 25 : 22),
+            esPrincipal ? 50 : 44,
+            esPrincipal ? 50 : 44);
+        nodoResaltado->setPen(QPen(color, esPrincipal ? 3 : 2));
         nodoResaltado->setBrush(Qt::NoBrush);
+        nodoResaltado->setZValue(esPrincipal ? 1 : 0);
         escena->addItem(nodoResaltado);
-        rutaActual.append(nodoResaltado);
+        itemsList.append(nodoResaltado);
     }
 
-    labelDistancia->setText(QString("Distancia: %1 km").arg(distanciaTotal));
+    return distanciaTotal;
 }
 
 void Mapa::setModoCompacto(bool compacto, QGraphicsView* vistaPrincipal) {
@@ -261,5 +286,17 @@ void Mapa::actualizarVistaCompacta() {
         cacheVista.fill(Qt::transparent);
         QPainter painter(&cacheVista);
         escena->render(&painter, QRectF(), escena->sceneRect());
+    }
+}
+
+
+void Mapa::procesarDistancias(float distanciaPrincipal, float distanciaAlternativa) {
+    emit actualizarDistancias(distanciaPrincipal, distanciaAlternativa);
+}
+
+void Mapa::setDistanciaText(const QString& text) {
+    if (labelDistancia) {
+        labelDistancia->setText(text);
+        labelDistancia->setStyleSheet("background: rgba(0,0,0,150); color: white; border-radius: 5px;");
     }
 }

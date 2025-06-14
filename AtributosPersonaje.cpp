@@ -1,6 +1,5 @@
 #include "AtributosPersonaje.h"
 #include <QPixmap>
-#include <QLabel>
 #include <QDebug>
 #include"bala.h"
 #include"zombie.h"
@@ -419,7 +418,6 @@ void AtributosPersonaje::ActualizarMuniciones()
 }
 
 void AtributosPersonaje::inicializarTabWidget() {
-    // Crear el tab widget
     tabWidget = new QTabWidget(this);
     tabWidget->setWindowFlags(Qt::Window | Qt::FramelessWindowHint);
     tabWidget->setStyleSheet(
@@ -429,10 +427,8 @@ void AtributosPersonaje::inicializarTabWidget() {
         "QTabBar::tab:hover { background: #444; }"
         );
 
-    // Configurar pestaña del mapa
     mapaTab = new QWidget();
 
-    // SOLUCIÓN MEJORADA - Usar un QLabel como contenedor de fondo
     QLabel* backgroundLabel = new QLabel(mapaTab);
     backgroundLabel->setAlignment(Qt::AlignCenter);
     backgroundLabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
@@ -440,34 +436,68 @@ void AtributosPersonaje::inicializarTabWidget() {
     QPixmap background(":/imagenes/assets/mapas/Mapa.jpg");
     if(!background.isNull()) {
         backgroundLabel->setPixmap(background);
-        backgroundLabel->setScaledContents(true); // Escalar manteniendo aspecto
+        backgroundLabel->setScaledContents(true);
     }
-
-    // Crea un QLabel para mostrar la distancia en el tabWidget
-    QLabel* distanciaLabel = new QLabel(mapaTab);
-    distanciaLabel->setAlignment(Qt::AlignCenter);
-    distanciaLabel->setGeometry(10, 10, 180, 40);
-
-    QPixmap bgDistancia(":/imagenes/assets/mapas/LetreroEntrar.png");
-    if (!bgDistancia.isNull()) {
-        QPixmap bg = bgDistancia.scaled(300, 80, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
-
-        QPainter painter(&bg);
-        painter.setRenderHint(QPainter::Antialiasing);
-        painter.setPen(QPen(Qt::white));
-        painter.setFont(QFont("Consolas", 14, QFont::Bold));
-        painter.drawText(bg.rect(), Qt::AlignCenter, "Distancia: 0 km");
-
-        distanciaLabel->setPixmap(bg);
-    }
-
-
-    distanciaLabel->raise();
-
 
     mapaWidget = new Mapa(mapaTab);
     mapaWidget->setStyleSheet("background: transparent;");
     mapaWidget->setAttribute(Qt::WA_TranslucentBackground);
+
+    // Crear el label de distancias
+    labelDistancias = new QLabel(mapaTab);
+    labelDistancias->setAlignment(Qt::AlignCenter);
+
+    QPixmap fondoLabel(":/imagenes/assets/mapas/LetreroEntrar.png");
+    if(!fondoLabel.isNull()) {
+        fondoLabel = fondoLabel.scaled(200, 60, Qt::KeepAspectRatioByExpanding, Qt::SmoothTransformation);
+        labelDistancias->setPixmap(fondoLabel);
+        labelDistancias->setFixedSize(150,40);
+    } else {
+        labelDistancias->setStyleSheet(
+            "QLabel {"
+            "   background-color: rgba(0, 0, 0, 180);"
+            "   color: white;"
+            "   font-size: 12px;"
+            "   padding: 8px;"
+            "   border-radius: 8px;"
+            "   border: 1px solid #555;"
+            "   min-width: 100px;"
+            "   min-height: 30px;"
+            "}"
+            );
+    }
+
+    QLabel *textoLabel = new QLabel(labelDistancias);
+    textoLabel->setAlignment(Qt::AlignCenter);
+    textoLabel->setStyleSheet(
+        "QLabel {"
+        "   color: white;"
+        "   font-size: 12px;"
+        "   font-weight: bold;"
+        "   background: transparent;"
+        "}"
+        );
+    textoLabel->setText("Seleccione un destino");
+    textoLabel->setGeometry(0, 0, labelDistancias->width(), labelDistancias->height());
+
+    labelDistancias->move(10, 10);
+    labelDistancias->raise();
+    labelDistancias->show();
+
+    // Conectar la señal para actualizar el texto
+    connect(mapaWidget, &Mapa::actualizarDistancias, this, [this, textoLabel](float principal, float alterna) {
+        QString texto;
+        if (principal > 0 && alterna > 0) {
+            texto = QString("Ruta rápida: %1 km\nAlternativa: %2 km")
+                        .arg(principal, 0, 'f', 1)
+                        .arg(alterna, 0, 'f', 1);
+        } else if (principal > 0) {
+            texto = QString("Distancia: %1 km").arg(principal, 0, 'f', 1);
+        } else {
+            texto = "No hay rutas disponibles";
+        }
+        textoLabel->setText(texto);
+    });
 
     // Conectar señal de selección de nodo
     connect(mapaWidget, &Mapa::nodoSeleccionadoDesdeCompacto, this, [this](const QString& nodo) {
@@ -478,7 +508,7 @@ void AtributosPersonaje::inicializarTabWidget() {
     mapaWidget->setModoCompacto(true);
     mapaWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
-    // Usar un layout apilado para superponer widgets
+
     QStackedLayout* stackedLayout = new QStackedLayout(mapaTab);
     stackedLayout->setStackingMode(QStackedLayout::StackAll);
     stackedLayout->addWidget(backgroundLabel); // Capa inferior: fondo
@@ -491,14 +521,12 @@ void AtributosPersonaje::inicializarTabWidget() {
     // Configurar pestaña de inventario
     inventarioWidget = new InventarioWidget(Inventario::getInstance());
 
-    // Añadir pestañas
     tabWidget->addTab(mapaTab, "Mapa");
     tabWidget->addTab(inventarioWidget, "Inventario");
 
-    // Tamaño adecuado
     tabWidget->resize(700, 450);
 
-    // Botón de cerrar
+    // Boton de cerrar
     QPushButton* closeButton = new QPushButton("×", tabWidget);
     closeButton->setStyleSheet(
         "QPushButton {"
@@ -517,6 +545,4 @@ void AtributosPersonaje::inicializarTabWidget() {
         );
     closeButton->move(tabWidget->width() - 30, 10);
     connect(closeButton, &QPushButton::clicked, tabWidget, &QWidget::hide);
-
-
 }
