@@ -97,7 +97,7 @@ QRect zonaEntradaGasolinera(450,350,131,127);
 QRect zonaEntradaMall(450,400,131,40);
 QRect zonaEntradaGym(450,500,131,40);
 QRect zonaEntradaSuper(700,400,131,100);
-QRect zonaEntradaLab(500,400,131,40);
+QRect zonaEntradaLab(600,400,131,40);
 
 void Caminos::configurarEscena()
 {
@@ -168,6 +168,36 @@ void Caminos::configurarObstaculos()
         obstaculos.append(QRect(600,20,400,300)); //PARTE SUPERIOR DERECHA
         obstaculos.append(QRect(20,520,400,300)); //PARTE INFERIOR IZQUIERDA
         obstaculos.append(QRect(600,500,400,300)); //PARTE INFERIOR DERECHA
+
+    }else if(rutaActual==7){
+
+        obstaculos.clear();//AQUI AGREGAR LOS OBSTACULOS DE LA RUTA 7
+        obstaculos.append(QRect(20,20,1200,100)); //PARTE SUPERIOR
+        obstaculos.append(QRect(20,300,700,600)); //PARTE  DERECHA
+        obstaculos.append(QRect(940,20,400,600)); //PARTE  IZQUIERDA
+
+    }else if(rutaActual==8){
+
+        obstaculos.clear();//AQUI AGREGAR LOS OBSTACULOS DE LA RUTA 8
+        obstaculos.append(QRect(20,20,720,330)); //PARTE SUPERIOR
+        obstaculos.append(QRect(1000,20,300,700)); //PARTE  DERECHA
+        obstaculos.append(QRect(20,580,1100,600)); //PARTE  IZQUIERDA
+
+    }else if(rutaActual==9){
+
+        obstaculos.clear();//AQUI AGREGAR LOS OBSTACULOS DE LA RUTA 9
+        obstaculos.append(QRect(20,20,610,280)); //PARTE SUPERIOR IZQUIERDA
+        obstaculos.append(QRect(880,20,500,280)); //PARTE SUPERIOR DERECHA
+        obstaculos.append(QRect(20,490,610,700)); //PARTE INFERIOR IZQUIERDA
+        obstaculos.append(QRect(880,490,600,600)); //PARTE INFERIOR DERECHA
+
+    }
+    else if(rutaActual==10){
+
+        obstaculos.clear();//AQUI AGREGAR LOS OBSTACULOS DE LA RUTA 10
+        obstaculos.append(QRect(20,20,1100,300)); //PARTE SUPERIOR
+        obstaculos.append(QRect(20,480,1100,700)); //PARTE INFERIOR
+        obstaculos.append(QRect(700,20,1100,800)); //PARTE  DERECHA
 
     }
 }
@@ -872,7 +902,7 @@ void Caminos::onMovimientoUpdate()
         cambiarRuta(9);
         configurarObstaculos();
 
-        jugador->move(600,400);
+        jugador->move(640,350);
 
         qDebug()<<"Cambiando a RUTA_3...";
 
@@ -910,7 +940,7 @@ void Caminos::onMovimientoUpdate()
     }
 
     // Cambio a RUTA_7 desde RUTA_9
-    if(rutaActual == 9 && rectJugador.intersects(QRect(800, 40, 200, 80)))
+    if(rutaActual == 9 && rectJugador.intersects(QRect(730, 40, 200, 80)))
     {
         obstaculos.clear();
 

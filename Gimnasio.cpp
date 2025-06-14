@@ -32,7 +32,7 @@ Gimnasio::Gimnasio(QWidget* parent) : AtributosPersonaje(parent) {
 }
 
 void Gimnasio::configurarEscena() {
-    QPixmap fondoPixmap(":/imagenes/assets/mapas/Gimnasio.jpeg");
+    QPixmap fondoPixmap(":/imagenes/assets/gym.jpeg");
     if (fondoPixmap.isNull()) {
         qDebug() << "Error al cargar imagen desde assets/mapas/gym.jpeg";
     } else {

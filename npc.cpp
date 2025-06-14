@@ -113,9 +113,12 @@ void NPC::mostrarDialogo(DialogoNPC* dialogoUI)
         QString textoFinal;
         switch(tipo) {
         case Tipo::NPC1:
-            textoFinal = "...Lo encontraste?";
+            textoFinal = "...La encontraste?";
             break;
         case Tipo::NPC2:
+            textoFinal = "No tengo más botiquines, sigue el camino para encontrar más.";
+            break;
+        case Tipo::NPC3:
             textoFinal = "No tengo más botiquines, sigue el camino para encontrar más.";
             break;
         case Tipo::NPC4:
@@ -209,7 +212,7 @@ void NPC::manejarOpcionSeleccionada(int opcion)
                 inventarioRef->insertarObjeto("curar1",2,"Botiquin","Restaura vidaaa");
                 qDebug() << "Botiquines agregados al inventario";
 
-                mostrarNotificacion("¡Has obtenido un botiquín! Revisa tu inventario.");
+                mostrarNotificacion("¡Has obtenido un botiquín! Revisa tu inventario presionando L.");
 
             }
 
@@ -219,7 +222,7 @@ void NPC::manejarOpcionSeleccionada(int opcion)
                 inventarioRef->insertarObjeto("curar2",1,"Botiquin","Restaura vidaaa");
                 qDebug() << "Botiquines agregados al inventario";
 
-                mostrarNotificacion("¡Has obtenido un botiquín grande! Revisa tu inventario.");
+                mostrarNotificacion("¡Has obtenido un botiquín grande! Revisa tu inventario presionando L.");
 
             }
 

@@ -44,14 +44,6 @@ lobby::lobby(personaje* jugadorExistente, QWidget* parent)
     btnMapa->setFocusPolicy(Qt::NoFocus);
     btnMapa->move(640,150);
 
-    connect(btnMapa, &QPushButton::clicked, this, [this]() {
-        Mapa* mapa = new Mapa();
-        mapa->show();
-        this->close();
-        qDebug() << "Boton de mapa presionado";
-        this->setFocus();
-    });
-
     // registro de NPCs
     NPC* npc2 = new NPC(NPC::Tipo::NPC2, this);
     npc2->move(1100, 390);

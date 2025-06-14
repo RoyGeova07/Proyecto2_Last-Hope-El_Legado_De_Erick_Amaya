@@ -16,11 +16,11 @@
 Mapa::Mapa(QWidget* parent) : QWidget(parent), jugador(nullptr) {
     this->setWindowTitle("Mapa - Last hope");
 
-    // Crear layout principal
+    // Layout principal
     QVBoxLayout *mainLayout = new QVBoxLayout(this);
     mainLayout->setContentsMargins(0, 0, 0, 0);
 
-    // Configurar escena y vista
+    // Configuración de escena y vista
     escena = new QGraphicsScene(this);
     vista = new QGraphicsView(escena, this);
     vista->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
@@ -29,44 +29,36 @@ Mapa::Mapa(QWidget* parent) : QWidget(parent), jugador(nullptr) {
     vista->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     vista->setStyleSheet("background: transparent; border: none;");
 
-    // Después de crear la vista
-    vista->setSceneRect(0, 0, 2000, 2000); // Ajusta según tu escena
+    // Ajustes de vista
+    vista->setSceneRect(0, 0, 2000, 2000);
     vista->fitInView(escena->sceneRect(), Qt::KeepAspectRatio);
-
-    // O usa scale directamente
-    vista->scale(0.6, 0.6); // 60% del tamaño original
-
-    vista->setSceneRect(escena->itemsBoundingRect()); // Ajustar al contenido
+    vista->scale(0.6, 0.6);
+    vista->setSceneRect(escena->itemsBoundingRect());
     vista->fitInView(escena->itemsBoundingRect(), Qt::KeepAspectRatio);
-
-    // O si prefieres un enfoque manual:
     vista->centerOn(escena->itemsBoundingRect().center());
 
-    // Añadir vista al layout principal
     mainLayout->addWidget(vista);
 
-    // Cargar imagen de fondo directamente en la escena
+    // Carga de fondo
     QPixmap fondoPixmap(":/imagenes/assets/mapas/Mapa.jpg");
     if(fondoPixmap.isNull()) {
         qDebug() << "Error al cargar imagen desde assets/mapas/Mapa.jpg";
     } else {
-        // Añadir fondo como item de la escena
         QGraphicsPixmapItem *fondoItem = escena->addPixmap(fondoPixmap);
-        fondoItem->setZValue(-1); // Para que esté detrás de todo
+        fondoItem->setZValue(-1);
     }
 
-    // Crear y configurar el grafo
+    // Inicialización del grafo
     grafoMapa = new Grafo();
     grafoMapa->crearGrafoCiudad();
-
     visualizarGrafo(*grafoMapa);
 
-    // Boton para volver al lobby
+    // Botón de volver
     btnVolver = new QPushButton(this);
     btnVolver->setText("⬅");
     btnVolver->setStyleSheet("QPushButton { border: none; background: transparent; font-size: 40px; }");
     btnVolver->move(10, 10);
-    btnVolver->raise(); // Para que esté encima de la vista
+    btnVolver->raise();
 
     connect(btnVolver, &QPushButton::clicked, this, [this]() {
         if(!jugador) {
@@ -78,13 +70,13 @@ Mapa::Mapa(QWidget* parent) : QWidget(parent), jugador(nullptr) {
         this->deleteLater();
     });
 
-    // Crear label para mostrar la distancia
+    // Label de distancia
     labelDistancia = new QLabel(this);
     labelDistancia->setStyleSheet("QLabel { background-color: rgba(0, 0, 0, 150); color: white; font-size: 16px; padding: 5px; border-radius: 5px; }");
     labelDistancia->setAlignment(Qt::AlignCenter);
     labelDistancia->setGeometry(width() - 200, 20, 180, 40);
     labelDistancia->setText("Distancia: 0 km");
-    labelDistancia->raise(); // Para que esté encima de la vista
+    labelDistancia->raise();
 }
 
 void Mapa::visualizarGrafo(const Grafo& grafo) {
@@ -125,7 +117,6 @@ void Mapa::visualizarGrafo(const Grafo& grafo) {
         QPointF posicion = grafo.obtenerPosicionNodo(nodo);
 
         QGraphicsEllipseItem* nodoItem = new QGraphicsEllipseItem(
-            //posicion.x() - 20, posicion.y() - 20, 40, 40);
             posicion.x() - 10, posicion.y() - 10, 20, 20);
         nodoItem->setBrush(QBrush(Qt::gray));
         nodoItem->setPen(QPen(Qt::black, 2));
@@ -138,13 +129,10 @@ void Mapa::visualizarGrafo(const Grafo& grafo) {
 }
 
 void Mapa::nodoSeleccionado() {
-    // Limpiar cualquier ruta previa
     for (auto item : rutaActual) {
         escena->removeItem(item);
     }
     rutaActual.clear();
-
-    // Resetear distancia
     labelDistancia->setText("Distancia: 0 km");
 
     QList<QGraphicsItem*> items = escena->selectedItems();
@@ -155,9 +143,7 @@ void Mapa::nodoSeleccionado() {
             QString origen = "Lobby";
 
             if (destino != origen) {
-                // Calcular ruta mas corta
                 QList<QString> ruta = grafoMapa->dijkstra(origen, destino);
-
                 if (!ruta.isEmpty()) {
                     dibujarRuta(ruta);
                 }
@@ -175,7 +161,6 @@ void Mapa::dibujarRuta(const QList<QString>& ruta) {
         QString nodoActual = ruta[i];
         QString nodoSiguiente = ruta[i + 1];
 
-        // Buscar la arista entre estos nodos
         for (const Grafo::Arista& arista : grafoMapa->obtenerAristas(nodoActual)) {
             if (arista.destino == nodoSiguiente) {
                 distanciaTotal += arista.peso;
@@ -200,7 +185,6 @@ void Mapa::dibujarRuta(const QList<QString>& ruta) {
             }
         }
 
-        // Resaltar nodos de la ruta
         QPointF posicion = grafoMapa->obtenerPosicionNodo(nodoActual);
         QGraphicsEllipseItem* nodoResaltado = new QGraphicsEllipseItem(
             posicion.x() - 25, posicion.y() - 25, 50, 50);
@@ -210,7 +194,6 @@ void Mapa::dibujarRuta(const QList<QString>& ruta) {
         rutaActual.append(nodoResaltado);
     }
 
-    // Resaltar el ultimo nodo (destino)
     if (!ruta.isEmpty()) {
         QPointF posicion = grafoMapa->obtenerPosicionNodo(ruta.last());
         QGraphicsEllipseItem* nodoResaltado = new QGraphicsEllipseItem(
@@ -221,7 +204,6 @@ void Mapa::dibujarRuta(const QList<QString>& ruta) {
         rutaActual.append(nodoResaltado);
     }
 
-    // Actualizar label con la distancia total
     labelDistancia->setText(QString("Distancia: %1 km").arg(distanciaTotal));
 }
 
@@ -248,6 +230,7 @@ QPixmap Mapa::obtenerVistaMinimizada() const {
 QSize Mapa::sizeHint() const {
     return modoCompacto ? QSize(400, 300) : QSize(1280, 720);
 }
+
 void Mapa::mousePressEvent(QMouseEvent* event) {
     if (modoCompacto) {
         QPointF scenePos = vista->mapToScene(event->pos());
@@ -271,7 +254,6 @@ void Mapa::actualizarVistaCompacta() {
             height() / escena->sceneRect().height()
             );
         vista->resetTransform();
-        //vista->scale(scaleFactor, scaleFactor);
         vista->scale(0.8, 0.8);
         vista->centerOn(escena->sceneRect().center());
 

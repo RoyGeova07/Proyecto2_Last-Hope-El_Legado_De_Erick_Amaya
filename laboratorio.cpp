@@ -33,7 +33,7 @@ laboratorio::laboratorio(QWidget* parent) : AtributosPersonaje(parent) {
 }
 
 void laboratorio::configurarEscena() {
-    QPixmap fondoPixmap(":/imagenes/assets/mapas/Gimnasio.jpeg");
+    QPixmap fondoPixmap(":/imagenes/assets/lab.jpeg");
     if (fondoPixmap.isNull()) {
         qDebug() << "Error al cargar imagen desde assets/mapas/lab.jpeg";
     } else {

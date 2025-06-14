@@ -443,6 +443,28 @@ void AtributosPersonaje::inicializarTabWidget() {
         backgroundLabel->setScaledContents(true); // Escalar manteniendo aspecto
     }
 
+    // Crea un QLabel para mostrar la distancia en el tabWidget
+    QLabel* distanciaLabel = new QLabel(mapaTab);
+    distanciaLabel->setAlignment(Qt::AlignCenter);
+    distanciaLabel->setGeometry(10, 10, 180, 40);
+
+    QPixmap bgDistancia(":/imagenes/assets/mapas/LetreroEntrar.png");
+    if (!bgDistancia.isNull()) {
+        QPixmap bg = bgDistancia.scaled(300, 80, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
+
+        QPainter painter(&bg);
+        painter.setRenderHint(QPainter::Antialiasing);
+        painter.setPen(QPen(Qt::white));
+        painter.setFont(QFont("Consolas", 14, QFont::Bold));
+        painter.drawText(bg.rect(), Qt::AlignCenter, "Distancia: 0 km");
+
+        distanciaLabel->setPixmap(bg);
+    }
+
+
+    distanciaLabel->raise();
+
+
     mapaWidget = new Mapa(mapaTab);
     mapaWidget->setStyleSheet("background: transparent;");
     mapaWidget->setAttribute(Qt::WA_TranslucentBackground);
