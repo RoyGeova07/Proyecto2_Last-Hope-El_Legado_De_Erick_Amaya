@@ -78,6 +78,18 @@ void Zombie::SetAnimacion(const QString& ruta, int cantidadFrames,bool loop)
 
     setPixmap(frames.first());
     animacionTimer->start(100);
+    //Esto previene que animaciones como la de muerte (no loop) sean sobrescritas accidentalmente por otra
+    //si el timer esta detenido.
+    if(!loop)
+    {
+
+        animacionTimer->start(100);
+
+    }else if(!animacionTimer->isActive()){
+
+        animacionTimer->start(100);
+
+    }
 
     //detectar si es animacion de ataque por su ruta
     estaAtacando=ruta.contains("Attack");
@@ -390,7 +402,13 @@ void Zombie::recibirDanio(int cantidad)
     {
 
         muerto=true;//se marca como muerto
-        if(movimientoTimer)movimientoTimer->stop();//detener el movimiento
+        if(movimientoTimer)
+        {
+
+            movimientoTimer->stop();//detener el movimiento
+            movimientoTimer->disconnect();
+
+        }
 
         //aqui se muestra la animacion de muerte segun el tipo de zombie
         QString rutaMuerte;
@@ -408,12 +426,14 @@ void Zombie::recibirDanio(int cantidad)
 
         }
 
+        //aqui reproduce animacion de muerte una unica vez sin interrupciones
         SetAnimacion(rutaMuerte,framesMuerte,false);
 
         //aqui ocultar barra de vida despues de animacion de muerte
         QTimer::singleShot(800,this,[=](){
 
            barraFondo->hide();
+           this->raise();// asegura que el zombie muerto se muestre encima
 
         });
 

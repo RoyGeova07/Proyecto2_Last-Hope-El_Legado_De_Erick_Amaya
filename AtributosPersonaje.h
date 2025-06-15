@@ -56,6 +56,15 @@ protected:
     QLabel*labelMuniciones;
     QList<Bala*>balasActivas;
     void ActualizarBarraVida();
+    void iniciarCuracion(int cantidad,const QString& tipo);
+
+private:
+
+    QTimer*curacionTimer=nullptr;
+    bool estadoCurandose=false;
+    void intentarCurarse();
+    void terminarCuracion(int cantidad);
+    void mostrarSeleccionBotiquin();
 
 public:
     explicit AtributosPersonaje(QWidget* parent = nullptr);
@@ -67,6 +76,7 @@ public:
     void keyPressEvent(QKeyEvent* event) override;
     void keyReleaseEvent(QKeyEvent* event) override;
     void ActualizarMuniciones();
+    void intentarDisparar();
 
 };
 

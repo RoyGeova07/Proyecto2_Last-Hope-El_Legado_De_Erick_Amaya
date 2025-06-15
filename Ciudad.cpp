@@ -23,7 +23,7 @@ Ciudad::Ciudad(QWidget* parent) : AtributosPersonaje(parent) {
 
     cofreLabel=new QLabel(this);
     cofreLabel->setGeometry(1112, 508, 164, 164);
-    cofreLabel->setPixmap(cofreCerrado.scaled(64,64)); // Puedes ajustar el tamaño visual según tu preferencia
+    cofreLabel->setPixmap(cofreCerrado.scaled(64,64)); //tamaño del cofre
     cofreLabel->show();
     cofreLabel->installEventFilter(this);
     //obstaculos.append(QRect(1142,538,64,64));
@@ -224,7 +224,7 @@ bool Ciudad::eventFilter(QObject* obj, QEvent* event) {
         }
         // Clic en el cofre
         else if (event->type() == QEvent::MouseButtonPress) {
-            // Solo abrir si NO está abierto y NO hay zombies vivos
+            //Solo abrir si NO esta abierto y NO hay zombies vivos
             if (!cofreAbiertoYa) {
                 bool zombiesVivos = false;
                 for (Zombie* z : zombies) {
@@ -234,7 +234,7 @@ bool Ciudad::eventFilter(QObject* obj, QEvent* event) {
                     }
                 }
                 if (!zombiesVivos) {
-                    // Lógica exacta de abrir el cofre (igual que con la T)
+                    //Logica exacta de abrir el cofre (igual que con la T)
                     cofreAbiertoYa = true;
                     cofreLabel->setPixmap(cofreAbierto.scaled(64, 64));
                     mensajeCofre->setText("🎁 Cofre abierto");
@@ -254,14 +254,15 @@ bool Ciudad::eventFilter(QObject* obj, QEvent* event) {
                         c->cambiarRuta(2);
                         c->posicionarJugadorEnCalleRuta2();
                         c->show();
+                        ResetearMovimiento();//FUNCION SALVADORA, QUE EVITA BUGS, TE ADOROOOOOOOOOOOOOO
                         this->close();
                     });
                     return true; // Consumimos el evento
                 }
-                // Si hay zombies vivos, el mensaje ya está visible
+                // Si hay zombies vivos, el mensaje ya esta visible
                 return true;
             }
-            // Si ya está abierto, no hacemos nada extra (mensaje de abierto ya visible)
+            //Si ya esta abierto, no hacemos nada extra (mensaje de abierto ya visible)
             return true;
         }
     }

@@ -200,6 +200,7 @@ bool Gasolinera::eventFilter(QObject* obj, QEvent* event) {
                         c->cambiarRuta(3);
                         c->posicionarJugadorEnCalleRuta3();
                         c->show();
+                        ResetearMovimiento();//FUNCION SALVADORA, QUE EVITA BUGS, TE ADOROOOOOOOOOOOOOO
                         this->close();
                     });
                     return true;

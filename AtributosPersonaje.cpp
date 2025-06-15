@@ -134,115 +134,70 @@ void AtributosPersonaje::inicializarJugador() {
 }
 
 void AtributosPersonaje::Movimientos() {
-    movimientoTimer = new QTimer(this);
+    movimientoTimer=new QTimer(this);
     connect(movimientoTimer, &QTimer::timeout, this, [=]() {
-        bool moviendo = false;
+        bool moviendo=false;
 
-        if(ZPresionado&&puedeDisparar&&!disparandoAhora)
+        //Disparo continuo
+        if(ZPresionado)
+            intentarDisparar();
+
+        //Movimiento (solo si no esta disparando)
+        if(!disparandoAhora)
         {
-            if(jugador->getMuniciones()>0)
+
+            if(izquierdaPresionada)
             {
-                disparandoAhora=true;
-                jugador->setMuniciones(jugador->getMuniciones()-1);
-                jugador->SetAnimacion(":/imagenes/assets/protagonista/Shot_1.png",4);
-                ActualizarMuniciones();
 
-                //crea la bala
-                Bala*bala=new Bala(this);
+                jugador->MoverSiNoColisiona(-jugador->getVelocidadMoviento(),0,obstaculos);
+                moviendo=true;
 
-                int offsetX=jugador->miradoDerecha?130:(128-130-10);// derecha o izquierda del arma
-                int offsetY=90;// altura a la mitad
+            }else if(derechaPresionada){
 
-                bala->move(jugador->x()+offsetX,jugador->y()+offsetY);
-                bala->Disparar(jugador->miradoDerecha);
-                balasActivas.append(bala);
-                connect(bala, &Bala::impactoBala, this, [=](Bala* b) {
-                    balasActivas.removeOne(b);
-                    b->deleteLater();  // esto elimina la bala una vez que termine de ejecutarse
-                });
+                jugador->MoverSiNoColisiona(jugador->getVelocidadMoviento(),0,obstaculos);
+                moviendo=true;
+            }
 
-                //Cancelar cualquier timer de disparo anterior
-                if(disparoTimer)
-                {
+            if(arribaPresionado)
+            {
+                jugador->MoverSiNoColisiona(0,-jugador->getVelocidadMoviento(),obstaculos);
+                moviendo=true;
 
-                    disparoTimer->stop();
-                    delete disparoTimer;
-                    disparoTimer=nullptr;
+            }else if(abajoPresionado){
 
-                }
+                jugador->MoverSiNoColisiona(0,jugador->getVelocidadMoviento(),obstaculos);
+                moviendo=true;
 
-                //aqui se crea un nuevo timer y guardarlo para poder cancelarlo
-                disparoTimer=new QTimer(this);
-                disparoTimer->setSingleShot(true);
-                connect(disparoTimer,&QTimer::timeout,this,[=](){
-                    disparandoAhora=false;
+            }
+        }
 
-                    //si no hay mas municiones, forzar detener el disparo y desactivar el Zpresinodado
-                    if(jugador->getMuniciones()==0)
-                    {
+        //Animaciones segun estado
+        if(moviendo)
+        {
 
-                        ZPresionado=false;
+            if(shiftPresionado)
+            {
 
-                    }
-
-                    if(!ZPresionado&&!izquierdaPresionada&&!derechaPresionada&&!arribaPresionado&&!abajoPresionado)
-                    {
-
-                        jugador->SetAnimacion(":/imagenes/assets/protagonista/Idle.png",7);
-
-                    }
-                    delete disparoTimer;
-                    disparoTimer=nullptr;
-
-                });
-                disparoTimer->start(400);//duracion del disparo
-
+                jugador->SetAnimacionMovimiento(6);
+                jugador->SetAnimacion(":/imagenes/assets/protagonista/Run.png",8);
             }else{
 
-                //si no hay balas, el bool se asegura q no siga intentando disparar
-                ZPresionado=false;
-
-            }
-            return;//no se permite otras acciones mientras el personaje dispara
-        }
-
-        if (izquierdaPresionada) {
-            jugador->MoverSiNoColisiona(-jugador->getVelocidadMoviento(), 0, obstaculos);
-            moviendo = true;
-        } else if (derechaPresionada) {
-            jugador->MoverSiNoColisiona(jugador->getVelocidadMoviento(), 0, obstaculos);
-            moviendo = true;
-        }
-
-        if (arribaPresionado) {
-            jugador->MoverSiNoColisiona(0, -jugador->getVelocidadMoviento(), obstaculos);
-            moviendo = true;
-        } else if (abajoPresionado) {
-            jugador->MoverSiNoColisiona(0, jugador->getVelocidadMoviento(), obstaculos);
-            moviendo = true;
-        }
-
-        if (moviendo) {
-            if (shiftPresionado) {
-                jugador->SetAnimacionMovimiento(6);
-                jugador->SetAnimacion(":/imagenes/assets/protagonista/Run.png", 8);
-            } else {
                 jugador->SetAnimacionMovimiento(2);
-                jugador->SetAnimacion(":/imagenes/assets/protagonista/Walk.png", 7);
+                jugador->SetAnimacion(":/imagenes/assets/protagonista/Walk.png",7);
+
             }
-        } else {
+        }else{
 
             movimientoTimer->stop();
-
             if(!disparandoAhora)
             {
 
                 jugador->DetenerAnimacion();
-                jugador->SetAnimacion(":/imagenes/assets/protagonista/Idle.png", 7);
+                jugador->SetAnimacion(":/imagenes/assets/protagonista/Idle.png",7);
 
             }
-
         }
+
         ActualizarBarraVida();
         onMovimientoUpdate();
     });
@@ -253,6 +208,7 @@ void AtributosPersonaje::Movimientos() {
 void AtributosPersonaje::keyPressEvent(QKeyEvent* event)
 {
     if(!jugador)return;
+    if(estadoCurandose)return;//si esta curandose no mover
 
     //aqui tecla l para abrir y cerrar el inventario
     if (event->key() == Qt::Key_L) {
@@ -297,11 +253,16 @@ void AtributosPersonaje::keyPressEvent(QKeyEvent* event)
         if (!movimientoTimer->isActive()) movimientoTimer->start();
         break;
 
+    case Qt::Key_C:
+        intentarCurarse();
+        break;
+
     }
 }
 
 void AtributosPersonaje::keyReleaseEvent(QKeyEvent* event) {
     if (!jugador) return;
+    if(estadoCurandose)return;//si esta curando no mover
 
     switch (event->key()) {
     case Qt::Key_Shift:
@@ -390,20 +351,6 @@ void AtributosPersonaje::ActualizarBarraVida()
     barraVidaTexto->setText(texto);
 
     barraVidaLabel->raise();
-
-    //CON ESTO SE CURA 5 DE VIDA
-    // int nuevaVida = jugador->getVidas() + 5;
-    // if (nuevaVida > 30) nuevaVida = 30;
-    // jugador->setVidas(nuevaVida);
-    // actualizarBarraVida();
-
-
-    //SE CURA 10 DE VIDA
-    // int nuevaVida = jugador->getVidas() + 10;
-    // if (nuevaVida > 30) nuevaVida = 30;
-    // jugador->setVidas(nuevaVida);
-    // actualizarBarraVida();
-
 }
 
 void AtributosPersonaje::ActualizarMuniciones()
@@ -545,4 +492,189 @@ void AtributosPersonaje::inicializarTabWidget() {
         );
     closeButton->move(tabWidget->width() - 30, 10);
     connect(closeButton, &QPushButton::clicked, tabWidget, &QWidget::hide);
+}
+
+void AtributosPersonaje::intentarCurarse()
+{
+
+    if(estadoCurandose||!jugador)return;
+
+    //aqui se verifica si esta en lobby o en caminos
+    QString nombreClase=this->metaObject()->className();
+    if(nombreClase!="lobby"&&nombreClase!="Caminos")
+    {
+
+        QMessageBox::warning(this,"Curación no permitida","No puedes curarte fuera del lobby o caminos.");
+        return;
+
+    }
+
+    if(izquierdaPresionada||derechaPresionada||arribaPresionado||abajoPresionado)
+    {
+
+        QMessageBox::information(this,"Movimiento activo","Detente para poder curarte.");
+        return;
+
+    }
+
+    if(jugador->getVidas()>=30)
+    {
+
+        QMessageBox::information(this,"Vida completa","Ya tienes la vida completa.");
+        return;
+
+    }
+
+    NodoInventario*curar1=Inventario::getInstance()->buscar(Inventario::getInstance()->obtenerRaiz(),"curar1");
+    NodoInventario*curar2=Inventario::getInstance()->buscar(Inventario::getInstance()->obtenerRaiz(),"curar2");
+
+    //si quiere curarse y tiene los 2 botiquines mostrar cual de los 2 usarrrr
+    if(curar1&&curar1->cantidad>0&&curar2&&curar2->cantidad>0)
+    {
+
+        mostrarSeleccionBotiquin();
+        return;
+
+    }
+
+    if(curar2&&curar2->cantidad>0)
+    {
+
+        iniciarCuracion(20,"curar2");
+
+    }else if(curar1&&curar1->cantidad>0){
+
+        iniciarCuracion(10,"curar1");
+
+    }else{
+
+        QMessageBox::information(this,"Sin botiquines","No tienes botiquines para curarte.");
+
+    }
+
+
+
+}
+
+void AtributosPersonaje::iniciarCuracion(int cantidad, const QString &tipo)
+{
+
+    estadoCurandose=true;
+    ResetearMovimiento();
+    jugador->SetAnimacion(":/imagenes/assets/protagonista/curandose.png",7);
+
+    if(curacionTimer)
+    {
+
+        curacionTimer->stop();
+        delete curacionTimer;
+
+    }
+
+    curacionTimer=new QTimer(this);
+    curacionTimer->setSingleShot(true);
+    connect(curacionTimer,&QTimer::timeout,this,[=]()
+    {
+
+        terminarCuracion(cantidad);
+        Inventario::getInstance()->insertarObjeto(tipo,-1,"","");
+
+    });
+    curacionTimer->start(2000);//2 segundos en curarse
+
+}
+
+void AtributosPersonaje::terminarCuracion(int cantidad)
+{
+
+    estadoCurandose=false;
+    jugador->SetAnimacion(":/imagenes/assets/protagonista/Idle.png",7);//quitar efecto, vuelve a la normalidad
+
+    int nuevaVida=jugador->getVidas()+cantidad;
+    if(nuevaVida>30)nuevaVida=30;
+    jugador->setVidas(nuevaVida);
+
+    ActualizarBarraVida();
+
+}
+
+void AtributosPersonaje::mostrarSeleccionBotiquin()
+{
+
+    QMessageBox msgBox;
+    msgBox.setWindowTitle("Elegir Botiquin");
+    msgBox.setText("Tienes dos botiquines. ¿Cuál deseas usar?");
+    QPushButton*btn10=msgBox.addButton("Curar1 (+10 vida)",QMessageBox::YesRole);
+    QPushButton*btn20=msgBox.addButton("Curar2 (+20 vida)",QMessageBox::NoRole);
+    msgBox.exec();
+
+    if(msgBox.clickedButton()==btn10)
+    {
+
+        iniciarCuracion(10,"curar1");
+
+    }else if(msgBox.clickedButton()==btn20){
+
+        iniciarCuracion(20,"curar2");
+
+    }
+
+}
+
+void AtributosPersonaje::intentarDisparar()
+{
+
+    if(!ZPresionado||!puedeDisparar||disparandoAhora||jugador->getMuniciones()<=0)
+        return;
+
+    disparandoAhora=true;
+    jugador->setMuniciones(jugador->getMuniciones()-1);
+    jugador->SetAnimacion(":/imagenes/assets/protagonista/Shot_1.png", 4);
+    ActualizarMuniciones();
+
+    // Crear bala
+    Bala* bala=new Bala(this);
+    int offsetX=jugador->miradoDerecha?130:(128-130-10);//calculando de donde saldra la bala
+    int offsetY=90;
+    bala->move(jugador->x()+offsetX,jugador->y()+offsetY);
+    bala->Disparar(jugador->miradoDerecha);
+    balasActivas.append(bala);
+
+
+    connect(bala,&Bala::impactoBala,this,[=](Bala*b)
+    {
+
+        balasActivas.removeOne(b);
+        b->deleteLater();
+
+    });
+
+    // Timer para permitir el siguiente disparo
+    if(disparoTimer)
+    {
+
+        disparoTimer->stop();
+        delete disparoTimer;
+
+    }
+
+    disparoTimer=new QTimer(this);
+    disparoTimer->setSingleShot(true);
+    connect(disparoTimer, &QTimer::timeout,this,[=]()
+    {
+
+        disparandoAhora=false;
+
+        // Si no hay municion, cancelar el estado Z
+        if(jugador->getMuniciones()==0)
+            ZPresionado=false;
+
+        if(!ZPresionado&&!izquierdaPresionada&&!derechaPresionada&&!arribaPresionado&&!abajoPresionado)
+            jugador->SetAnimacion(":/imagenes/assets/protagonista/Idle.png",7);
+
+        delete disparoTimer;
+        disparoTimer=nullptr;
+    });
+    disparoTimer->start(400);
+
 }

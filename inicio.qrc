@@ -83,5 +83,6 @@
 	<file>assets/mapas/Gimnasio.jpeg</file>
 	<file>assets/gym.jpeg</file>
         <file>assets/lab.jpeg</file>
+	<file>assets/protagonista/curandose.png</file>
     </qresource>
 </RCC>

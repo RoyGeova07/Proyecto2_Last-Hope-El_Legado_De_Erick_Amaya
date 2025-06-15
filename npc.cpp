@@ -212,7 +212,7 @@ void NPC::manejarOpcionSeleccionada(int opcion)
                 inventarioRef->insertarObjeto("curar1",2,"Botiquin","Restaura vidaaa");
                 qDebug() << "Botiquines agregados al inventario";
 
-                mostrarNotificacion("¡Has obtenido un botiquín! Revisa tu inventario presionando L.");
+                mostrarNotificacion("¡Has obtenido un botiquín pequeño! Revisa tu inventario presionando L.");
 
             }
 

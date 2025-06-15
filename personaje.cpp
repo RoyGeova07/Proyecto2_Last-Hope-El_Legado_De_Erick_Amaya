@@ -2,16 +2,22 @@
 #include<QDebug>
 
 personaje::personaje(QWidget*parent):QLabel(parent),frameActual(0),velocidadMovimiento(10),miradoDerecha(true),ultimaDireccionDerecha(true),
-    vida(30),energia(10),municiones(60)
+    municiones(60)
 {
 
     this->resize(128,128);//aqui tamanio del frame
     this->move(600,500);//aqui posiciion inicial del personaje
 
+    //Cargar datos guardados o usar valores por defecto si no hay archivo
+    QMap<QString, int> datos = cargarDatosJugador();
+    vida = datos.value("Vida", 30);
+    if(vida<=0) vida=30;
+
+    energia = datos.value("Energia", 10);
+    municiones = datos.value("Municiones", 60);
+
     timer=new QTimer(this);
     connect(timer,&QTimer::timeout,this,&personaje::AvanzarFrame);
-
-    guardarDatosJugador();
 
 }
 
@@ -182,9 +188,9 @@ QMap<QString, int> personaje::cargarDatosJugador() {
     QFile archivo("jugador.dat");
 
     // Valores por defecto si el archivo no existe o está corrupto
-    datos["Vida"] = 3;
-    datos["Energia"] = 10;
-    datos["Municiones"] = 30;
+    if(datos["Vida"]<=0)datos["Vida"]=30;
+    if(datos["Energia"]<0) datos["Energia"]=10;
+    if(datos["Municiones"]<0) datos["Municiones"]=60;
 
     if (!archivo.open(QIODevice::ReadOnly | QIODevice::Text)) {
         return datos;
@@ -210,14 +216,19 @@ void personaje::Morir()
 
     SetAnimacion(":/imagenes/assets/protagonista/Dead.png", 4); // 4 frames de muerte
     // Detener el timer después de completar la animación
-    QTimer::singleShot(400, this, [=]() {
+    QTimer::singleShot(400, this, [=]()
+    {
         if (!frames.isEmpty()) {
             setPixmap(frames.last());  // Mostrar el último frame
         }
         timer->stop();
+
+        // Reiniciar valores al morir
+        vida=30;
+        energia=10;
+        municiones=60;
+        guardarDatosJugador();
+
     });
-
-
-
 
 }

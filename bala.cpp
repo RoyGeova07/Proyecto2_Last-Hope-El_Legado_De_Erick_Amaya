@@ -5,7 +5,7 @@ Bala::Bala(QWidget*parent):QLabel(parent)
 {
 
     this->resize(10,4);//forma rectangular
-    this->setStyleSheet("background-color: orange; border-radius: 2px;");
+    this->setStyleSheet("background-color: orange; border-radius: 2px;");//estilo de la bala
     timer=new QTimer(this);
 
     connect(timer,&QTimer::timeout,this,&Bala::Mover);

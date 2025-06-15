@@ -30,7 +30,6 @@ private:
 
     //aqui funciones auxiliares recursivos
     NodoInventario* insertar(NodoInventario* nodo, NodoInventario* nuevo);
-    NodoInventario* buscar(NodoInventario* nodo, const QString& nombre);
     NodoInventario* eliminar(NodoInventario* nodo, const QString& nombre);
     NodoInventario* encontrarMin(NodoInventario* nodo);
     void listarInOrden(NodoInventario* nodo);
@@ -53,6 +52,7 @@ public:
     void listarInventario();
     void setBalas(int cantidad);
     int getBalas() const;
+    NodoInventario* buscar(NodoInventario* nodo, const QString& nombre);
 
 
     NodoInventario* obtenerRaiz() { return raiz; }

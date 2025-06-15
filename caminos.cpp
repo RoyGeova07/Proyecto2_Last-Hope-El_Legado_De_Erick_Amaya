@@ -157,9 +157,8 @@ void Caminos::configurarObstaculos()
         obstaculos.append(QRect(20,20,400,310)); //PARTE SUPERIOR IZQUIERDA
         obstaculos.append(QRect(600,20,400,310)); //PARTE SUPERIOR DERECHA
         obstaculos.append(QRect(20,555,400,300)); //PARTE INFERIOR IZQUIERDA
-        obstaculos.append(QRect(600,555
-
-                                ,400,300)); //PARTE INFERIOR DERECHA
+        obstaculos.append(QRect(600,555,400,300)); //PARTE INFERIOR DERECHA
+        obstaculos.append(QRect(456,542,583,669));
 
     }else if(rutaActual==6){
 
