@@ -22,7 +22,7 @@ Gimnasio::Gimnasio(QWidget* parent) : AtributosPersonaje(parent) {
 
     cofreLabel = new QLabel(this);
     cofreLabel->setGeometry(1112, 508, 164, 164); // hitbox grande
-    cofreLabel->setPixmap(cofreCerrado.scaled(104, 104));
+    cofreLabel->setPixmap(cofreCerrado.scaled(64, 64));
     cofreLabel->show();
     cofreLabel->installEventFilter(this);
 
