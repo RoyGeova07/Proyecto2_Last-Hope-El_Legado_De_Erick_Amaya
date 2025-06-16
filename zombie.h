@@ -62,8 +62,8 @@ private:
     int frameAtaqueFinal=0;
     void realizarAtaque();
 
-    int vida=10;
-    const int vidaMaxima=10;
+    int vida;
+    int vidaMaxima;
 
     QLabel*barraFondo=nullptr;
     QLabel*barraVida=nullptr;

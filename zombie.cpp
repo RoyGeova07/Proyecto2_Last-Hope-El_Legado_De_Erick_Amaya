@@ -9,6 +9,24 @@ Zombie::Zombie(Tipo tipo, QWidget* parent)
     this->setFixedSize(128, 128);
     this->move(600, 500);
 
+    // ASIGNA VIDA SEGÚN TIPO:
+    switch(tipo) {
+    case Tipo::Z1:
+    case Tipo::Z2:
+    case Tipo::Z3:
+        vida = vidaMaxima = 10;
+        break;
+    case Tipo::Z4:
+        vida = vidaMaxima = 8;   // Z4: rápido
+        break;
+    case Tipo::Z5:
+        vida = vidaMaxima = 10;  // Z5: intermedio
+        break;
+    case Tipo::Z6:
+        vida = vidaMaxima = 14;  // Z6: lento
+        break;
+    }
+
     // Timers
     animacionTimer = new QTimer(this);
     connect(animacionTimer, &QTimer::timeout, this, &Zombie::AvanzarFrame);
@@ -16,32 +34,26 @@ Zombie::Zombie(Tipo tipo, QWidget* parent)
     // Definicion por tipo de zombie
     switch(tipo) {
     case Tipo::Z1:
-        SetAnimacion(":/imagenes/assets/Zombies/Idle_Z1.png", 9,true);
+        SetAnimacion(":/imagenes/assets/Zombies/Idle_Z1.png", 9, true);
         break;
     case Tipo::Z2:
-        SetAnimacion(":/imagenes/assets/Zombies/Idle_Z2.png", 8,true);
+        SetAnimacion(":/imagenes/assets/Zombies/Idle_Z2.png", 8, true);
         break;
     case Tipo::Z3:
-        SetAnimacion(":/imagenes/assets/Zombies/Idle_Z3.png", 5,true);
+        SetAnimacion(":/imagenes/assets/Zombies/Idle_Z3.png", 5, true);
         break;
-
     case Tipo::Z4:
-        SetAnimacion(":/imagenes/assets/Zombies/Idle_Z4.png",6,true);
+        SetAnimacion(":/imagenes/assets/Zombies/Idle_Z4.png", 6, true);
         break;
-
     case Tipo::Z5:
-        SetAnimacion(":/imagenes/assets/Zombies/Idle_Z5.png", 6,true);
+        SetAnimacion(":/imagenes/assets/Zombies/Idle_Z5.png", 6, true);
         break;
-
     case Tipo::Z6:
-        SetAnimacion(":/imagenes/assets/Zombies/Idle_Z6.png", 6,true);
+        SetAnimacion(":/imagenes/assets/Zombies/Idle_Z6.png", 6, true);
         break;
-
-
     }
 
     inicializarBarraVida();
-
 }
 
 //AGREGO OTRO PARAMETRO PARA PODER CONTROLAR SI UNA ANIMACION DEBE REPETIRSE O NO

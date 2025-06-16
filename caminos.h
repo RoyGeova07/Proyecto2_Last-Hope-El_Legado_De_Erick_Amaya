@@ -34,8 +34,8 @@ private:
 
 
     void posicionarJugadorEnCalleRuta4();
-    void posicionarJugadorEnCalleRuta5();
-    void posicionarJugadroEnCalleRuta6();
+
+
     void posicionarJugadorEnCalleRuta7();
     void posicionarJugadorEnCalleRuta8();
     void posicionarJugadorEnCalleRuta9();
@@ -71,6 +71,8 @@ public:
     void cambiarRuta(int nuevaRuta);
     void posicionarJugadorEnCalleRuta2();
     void posicionarJugadorEnCalleRuta3();
+    void posicionarJugadorEnCalleRuta5();
+    void posicionarJugadroEnCalleRuta6();
 };
 
 #endif // CAMINOS_H
