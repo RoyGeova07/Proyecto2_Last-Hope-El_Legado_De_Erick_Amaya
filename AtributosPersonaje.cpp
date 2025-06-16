@@ -136,6 +136,15 @@ void AtributosPersonaje::inicializarJugador() {
 void AtributosPersonaje::Movimientos() {
     movimientoTimer=new QTimer(this);
     connect(movimientoTimer, &QTimer::timeout, this, [=]() {
+
+        if(jugador->estaMuertoPersonaje())
+        {
+
+            movimientoTimer->stop();
+            return;
+
+        }
+
         bool moviendo=false;
 
         //Disparo continuo
@@ -208,6 +217,7 @@ void AtributosPersonaje::Movimientos() {
 void AtributosPersonaje::keyPressEvent(QKeyEvent* event)
 {
     if(!jugador)return;
+    if(jugador->estaMuertoPersonaje())return;
     if(estadoCurandose)return;//si esta curandose no mover
 
     //aqui tecla l para abrir y cerrar el inventario

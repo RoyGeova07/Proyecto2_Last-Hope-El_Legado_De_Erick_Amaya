@@ -220,6 +220,9 @@ QMap<QString, int> personaje::cargarDatosJugador() {
 void personaje::Morir()
 {
 
+    if(estaMuerto)return;
+
+    estaMuerto=true;
     SetAnimacion(":/imagenes/assets/protagonista/Dead.png", 4); // 4 frames de muerte
     // Detener el timer después de completar la animación
     QTimer::singleShot(400, this, [=]()

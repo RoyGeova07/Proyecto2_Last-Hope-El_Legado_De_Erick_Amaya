@@ -80,6 +80,7 @@ Ciudad::Ciudad(QWidget* parent) : AtributosPersonaje(parent) {
                 if(jugador->getVidas()<=0)
                 {
 
+                    ResetearMovimiento();
                     jugador->Morir();
                     movimientoTimer->stop();
 

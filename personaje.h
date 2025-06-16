@@ -39,6 +39,9 @@ public:
     void MoverSiNoColisiona(int dx,int dy,const QVector<QRect>&obstaculos);
     int getVelocidadMoviento()const{return velocidadMovimiento;}
     void Morir();
+    bool estaMuerto=false;
+
+    bool estaMuertoPersonaje()const{return estaMuerto;}
 
     QString animacionActual;//bandera para evitar que se reinicie una animacion si ya esta en curso
 
@@ -71,7 +74,6 @@ private:
     bool ultimaDireccionDerecha;
 
     QVector<QRect> obstaculos; //aqui obstaculo
-
     int vida;
     int energia;
     int municiones;
