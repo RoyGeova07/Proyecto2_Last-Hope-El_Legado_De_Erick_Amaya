@@ -96,5 +96,12 @@
         <file>assets/protagonista/Shot_1_P3.png</file>
         <file>assets/protagonista/Walk_P2.png</file>
         <file>assets/protagonista/Walk_P3.png</file>
+        <file>assets/items/bala_danio.png</file>
+        <file>assets/items/casco.png</file>
+        <file>assets/items/chaleco.png</file>
+        <file>assets/items/zapato_rapido.png</file>
+        <file>assets/items/granada.png</file>
+        <file>assets/protagonista/Explosion.png</file>
+        <file>assets/protagonista/Grenade_P1.png</file>
     </qresource>
 </RCC>
