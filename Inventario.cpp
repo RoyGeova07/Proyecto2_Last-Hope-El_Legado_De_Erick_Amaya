@@ -147,7 +147,7 @@ NodoInventario* Inventario::buscar(NodoInventario* nodo, const QString& nombre)
 void Inventario::listarInventario()
 {
     qDebug() << "===== Inventario =====";
-    listarInOrden(raiz);
+    listarInOrden(raiz,true);
     qDebug() << "======================";
 }
 
@@ -160,13 +160,29 @@ void Inventario::setBalas(int cantidad) {
 }
 
 
+void Inventario::listarInOrden(NodoInventario* nodo, bool ascendente)
+{
+    if (ascendente)
+    {
+        if (nodo)
+        {
+            listarInOrden(nodo->izquierda, ascendente);
+            qDebug() << nodo->nombre << "- Cantidad:" << nodo->cantidad << "- Tipo:" << nodo->tipo;
+            listarInOrden(nodo->derecha, ascendente);
+        }
+    }
+    else
+    {
+        listarInOrdenDescendente(nodo);
+    }
+}
 
-void Inventario::listarInOrden(NodoInventario* nodo)
+void Inventario::listarInOrdenDescendente(NodoInventario* nodo)
 {
     if (nodo)
     {
-        listarInOrden(nodo->izquierda);
+        listarInOrdenDescendente(nodo->derecha);
         qDebug() << nodo->nombre << "- Cantidad:" << nodo->cantidad << "- Tipo:" << nodo->tipo;
-        listarInOrden(nodo->derecha);
+        listarInOrdenDescendente(nodo->izquierda);
     }
 }

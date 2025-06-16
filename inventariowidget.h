@@ -6,6 +6,8 @@
 #include <QLabel>
 #include <QPushButton>
 #include <QVBoxLayout>
+#include <QLineEdit>
+#include <QPushButton>
 #include"inventario.h"
 
 
@@ -23,7 +25,15 @@ private:
     QGridLayout* gridInventario;
     QPushButton* btnRefrescar;
 
+    QLineEdit* barraBusqueda;
+    QPushButton* btnOrdenar;
+    bool ordenAscendente;
+
     void limpiarGrid();
+
+private slots:
+    void buscarObjetos();
+    void ordenarInventario();
 };
 
 #endif // INVENTARIOWIDGET_H

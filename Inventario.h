@@ -54,8 +54,9 @@ public:
     int getBalas() const;
     NodoInventario* buscar(NodoInventario* nodo, const QString& nombre);
 
-
     NodoInventario* obtenerRaiz() { return raiz; }
+    void listarInOrden(NodoInventario* nodo, bool ascendente = true);
+    void listarInOrdenDescendente(NodoInventario* nodo);
 
 };
 
