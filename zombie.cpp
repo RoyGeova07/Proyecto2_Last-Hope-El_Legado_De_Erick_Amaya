@@ -17,13 +17,13 @@ Zombie::Zombie(Tipo tipo, QWidget* parent)
         vida = vidaMaxima = 10;
         break;
     case Tipo::Z4:
-        vida = vidaMaxima = 8;   // Z4: rápido
+        vida = vidaMaxima = 10;   // Z4: rapido
         break;
     case Tipo::Z5:
-        vida = vidaMaxima = 10;  // Z5: intermedio
+        vida = vidaMaxima = 12;  // Z5: intermedio
         break;
     case Tipo::Z6:
-        vida = vidaMaxima = 14;  // Z6: lento
+        vida = vidaMaxima = 20;  // Z6: lento
         break;
     }
 
@@ -247,6 +247,8 @@ void Zombie::moverHaciaJugador()
 void Zombie::SetAnimacionMovimientoZombie()
 {
 
+    if(muerto)return;//si ya esta muerto evitar hacer q el zombie haga otra animacion
+
     QString ruta;
     int frames=0;
 
@@ -419,6 +421,8 @@ void Zombie::recibirDanio(int cantidad)
 
             movimientoTimer->stop();//detener el movimiento
             movimientoTimer->disconnect();
+            movimientoTimer->deleteLater(); //Eliminar el timer de movimiento por completo
+            movimientoTimer=nullptr;
 
         }
 

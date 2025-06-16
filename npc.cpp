@@ -308,7 +308,7 @@ void NPC::mostrarNotificacion(const QString& texto)
         labelNotificacion = new QLabel(texto, this->parentWidget());
         labelNotificacion->setStyleSheet("background: rgba(0, 0, 0, 200); color: lime; font-size: 16px; padding: 10px; border-radius: 8px; border: 2px solid lime;");
         labelNotificacion->setAlignment(Qt::AlignCenter);
-        labelNotificacion->setFixedSize(400,100);
+        labelNotificacion->setFixedSize(550,100);
     }
 
     labelNotificacion->setText(texto);

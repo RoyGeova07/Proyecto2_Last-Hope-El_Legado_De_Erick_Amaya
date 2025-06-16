@@ -282,6 +282,16 @@ void AtributosPersonaje::keyReleaseEvent(QKeyEvent* event) {
         break;
     case Qt::Key_Z:
         ZPresionado = false;
+
+        //si no esta disparando y no hay movimiento, volver a quedar quieto
+        if(!disparandoAhora&&!izquierdaPresionada&&!derechaPresionada&&!arribaPresionado&&!abajoPresionado)
+        {
+
+            jugador->DetenerAnimacion();
+            jugador->SetAnimacion(":/imagenes/assets/protagonista/Idle.png", 7);
+
+        }
+
         break;
     }
 }
@@ -446,7 +456,7 @@ void AtributosPersonaje::inicializarTabWidget() {
         textoLabel->setText(texto);
     });
 
-    // Conectar señal de selección de nodo
+    // Conectar señal de seleccion de nodo
     connect(mapaWidget, &Mapa::nodoSeleccionadoDesdeCompacto, this, [this](const QString& nodo) {
         QMessageBox::information(this, "Nodo seleccionado",
                                  QString("Has seleccionado: %1").arg(nodo));
