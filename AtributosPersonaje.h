@@ -39,7 +39,8 @@ protected:
     QTabWidget* tabWidget;
     Mapa* mapaWidget;
     QWidget* mapaTab;
-     void inicializarTabWidget();
+    void inicializarTabWidget();
+    void InicializarPersonajes();
 
     InventarioWidget* inventarioWidget;
 

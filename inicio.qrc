@@ -47,10 +47,10 @@
         <file>assets/mapas/RUTA_4.jpg</file>
         <file>assets/mapas/RUTA_5.jpg</file>
         <file>assets/mapas/RUTA_6.jpg</file>
-	<file>assets/mapas/RUTA_7.png</file>
-	<file>assets/mapas/RUTA_8.png</file>
-	<file>assets/mapas/RUTA_9.png</file>
-	<file>assets/mapas/RUTA_10.png</file>
+        <file>assets/mapas/RUTA_7.png</file>
+        <file>assets/mapas/RUTA_8.png</file>
+        <file>assets/mapas/RUTA_9.png</file>
+        <file>assets/mapas/RUTA_10.png</file>
         <file>assets/mapas/Mall.jpeg</file>
         <file>assets/Zombies/Attack_Z4.png</file>
         <file>assets/Zombies/Attack_Z5.png</file>
@@ -74,15 +74,27 @@
         <file>assets/NPC/Idle_NPC4.png</file>
         <file>assets/NPC/Idle_NPC5.png</file>
         <file>assets/NPC/Idle_NPC6.png</file>
-	<file>assets/protagonista/Dead.png</file>
-	<file>assets/items/cofre_abierto.png</file>
-	<file>assets/items/cofre_cerrado.png</file>
-	<file>assets/items/cofre_cerrado2.png</file>
-	<file>assets/items/cofre_abierto2.png</file>
-	<file>assets/mapas/LetreroEntrar.png</file>
-	<file>assets/mapas/Gimnasio.jpeg</file>
-	<file>assets/gym.jpeg</file>
+        <file>assets/protagonista/Dead.png</file>
+        <file>assets/items/cofre_abierto.png</file>
+        <file>assets/items/cofre_cerrado.png</file>
+        <file>assets/items/cofre_cerrado2.png</file>
+        <file>assets/items/cofre_abierto2.png</file>
+        <file>assets/mapas/LetreroEntrar.png</file>
+        <file>assets/mapas/Gimnasio.jpeg</file>
+        <file>assets/gym.jpeg</file>
         <file>assets/lab.jpeg</file>
-	<file>assets/protagonista/curandose.png</file>
+        <file>assets/protagonista/curandose.png</file>
+        <file>assets/protagonista/Curandose_P2.png</file>
+        <file>assets/protagonista/Curandose_P3.png</file>
+        <file>assets/protagonista/Dead_P2.png</file>
+        <file>assets/protagonista/Dead_P3.png</file>
+        <file>assets/protagonista/Idle_P2.png</file>
+        <file>assets/protagonista/Idle_P3.png</file>
+        <file>assets/protagonista/Run_P2.png</file>
+        <file>assets/protagonista/Run_P3.png</file>
+        <file>assets/protagonista/Shot_1_P2.png</file>
+        <file>assets/protagonista/Shot_1_P3.png</file>
+        <file>assets/protagonista/Walk_P2.png</file>
+        <file>assets/protagonista/Walk_P3.png</file>
     </qresource>
 </RCC>
