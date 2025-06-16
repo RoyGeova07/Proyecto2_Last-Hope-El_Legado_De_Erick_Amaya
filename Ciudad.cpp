@@ -85,9 +85,14 @@ Ciudad::Ciudad(QWidget* parent) : AtributosPersonaje(parent) {
 
                     QTimer::singleShot(1000, this, [=]() {
                         QMessageBox::information(this, "💀 GAME OVER", "Has muerto...");
+                        this->hide();
 
-                        Inicio *i=new Inicio();
-                        i->show();
+
+                        QTimer::singleShot(300, this, [=]() {
+                            Inicio* i = new Inicio();
+                            i->show();
+                            deleteLater();  // destruye correctamente esta ventana actual
+                        });
 
                         this->close();
                     });

@@ -11,7 +11,13 @@ personaje::personaje(QWidget*parent):QLabel(parent),frameActual(0),velocidadMovi
     //Cargar datos guardados o usar valores por defecto si no hay archivo
     QMap<QString, int> datos = cargarDatosJugador();
     vida = datos.value("Vida", 30);
-    if(vida<=0) vida=30;
+    if(vida<=0)
+    {
+
+        vida=30;
+        guardarDatosJugador();
+
+    }
 
     energia = datos.value("Energia", 10);
     municiones = datos.value("Municiones", 60);
@@ -222,12 +228,6 @@ void personaje::Morir()
             setPixmap(frames.last());  // Mostrar el último frame
         }
         timer->stop();
-
-        // Reiniciar valores al morir
-        vida=30;
-        energia=10;
-        municiones=60;
-        guardarDatosJugador();
 
     });
 

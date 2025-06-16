@@ -137,12 +137,6 @@ void Inicio::AbrirJuego()
 
         qDebug()<<"Archivo de partida creado en: "<<rutaArchivo;
         QMessageBox::information(this,"Nueva Partida","Partida creada exitosamente!");
-        //PONER ESTO YA CUANDO VAYAMOS TERMINANDO EL PROYECTOOOOOOOOOOO
-        //PONER ESTO YA CUANDO VAYAMOS TERMINANDO EL PROYECTOOOOOOOOOOO
-        //PONER ESTO YA CUANDO VAYAMOS TERMINANDO EL PROYECTOOOOOOOOOOO
-        //PONER ESTO YA CUANDO VAYAMOS TERMINANDO EL PROYECTOOOOOOOOOOO
-        //PONER ESTO YA CUANDO VAYAMOS TERMINANDO EL PROYECTOOOOOOOOOOO
-        //QFile::remove("jugador.dat"); PONER ESTO YA CUANDO VAYAMOS TERMINANDO EL PROYECTOOOOOOOOOOO
 
     }else{
 
@@ -150,6 +144,15 @@ void Inicio::AbrirJuego()
         return;
 
     }
+
+    if(jugador)
+    {
+
+        delete jugador;
+        jugador=nullptr;
+
+    }
+    QFile::remove("jugador.dat");
 
     if (!jugador)
     {
@@ -161,8 +164,6 @@ void Inicio::AbrirJuego()
 
     lobby*ventanaLobby=new lobby(jugador);
     ventanaLobby->show();
-    //Ciudad* ventana=new Ciudad();
-    //ventana->show();
 
 
     this->close();
