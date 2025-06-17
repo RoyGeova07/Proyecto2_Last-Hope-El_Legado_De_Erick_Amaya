@@ -7,7 +7,7 @@
 #include "inicio.h"
 #include "Inventario.h"
 
-Gasolinera::Gasolinera(QWidget* parent) : AtributosPersonaje(parent) {
+Gasolinera::Gasolinera(personaje* jugadorExistente, QWidget* parent) : AtributosPersonaje(jugadorExistente,parent) {
     this->resize(1280, 720);
     this->setWindowTitle("Gasolinera - Last hope");
 
@@ -190,9 +190,8 @@ bool Gasolinera::eventFilter(QObject* obj, QEvent* event) {
                     cofreLabel->setPixmap(cofreAbierto.scaled(104, 104));
                     mensajeCofre->setText("🎁 Cofre abierto");
                     mensajeCofre->show();
-                    jugador->setMuniciones(jugador->getMuniciones() + 30);
-                    ActualizarMuniciones();
-                    mostrarNotificacion("🎯 Recibiste 30 municiones");
+                    Inventario::getInstance()->desbloquearPersonajeP2();
+                    mostrarNotificacion("🎯 Felicidades, has conseguido la Famas\n🧍 Personaje P2 desbloqueado");
                     QTimer::singleShot(3000, this, [=]() {
                         mostrarNotificacion("⛽ Nivel completado...");
                         Caminos* c = new Caminos(jugador);

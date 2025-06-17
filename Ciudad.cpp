@@ -7,8 +7,9 @@
 #include"inicio.h"
 #include"caminos.h"
 #include "Inventario.h"
+#include"personaje.h"
 
-Ciudad::Ciudad(QWidget* parent) : AtributosPersonaje(parent) {
+Ciudad::Ciudad(personaje* jugadorExistente,QWidget* parent) : AtributosPersonaje(jugadorExistente,parent) {
     this->resize(1280, 720);
     this->setWindowTitle("Ciudad en Ruinas - Last hope");
 

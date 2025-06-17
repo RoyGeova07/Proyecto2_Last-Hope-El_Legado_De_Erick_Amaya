@@ -261,6 +261,17 @@ void Caminos::posicionarJugadroEnCalleRuta6()
 
 }
 
+void Caminos::posicionarJugadorEnCalleRuta9()
+{
+
+    int posX=158;
+    int posY=358;
+
+    jugador->move(posX,posY);
+
+}
+
+
 void Caminos::posicionarJugadorDeVueltaARuta2_Desde_Ruta3()
 {
 
@@ -424,7 +435,8 @@ void Caminos::cambiarRuta(int nuevaRuta)
     {
 
         jugador->DetenerAnimacion();
-        jugador->SetAnimacion(":/imagenes/assets/protagonista/Idle.png",7);
+        auto anim=jugador->obtenerAnimacion("idle",jugador->personajeActual);
+        jugador->SetAnimacion(anim.ruta,anim.frames);
 
     }
 
@@ -531,7 +543,8 @@ void Caminos::onMovimientoUpdate()
 
             // Dejar el personaje en Idle
             jugador->DetenerAnimacion();
-            jugador->SetAnimacion(":/imagenes/assets/protagonista/Idle.png",7);
+            auto anim=jugador->obtenerAnimacion("idle",jugador->personajeActual);
+            jugador->SetAnimacion(anim.ruta,anim.frames);
 
 
             lobby* lobbyWindow=new lobby(jugador);
@@ -1037,10 +1050,11 @@ void Caminos::keyPressEvent(QKeyEvent *event)
             abajoPresionado = false;
             ZPresionado = false;
 
-            // Detener animación
+            // Detener animacion
             if(jugador) {
                 jugador->DetenerAnimacion();
-                jugador->SetAnimacion(":/imagenes/assets/protagonista/Idle.png", 7);
+                auto anim=jugador->obtenerAnimacion("idle",jugador->personajeActual);
+                jugador->SetAnimacion(anim.ruta,anim.frames);
             }
 
             // Reactivar movimiento
@@ -1058,7 +1072,8 @@ void Caminos::keyPressEvent(QKeyEvent *event)
         qDebug() << "Entrando a la Ciudad...";
 
         // Crear la ciudad y mostrarla
-        Ciudad* ciudadWindow = new Ciudad();
+        Ciudad* ciudadWindow = new Ciudad(jugador);
+        ResetearMovimiento();
         ciudadWindow->show();
 
         // Cerrar esta ventana
@@ -1073,7 +1088,8 @@ void Caminos::keyPressEvent(QKeyEvent *event)
         qDebug() << "Entrando a la Ciudad...";
 
         // Crear la ciudad y mostrarla
-        Gasolinera* w = new Gasolinera();
+        Gasolinera* w = new Gasolinera(jugador);
+        ResetearMovimiento();
         w->show();
 
         // Cerrar esta ventana
@@ -1088,7 +1104,8 @@ void Caminos::keyPressEvent(QKeyEvent *event)
         qDebug() << "Entrando al gimnasio...";
 
         // Crear la ciudad y mostrarla
-        Gimnasio* w = new Gimnasio();
+        Gimnasio* w = new Gimnasio(jugador);
+        ResetearMovimiento();
         w->show();
 
         // Cerrar esta ventana
@@ -1103,7 +1120,7 @@ void Caminos::keyPressEvent(QKeyEvent *event)
         qDebug() << "Entrando a la Ciudad...";
 
         // Crear la ciudad y mostrarla
-        Mall* mallWindow = new Mall();
+        Mall* mallWindow = new Mall(jugador);
         mallWindow->show();
 
         // Cerrar esta ventana
@@ -1118,7 +1135,7 @@ void Caminos::keyPressEvent(QKeyEvent *event)
         qDebug() << "Entrando a la Ciudad...";
 
         // Crear la ciudad y mostrarla
-        supermercado* mallWindow = new supermercado();
+        supermercado* mallWindow = new supermercado(jugador);
         mallWindow->show();
 
         // Cerrar esta ventana
@@ -1133,7 +1150,7 @@ void Caminos::keyPressEvent(QKeyEvent *event)
         qDebug() << "Entrando a la Ciudad...";
 
         // Crear la ciudad y mostrarla
-        laboratorio* mallWindow = new laboratorio();
+        laboratorio* mallWindow = new laboratorio(jugador);
         mallWindow->show();
 
         // Cerrar esta ventana
@@ -1146,7 +1163,8 @@ void Caminos::keyPressEvent(QKeyEvent *event)
     {
 
         jugador->DetenerAnimacion();
-        jugador->SetAnimacion(":/imagenes/assets/protagonista/Idle.png",7);
+        auto anim=jugador->obtenerAnimacion("idle",jugador->personajeActual);
+        jugador->SetAnimacion(anim.ruta,anim.frames);
 
     }
 

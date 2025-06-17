@@ -1,4 +1,4 @@
-// mapa.cpp
+//mapa.cpp
 #include "mapa.h"
 #include <lobby.h>
 #include <QPixmap>
@@ -141,10 +141,20 @@ void Mapa::nodoSeleccionado() {
     if (!items.isEmpty()) {
         QGraphicsEllipseItem* nodoItem = dynamic_cast<QGraphicsEllipseItem*>(items.first());
         if (nodoItem) {
-            QString destino = nodoItem->data(0).toString();
-            QString origen = "Lobby";
+            destSeleccionado = nodoItem->data(0).toString();
 
-            if (destino != origen) {
+            // Si no hay origen seleccionado, este nodo será el origen
+            if (origenSeleccionado.isEmpty()) {
+                origenSeleccionado = destSeleccionado;
+                // Puedes cambiar el color del nodo origen para distinguirlo
+                nodoItem->setBrush(Qt::gray);
+                emit nodoOrigenSeleccionado(origenSeleccionado);
+            }
+            // Si ya hay origen seleccionado, este nodo será el destino
+            else if (destSeleccionado != origenSeleccionado) {
+                QString destino = destSeleccionado;
+                QString origen = origenSeleccionado;
+
                 QList<QString> rutaCorta = grafoMapa->dijkstra(origen, destino);
                 QList<QString> rutaAlternativa = grafoMapa->encontrarSegundaMejorRuta(origen, destino, rutaCorta);
 
@@ -159,9 +169,15 @@ void Mapa::nodoSeleccionado() {
                     distanciaPrincipal = dibujarRuta(rutaCorta, Qt::yellow, rutaActual, true);
                 }
 
-                emit actualizarDistancias(distanciaPrincipal, distanciaAlternativa);
-
+                emit actualizarDistancias(distanciaPrincipal, distanciaAlternativa, origenSeleccionado, destSeleccionado);
                 procesarDistancias(distanciaPrincipal, distanciaAlternativa);
+
+                // Resetear la selección para la próxima vez
+                origenSeleccionado.clear();
+            }
+            else {
+                origenSeleccionado.clear();
+                nodoItem->setBrush(Qt::red);
             }
         }
     }
@@ -291,7 +307,7 @@ void Mapa::actualizarVistaCompacta() {
 
 
 void Mapa::procesarDistancias(float distanciaPrincipal, float distanciaAlternativa) {
-    emit actualizarDistancias(distanciaPrincipal, distanciaAlternativa);
+    emit actualizarDistancias(distanciaPrincipal, distanciaAlternativa,origenSeleccionado, destSeleccionado);
 }
 
 void Mapa::setDistanciaText(const QString& text) {

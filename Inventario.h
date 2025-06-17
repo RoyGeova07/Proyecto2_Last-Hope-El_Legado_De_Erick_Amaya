@@ -25,7 +25,7 @@ class Inventario
 
 private:
 
-    int balas = 60;
+    int balas = 110;
     NodoInventario* raiz;
 
     //aqui funciones auxiliares recursivos
@@ -57,6 +57,14 @@ public:
     NodoInventario* obtenerRaiz() { return raiz; }
     void listarInOrden(NodoInventario* nodo, bool ascendente = true);
     void listarInOrdenDescendente(NodoInventario* nodo);
+    bool personajeP2Desbloqueado = false;
+    bool personajeP3Desbloqueado = false;
+
+    bool getPersonajeP2Desbloqueado() const { return personajeP2Desbloqueado; }
+    bool getPersonajeP3Desbloqueado() const { return personajeP3Desbloqueado; }
+
+    void desbloquearPersonajeP2() { personajeP2Desbloqueado = true; }
+    void desbloquearPersonajeP3() { personajeP3Desbloqueado = true; }
 
 };
 

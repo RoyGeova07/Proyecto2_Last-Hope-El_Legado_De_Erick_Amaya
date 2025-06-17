@@ -14,7 +14,7 @@ private:
     Zombie* zombieCercano;
 
 public:
-    laboratorio(QWidget* parent = nullptr);
+    laboratorio(personaje* jugadorExistente,QWidget* parent=nullptr);
 };
 
 #endif // LABORATORIO_H

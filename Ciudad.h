@@ -1,6 +1,7 @@
 #include "AtributosPersonaje.h"
 #include "zombie.h"
 #include"bala.h"
+#include"personaje.h"
 
 
 class Ciudad : public AtributosPersonaje {
@@ -16,7 +17,7 @@ private:
 
 
 public:
-    Ciudad(QWidget* parent = nullptr);
+   explicit Ciudad(personaje* jugadorExistente,QWidget* parent=nullptr);
 
     QLabel* cofreLabel;
     QLabel* mensajeCofre;
@@ -28,6 +29,6 @@ public:
     void mostrarNotificacion(const QString& texto);
 
 protected:
-     bool eventFilter(QObject* obj, QEvent* event) override;
+    bool eventFilter(QObject* obj, QEvent* event) override;
 
 };

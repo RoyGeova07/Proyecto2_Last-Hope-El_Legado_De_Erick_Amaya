@@ -27,6 +27,22 @@ class personaje:public QLabel
 public:
    explicit personaje(QWidget*parent=nullptr);
 
+   enum TipoPersonaje
+   {
+
+       P1=0,P2=1,P3=2
+
+   };
+
+   struct DatosAnimacion{
+
+       QString ruta;
+       int frames;
+
+   };
+
+   TipoPersonaje personajeActual=P1;
+
     bool miradoDerecha;
     void SetAnimacion(const QString&ruta,int cantidadFrames);
     void AvanzarFrame();
@@ -35,13 +51,15 @@ public:
     void MoverArriba();
     void MoverAbajo();
     void DetenerAnimacion();
-    void SetAnimacionMovimiento(int velocidad);
     void MoverSiNoColisiona(int dx,int dy,const QVector<QRect>&obstaculos);
-    int getVelocidadMoviento()const{return velocidadMovimiento;}
+    void SetAnimacionMovimiento(int velocidad);
+    int getVelocidadMovimiento()const{return velocidadMovimiento;}
     void Morir();
     bool estaMuerto=false;
 
     bool estaMuertoPersonaje()const{return estaMuerto;}
+
+    DatosAnimacion obtenerAnimacion(const QString& tipo, TipoPersonaje personaje);
 
     QString animacionActual;//bandera para evitar que se reinicie una animacion si ya esta en curso
 
@@ -55,7 +73,6 @@ public:
     }
     void setMuniciones(int municiones){
         this->municiones = municiones;
-        guardarDatosJugador();
     }
 
     int getVidas(){return vida;}
@@ -69,7 +86,6 @@ private:
     QVector<QPixmap>frames;
     int frameActual;
     QTimer*timer;
-    int velocidadMovimiento;
     //aqui si la direccion cambio la ultima vez que se dibujo
     bool ultimaDireccionDerecha;
 
@@ -77,6 +93,7 @@ private:
     int vida;
     int energia;
     int municiones;
+    int velocidadMovimiento;
 
 };
 

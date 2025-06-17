@@ -33,7 +33,9 @@ private slots:
 
 signals:
     void nodoSeleccionadoDesdeCompacto(const QString& nombreNodo);
-    void actualizarDistancias(float distanciaPrincipal, float distanciaAlternativa);
+    void nodoOrigenSeleccionado(const QString& nombreNodo);
+    //void actualizarDistancias(float principal, float alternativa);
+    void actualizarDistancias(float principal, float alterna, const QString& origen, const QString& destino);
     void distanciaActualizada(const QString& textoDistancia);
 
 private:
@@ -53,6 +55,9 @@ private:
     bool modoCompacto = false;
     QGraphicsView* vistaPrincipal = nullptr;
     QPixmap cacheVista;
+
+    QString origenSeleccionado;
+    QString destSeleccionado;
 };
 
 #endif // MAPA_H

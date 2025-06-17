@@ -158,7 +158,11 @@ void Inicio::AbrirJuego()
     {
 
         jugador=new personaje();
-        jugador->SetAnimacion(":/imagenes/assets/protagonista/Idle.png", 7);
+        auto anim=jugador->obtenerAnimacion("idle",jugador->personajeActual);
+        jugador->SetAnimacion(anim.ruta,anim.frames);
+        jugador->setMuniciones(80);
+        jugador->guardarDatosJugador();
+
 
     }
 

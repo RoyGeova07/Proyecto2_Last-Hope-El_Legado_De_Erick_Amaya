@@ -7,7 +7,7 @@
 #include "inicio.h"
 #include "Inventario.h"
 
-Gimnasio::Gimnasio(QWidget* parent) : AtributosPersonaje(parent) {
+Gimnasio::Gimnasio(personaje* jugadorExistente,QWidget* parent) : AtributosPersonaje(jugadorExistente,parent) {
     this->resize(1280, 720);
     this->setWindowTitle("Gimnasio - Last hope");
 
@@ -151,9 +151,9 @@ bool Gimnasio::eventFilter(QObject* obj, QEvent* event) {
                         Caminos* c = new Caminos(jugador);
                         Inventario::getInstance()->setBalas(jugador->getMuniciones());
                         c->cambiarRuta(5); // <---- Manda a Ruta 5
-                        c->posicionarJugadorEnCalleRuta5(); // <---- Debe existir este método
+                        c->posicionarJugadorEnCalleRuta5();
                         c->show();
-                        // ResetearMovimiento(); // si la usas, descomenta esto
+                        ResetearMovimiento();
                         this->close();
                     });
                     return true;

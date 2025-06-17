@@ -29,18 +29,6 @@ private:
     void configurarEscena() override;
     void configurarObstaculos() override;
 
-
-    void posicionarJugadorEnCalleRuta1();
-
-
-    void posicionarJugadorEnCalleRuta4();
-
-
-    void posicionarJugadorEnCalleRuta7();
-    void posicionarJugadorEnCalleRuta8();
-    void posicionarJugadorEnCalleRuta9();
-    void posicionarJugadorEnCalleRuta10();
-
     void posicionarJugadorDeVueltaARuta2_Desde_Ruta3();
     void posicionarJugadorDeVueltaA_Ruta1_Desde_Ruta4();
     void posicionarJugadorDeVueltaA_Ruta4_Desde_Ruta5();
@@ -69,10 +57,17 @@ public:
     explicit Caminos(personaje*jugadorExistente,QWidget* parent = nullptr);
     bool regresandoAlLobby = false;
     void cambiarRuta(int nuevaRuta);
+    void posicionarJugadorEnCalleRuta1();
     void posicionarJugadorEnCalleRuta2();
     void posicionarJugadorEnCalleRuta3();
+    void posicionarJugadorEnCalleRuta4();
     void posicionarJugadorEnCalleRuta5();
     void posicionarJugadroEnCalleRuta6();
+    void posicionarJugadorEnCalleRuta7();
+    void posicionarJugadorEnCalleRuta8();
+    void posicionarJugadorEnCalleRuta9();
+    void posicionarJugadorEnCalleRuta10();
+
 };
 
 #endif // CAMINOS_H

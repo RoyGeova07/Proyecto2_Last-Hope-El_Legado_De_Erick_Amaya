@@ -1,8 +1,8 @@
 #include "personaje.h"
 #include<QDebug>
 
-personaje::personaje(QWidget*parent):QLabel(parent),frameActual(0),velocidadMovimiento(10),miradoDerecha(true),ultimaDireccionDerecha(true),
-    municiones(60)
+personaje::personaje(QWidget*parent):QLabel(parent),frameActual(0),miradoDerecha(true),ultimaDireccionDerecha(true),
+    municiones(80)
 {
 
     this->resize(128,128);//aqui tamanio del frame
@@ -20,7 +20,7 @@ personaje::personaje(QWidget*parent):QLabel(parent),frameActual(0),velocidadMovi
     }
 
     energia = datos.value("Energia", 10);
-    municiones = datos.value("Municiones", 60);
+    municiones = datos.value("Municiones", 80);
 
     timer=new QTimer(this);
     connect(timer,&QTimer::timeout,this,&personaje::AvanzarFrame);
@@ -112,7 +112,7 @@ void personaje::AvanzarFrame()
 void personaje::MoverIzquierda()
 {
 
-    this->move(x()-velocidadMovimiento,y());
+    this->move(x()-getVelocidadMovimiento(),y());
     miradoDerecha=false;
 
 }
@@ -120,7 +120,7 @@ void personaje::MoverIzquierda()
 void personaje::MoverDerecha()
 {
 
-    this->move(x()+velocidadMovimiento,y());
+    this->move(x()+getVelocidadMovimiento(),y());
     miradoDerecha=true;
 
 }
@@ -128,21 +128,14 @@ void personaje::MoverDerecha()
 void personaje::MoverArriba()
 {
 
-    this->move(x(),y()-velocidadMovimiento);
+    this->move(x(),y()-getVelocidadMovimiento());
 
 }
 
 void personaje::MoverAbajo()
 {
 
-    this->move(x(),y()+velocidadMovimiento);
-
-}
-
-void personaje::SetAnimacionMovimiento(int velocidad)
-{
-
-    velocidadMovimiento=velocidad;
+    this->move(x(),y()+getVelocidadMovimiento());
 
 }
 
@@ -193,10 +186,10 @@ QMap<QString, int> personaje::cargarDatosJugador() {
     QMap<QString, int> datos;
     QFile archivo("jugador.dat");
 
-    // Valores por defecto si el archivo no existe o está corrupto
-    if(datos["Vida"]<=0)datos["Vida"]=30;
-    if(datos["Energia"]<0) datos["Energia"]=10;
-    if(datos["Municiones"]<0) datos["Municiones"]=60;
+    // Valores por defecto si el archivo no existe o esta corrupto
+    datos["Vida"] = 30;
+    datos["Energia"] = 10;
+    datos["Municiones"] = 80;
 
     if (!archivo.open(QIODevice::ReadOnly | QIODevice::Text)) {
         return datos;
@@ -223,8 +216,9 @@ void personaje::Morir()
     if(estaMuerto)return;
 
     estaMuerto=true;
-    SetAnimacion(":/imagenes/assets/protagonista/Dead.png", 4); // 4 frames de muerte
-    // Detener el timer después de completar la animación
+    auto anim=obtenerAnimacion("dead",personajeActual);
+    SetAnimacion(anim.ruta,anim.frames);
+    // Detener el timer después de completar la animacion
     QTimer::singleShot(400, this, [=]()
     {
         if (!frames.isEmpty()) {
@@ -235,3 +229,60 @@ void personaje::Morir()
     });
 
 }
+
+personaje::DatosAnimacion personaje::obtenerAnimacion(const QString &tipo, TipoPersonaje personaje)
+{
+
+    QString base=":/imagenes/assets/protagonista/";
+    DatosAnimacion datos;
+
+    if(personaje==P1)
+    {
+        if(tipo=="idle")     datos={base+"Idle.png",         7};
+        else if(tipo=="run") datos={base+"Run.png",          8};
+        else if(tipo=="walk")datos={base+"Walk.png",         7};
+        else if(tipo=="shot")datos={base+"Shot_1.png",       4};
+        else if(tipo=="curar")datos={base+"curandose.png",   7};
+        else if(tipo=="dead") datos={base+"Dead.png",        4};
+
+    }else if(personaje==P2){
+
+        if(tipo=="idle")     datos={base+"Idle_P2.png",      9};
+        else if(tipo=="run")datos={base+"Run_P2.png",       8};
+        else if(tipo=="walk")datos={base+"Walk_P2.png",      8};
+        else if(tipo=="shot")datos={base+"Shot_1_P2.png",    4};
+        else if(tipo=="curar")datos={base+"Curandose_P2.png",9};
+        else if(tipo=="dead") datos={base+"Dead_P2.png",     4};
+
+    }else if(personaje==P3){
+
+        if(tipo=="idle")     datos={base+"Idle_P3.png",      7};
+        else if(tipo=="run") datos={base+"Run_P3.png",       6};
+        else if(tipo=="walk")datos={base+"Walk_P3.png",      8};
+        else if(tipo=="shot")datos={base+"Shot_1_P3.png",    4};
+        else if(tipo=="curar")datos={base+"Curandose_P3.png",7};
+        else if(tipo=="dead") datos={base+"Dead_P3.png",     5};
+
+    }
+
+    return datos;
+
+}
+
+void personaje::SetAnimacionMovimiento(int velocidad)
+{
+
+    if(personajeActual==P3)
+    {
+
+        velocidadMovimiento=std::max(1,velocidad-1);
+
+    }else{
+
+        this->velocidadMovimiento=velocidad;
+
+    }
+
+
+}
+

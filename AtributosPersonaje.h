@@ -40,7 +40,6 @@ protected:
     Mapa* mapaWidget;
     QWidget* mapaTab;
     void inicializarTabWidget();
-    void InicializarPersonajes();
 
     InventarioWidget* inventarioWidget;
 
@@ -59,6 +58,9 @@ protected:
     void ActualizarBarraVida();
     void iniciarCuracion(int cantidad,const QString& tipo);
 
+signals:
+    void actualizarDistancias(float principal, float alterna, const QString& origen, const QString& destino);
+
 private:
 
     QTimer*curacionTimer=nullptr;
@@ -66,6 +68,9 @@ private:
     void intentarCurarse();
     void terminarCuracion(int cantidad);
     void mostrarSeleccionBotiquin();
+    personaje::TipoPersonaje personajeActual=personaje::P1;
+    QLabel*labelNotificacion=nullptr;
+    void mostrarNotificacion(const QString& texto);
 
 public:
     explicit AtributosPersonaje(QWidget* parent = nullptr);

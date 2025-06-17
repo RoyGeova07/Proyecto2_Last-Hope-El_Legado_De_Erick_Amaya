@@ -4,7 +4,7 @@
 #include <QLabel>
 #include <QDebug>
 
-laboratorio::laboratorio(QWidget* parent) : AtributosPersonaje(parent) {
+laboratorio::laboratorio(personaje* jugadorExistente,QWidget* parent) : AtributosPersonaje(jugadorExistente,parent) {
     this->resize(1280, 720);
     this->setWindowTitle("Gasolinera - Last hope");
 

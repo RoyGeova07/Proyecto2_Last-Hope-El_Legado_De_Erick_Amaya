@@ -7,7 +7,7 @@
 #include "inicio.h"
 #include "Inventario.h"
 
-Mall::Mall(QWidget* parent) : AtributosPersonaje(parent) {
+Mall::Mall(personaje* jugadorExistente,QWidget* parent) : AtributosPersonaje(jugadorExistente,parent) {
     this->resize(1280, 720);
     this->setWindowTitle("Mall - Last hope");
 
@@ -147,9 +147,8 @@ bool Mall::eventFilter(QObject* obj, QEvent* event) {
                     cofreLabel->setPixmap(cofreAbierto.scaled(104, 104));
                     mensajeCofre->setText("🎁 Cofre abierto");
                     mensajeCofre->show();
-                    jugador->setMuniciones(jugador->getMuniciones() + 30);
-                    ActualizarMuniciones();
-                    mostrarNotificacion("🎯 Recibiste 30 municiones");
+                    Inventario::getInstance()->desbloquearPersonajeP3();
+                    mostrarNotificacion("🎯 Felicidades, has conseguido el Francotirador\n🧍 Personaje P3 desbloqueado");
                     QTimer::singleShot(3000, this, [=]() {
                         mostrarNotificacion("🏬 Nivel completado...");
                         Caminos* c = new Caminos(jugador);
@@ -157,7 +156,7 @@ bool Mall::eventFilter(QObject* obj, QEvent* event) {
                         c->cambiarRuta(6); // <---- Manda a Ruta 6
                         c->posicionarJugadroEnCalleRuta6(); // <---- Debe existir este método
                         c->show();
-                        // ResetearMovimiento(); // si la usas, descomenta esto
+                        ResetearMovimiento();
                         this->close();
                     });
                     return true;

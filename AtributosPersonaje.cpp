@@ -7,6 +7,7 @@
 #include <QMessageBox>
 #include<QPainter>
 #include <QStackedLayout>
+#include<QScrollArea>
 
 AtributosPersonaje::AtributosPersonaje(QWidget* parent)
     : QWidget(parent),
@@ -17,7 +18,6 @@ AtributosPersonaje::AtributosPersonaje(QWidget* parent)
 {
 
     inicializarTabWidget();
-
     //barra de vida contenedor
     barraVidaLabel = new QLabel(this);
     barraVidaLabel->setStyleSheet("background-color: #333333; border: 2px solid black; border-radius: 5px; padding: 0px;");
@@ -121,7 +121,8 @@ void AtributosPersonaje::inicializarJugador() {
     {
 
         jugador = new personaje(this);//Solo si NO hay jugador
-        jugador->SetAnimacion(":/imagenes/assets/protagonista/Idle.png",7);
+        auto anim=jugador->obtenerAnimacion("idle",jugador->personajeActual);
+        jugador->SetAnimacion(anim.ruta,anim.frames);
 
     }else{
 
@@ -158,23 +159,23 @@ void AtributosPersonaje::Movimientos() {
             if(izquierdaPresionada)
             {
 
-                jugador->MoverSiNoColisiona(-jugador->getVelocidadMoviento(),0,obstaculos);
+                jugador->MoverSiNoColisiona(-jugador->getVelocidadMovimiento(),0,obstaculos);
                 moviendo=true;
 
             }else if(derechaPresionada){
 
-                jugador->MoverSiNoColisiona(jugador->getVelocidadMoviento(),0,obstaculos);
+                jugador->MoverSiNoColisiona(jugador->getVelocidadMovimiento(),0,obstaculos);
                 moviendo=true;
             }
 
             if(arribaPresionado)
             {
-                jugador->MoverSiNoColisiona(0,-jugador->getVelocidadMoviento(),obstaculos);
+                jugador->MoverSiNoColisiona(0,-jugador->getVelocidadMovimiento(),obstaculos);
                 moviendo=true;
 
             }else if(abajoPresionado){
 
-                jugador->MoverSiNoColisiona(0,jugador->getVelocidadMoviento(),obstaculos);
+                jugador->MoverSiNoColisiona(0,jugador->getVelocidadMovimiento(),obstaculos);
                 moviendo=true;
 
             }
@@ -188,11 +189,14 @@ void AtributosPersonaje::Movimientos() {
             {
 
                 jugador->SetAnimacionMovimiento(6);
-                jugador->SetAnimacion(":/imagenes/assets/protagonista/Run.png",8);
+                auto anim=jugador->obtenerAnimacion("run",jugador->personajeActual);
+                jugador->SetAnimacion(anim.ruta,anim.frames);
+
             }else{
 
                 jugador->SetAnimacionMovimiento(2);
-                jugador->SetAnimacion(":/imagenes/assets/protagonista/Walk.png",7);
+                auto anim=jugador->obtenerAnimacion("walk",jugador->personajeActual);
+                jugador->SetAnimacion(anim.ruta,anim.frames);
 
             }
         }else{
@@ -202,7 +206,8 @@ void AtributosPersonaje::Movimientos() {
             {
 
                 jugador->DetenerAnimacion();
-                jugador->SetAnimacion(":/imagenes/assets/protagonista/Idle.png",7);
+                auto anim=jugador->obtenerAnimacion("idle",jugador->personajeActual);
+                jugador->SetAnimacion(anim.ruta,anim.frames);
 
             }
         }
@@ -298,7 +303,8 @@ void AtributosPersonaje::keyReleaseEvent(QKeyEvent* event) {
         {
 
             jugador->DetenerAnimacion();
-            jugador->SetAnimacion(":/imagenes/assets/protagonista/Idle.png", 7);
+            auto anim=jugador->obtenerAnimacion("idle",jugador->personajeActual);
+            jugador->SetAnimacion(anim.ruta,anim.frames);
 
         }
 
@@ -322,7 +328,8 @@ void AtributosPersonaje::ResetearMovimiento()
     if (jugador)
     {
         jugador->DetenerAnimacion();
-        jugador->SetAnimacion(":/imagenes/assets/protagonista/Idle.png",7);
+        auto anim=jugador->obtenerAnimacion("idle",jugador->personajeActual);
+        jugador->SetAnimacion(anim.ruta,anim.frames);
     }
 
     ActualizarBarraVida();
@@ -418,7 +425,7 @@ void AtributosPersonaje::inicializarTabWidget() {
     if(!fondoLabel.isNull()) {
         fondoLabel = fondoLabel.scaled(200, 60, Qt::KeepAspectRatioByExpanding, Qt::SmoothTransformation);
         labelDistancias->setPixmap(fondoLabel);
-        labelDistancias->setFixedSize(150,40);
+        labelDistancias->setFixedSize(150,70);
     } else {
         labelDistancias->setStyleSheet(
             "QLabel {"
@@ -452,7 +459,7 @@ void AtributosPersonaje::inicializarTabWidget() {
     labelDistancias->show();
 
     // Conectar la señal para actualizar el texto
-    connect(mapaWidget, &Mapa::actualizarDistancias, this, [this, textoLabel](float principal, float alterna) {
+    connect(mapaWidget, &Mapa::actualizarDistancias, this, [this, textoLabel](float principal, float alterna,const QString& origen, const QString& destino) {
         QString texto;
         if (principal > 0 && alterna > 0) {
             texto = QString("Ruta rápida: %1 km\nAlternativa: %2 km")
@@ -460,6 +467,28 @@ void AtributosPersonaje::inicializarTabWidget() {
                         .arg(alterna, 0, 'f', 1);
         } else if (principal > 0) {
             texto = QString("Distancia: %1 km").arg(principal, 0, 'f', 1);
+        } else {
+            texto = "No hay rutas disponibles";
+        }
+        textoLabel->setText(texto);
+    });
+
+    // Conectar la señal para actualizar el texto
+    connect(mapaWidget, &Mapa::actualizarDistancias, this, [this, textoLabel](float principal, float alterna, const QString& origen, const QString& destino) {
+        QString texto;
+
+        QString ruta = QString("<div style='margin-bottom: 5px; font-size: 11px;'>%1 → %2</div><br/>").arg(origen).arg(destino);
+
+        if (principal > 0 && alterna > 0) {
+            texto = ruta +
+                    QString("<span style='color: yellow;'>Ruta rápida: %1 km</span><br/>"
+                            "<span style='color: #3498db;'>Alternativa: %2 km</span>")
+                        .arg(principal, 0, 'f', 1)
+                        .arg(alterna, 0, 'f', 1);
+        } else if (principal > 0) {
+            texto = ruta +
+                    QString("<span style='color: yellow;'>Distancia: %1 km</span>")
+                        .arg(principal, 0, 'f', 1);
         } else {
             texto = "No hay rutas disponibles";
         }
@@ -478,9 +507,10 @@ void AtributosPersonaje::inicializarTabWidget() {
 
     QStackedLayout* stackedLayout = new QStackedLayout(mapaTab);
     stackedLayout->setStackingMode(QStackedLayout::StackAll);
-    stackedLayout->addWidget(backgroundLabel); // Capa inferior: fondo
-    stackedLayout->addWidget(mapaWidget);      // Capa superior: mapa interactivo
+    stackedLayout->addWidget(backgroundLabel);
+    stackedLayout->addWidget(mapaWidget);
     stackedLayout->setContentsMargins(0, 0, 0, 0);
+
 
     backgroundLabel->lower();
     mapaWidget->raise();
@@ -491,6 +521,128 @@ void AtributosPersonaje::inicializarTabWidget() {
     tabWidget->addTab(mapaTab, "Mapa");
     tabWidget->addTab(inventarioWidget, "Inventario");
 
+
+//==================================Crear pestaña de personajes/habilidades=================================================================
+    QScrollArea*scrollArea=new QScrollArea();
+    scrollArea->setWidgetResizable(true);
+    scrollArea->setStyleSheet("background-color: #222; border: none;");
+
+    QWidget*contenidoScroll=new QWidget();
+    QVBoxLayout*layoutPersonajes=new QVBoxLayout(contenidoScroll);
+    layoutPersonajes->setSpacing(30);
+    layoutPersonajes->setContentsMargins(30,20,30,20);
+
+    // Lista de skins
+    struct Skin
+    {
+
+        QString nombre;
+        QString rutaImagen;
+        bool desbloqueado;
+
+    };
+
+    QVector<Skin> skins=
+    {
+
+        {"P1",":/imagenes/assets/protagonista/P1.png",true},
+        {"P2",":/imagenes/assets/protagonista/P2.png",Inventario::getInstance()->getPersonajeP2Desbloqueado()},
+        {"P3",":/imagenes/assets/protagonista/P3.png",Inventario::getInstance()->getPersonajeP3Desbloqueado()}
+
+    };
+
+    QVector<QPushButton*> botonesUsar;
+
+    for(int i=0;i<skins.size();++i)
+    {
+        QVBoxLayout*skinLayout=new QVBoxLayout();
+
+        QLabel*imagenLabel=new QLabel();
+        QPixmap img(skins[i].rutaImagen);
+        imagenLabel->setPixmap(img.scaled(220, 220, Qt::KeepAspectRatio, Qt::SmoothTransformation));
+        imagenLabel->setAlignment(Qt::AlignCenter);
+        imagenLabel->setStyleSheet("background-color: black; border-radius: 10px;");
+        skinLayout->addWidget(imagenLabel);
+
+        QLabel* nombreLabel = new QLabel(skins[i].nombre);
+        nombreLabel->setAlignment(Qt::AlignCenter);
+        nombreLabel->setStyleSheet("color: white; font-weight: bold; font-size: 18px;");
+        skinLayout->addWidget(nombreLabel);
+
+        QPushButton* usarBtn = new QPushButton();
+        usarBtn->setEnabled(skins[i].desbloqueado);
+        usarBtn->setText("Cambiar");
+        if (skins[i].desbloqueado) {
+            usarBtn->setText("Cambiar");
+            usarBtn->setStyleSheet(
+                "QPushButton {"
+                "   background-color: #5a5aff;"
+                "   color: white;"
+                "   font-size: 14px;"
+                "   font-weight: bold;"
+                "   padding: 6px 20px;"
+                "   border-radius: 8px;"
+                "}"
+                "QPushButton:hover { background-color: #7373ff; }"
+                );
+        } else {
+            usarBtn->setText("🔒 Arma bloqueada");
+            usarBtn->setStyleSheet(
+                "QPushButton {"
+                "   background-color: #444;"
+                "   color: red;"
+                "   font-size: 14px;"
+                "   font-weight: bold;"
+                "   padding: 6px 20px;"
+                "   border-radius: 8px;"
+                "}"
+                );
+        }
+        botonesUsar.append(usarBtn);
+        skinLayout->addWidget(usarBtn);
+
+        QLabel* habilidad1 = new QLabel("Habilidad 1: Vacía");
+        QLabel* habilidad2 = new QLabel("Habilidad 2: Vacía");
+        habilidad1->setStyleSheet("color: lightgray; font-style: italic;");
+        habilidad2->setStyleSheet("color: lightgray; font-style: italic;");
+        habilidad1->setAlignment(Qt::AlignCenter);
+        habilidad2->setAlignment(Qt::AlignCenter);
+        skinLayout->addWidget(habilidad1);
+        skinLayout->addWidget(habilidad2);
+
+        QFrame* skinFrame = new QFrame();
+        skinFrame->setStyleSheet("background-color: #2d2d2d; border: 2px solid #555; border-radius: 12px;");
+        skinFrame->setLayout(skinLayout);
+
+        layoutPersonajes->addWidget(skinFrame);
+
+        connect(usarBtn, &QPushButton::clicked, this, [=]() {
+
+            if (!skins[i].desbloqueado)
+                return;
+
+            //aqui verifica si el jugador ya esta usando este personaje
+            if (jugador->personajeActual==static_cast<personaje::TipoPersonaje>(i))
+                return;
+
+            //aqui cambia el personaje actual del jugador
+            jugador->personajeActual=static_cast<personaje::TipoPersonaje>(i);
+
+            //aqui cambia animacion a idle con el nuevo personaje
+            auto anim = jugador->obtenerAnimacion("idle", jugador->personajeActual);
+            jugador->SetAnimacion(anim.ruta, anim.frames);
+
+            //aqui muestra notificacion visual del cambio
+            mostrarNotificacion(QString("🧍 Atuendo cambiado a: %1").arg(skins[i].nombre));
+        });
+    }
+
+    layoutPersonajes->addStretch();
+    contenidoScroll->setLayout(layoutPersonajes);
+    scrollArea->setWidget(contenidoScroll);
+    tabWidget->addTab(scrollArea, "Personajes - Habilidades");
+
+//=======================TERMINA HABILIDADES===========================================================================
     tabWidget->resize(700, 450);
 
     // Boton de cerrar
@@ -518,16 +670,6 @@ void AtributosPersonaje::intentarCurarse()
 {
 
     if(estadoCurandose||!jugador)return;
-
-    //aqui se verifica si esta en lobby o en caminos
-    QString nombreClase=this->metaObject()->className();
-    if(nombreClase!="lobby"&&nombreClase!="Caminos")
-    {
-
-        QMessageBox::warning(this,"Curación no permitida","No puedes curarte fuera del lobby o caminos.");
-        return;
-
-    }
 
     if(izquierdaPresionada||derechaPresionada||arribaPresionado||abajoPresionado)
     {
@@ -572,8 +714,6 @@ void AtributosPersonaje::intentarCurarse()
 
     }
 
-
-
 }
 
 void AtributosPersonaje::iniciarCuracion(int cantidad, const QString &tipo)
@@ -581,7 +721,8 @@ void AtributosPersonaje::iniciarCuracion(int cantidad, const QString &tipo)
 
     estadoCurandose=true;
     ResetearMovimiento();
-    jugador->SetAnimacion(":/imagenes/assets/protagonista/curandose.png",7);
+    auto anim=jugador->obtenerAnimacion("curar",jugador->personajeActual);
+    jugador->SetAnimacion(anim.ruta,anim.frames);
 
     if(curacionTimer)
     {
@@ -608,7 +749,8 @@ void AtributosPersonaje::terminarCuracion(int cantidad)
 {
 
     estadoCurandose=false;
-    jugador->SetAnimacion(":/imagenes/assets/protagonista/Idle.png",7);//quitar efecto, vuelve a la normalidad
+    auto anim=jugador->obtenerAnimacion("idle",jugador->personajeActual);
+    jugador->SetAnimacion(anim.ruta,anim.frames);//quitar efecto, vuelve a la normalidad
 
     int nuevaVida=jugador->getVidas()+cantidad;
     if(nuevaVida>30)nuevaVida=30;
@@ -649,11 +791,25 @@ void AtributosPersonaje::intentarDisparar()
 
     disparandoAhora=true;
     jugador->setMuniciones(jugador->getMuniciones()-1);
-    jugador->SetAnimacion(":/imagenes/assets/protagonista/Shot_1.png", 4);
+    auto anim=jugador->obtenerAnimacion("shot",jugador->personajeActual);
+    jugador->SetAnimacion(anim.ruta,anim.frames);
     ActualizarMuniciones();
 
     // Crear bala
     Bala* bala=new Bala(this);
+    //daño de la bala dependiendo del arma
+    int danio=3;
+    if(jugador->personajeActual==personaje::P2)
+    {
+
+        danio=4;
+
+    }else if(jugador->personajeActual==personaje::P3){
+
+        danio=5;
+
+    }
+    bala->setDanio(danio);
     int offsetX=jugador->miradoDerecha?130:(128-130-10);//calculando de donde saldra la bala
     int offsetY=90;
     bala->move(jugador->x()+offsetX,jugador->y()+offsetY);
@@ -690,11 +846,40 @@ void AtributosPersonaje::intentarDisparar()
             ZPresionado=false;
 
         if(!ZPresionado&&!izquierdaPresionada&&!derechaPresionada&&!arribaPresionado&&!abajoPresionado)
-            jugador->SetAnimacion(":/imagenes/assets/protagonista/Idle.png",7);
+        {
+
+            auto anim=jugador->obtenerAnimacion("idle",jugador->personajeActual);
+            jugador->SetAnimacion(anim.ruta,anim.frames);
+
+        }
 
         delete disparoTimer;
         disparoTimer=nullptr;
     });
     disparoTimer->start(400);
+
+}
+
+void AtributosPersonaje::mostrarNotificacion(const QString &texto)
+{
+
+    if(!labelNotificacion)
+    {
+
+        labelNotificacion=new QLabel(texto,this);
+        labelNotificacion->setStyleSheet("background: rgba(0, 0, 0, 200); color: #00ffcc; font-size: 16px; padding: 10px; border-radius: 8px; border: 2px solid #00ffcc;");
+        labelNotificacion->setAlignment(Qt::AlignCenter);
+        labelNotificacion->setFixedSize(400,100);
+
+    }
+
+    labelNotificacion->setText(texto);
+    labelNotificacion->move((width()-labelNotificacion->width())/2,40);
+    labelNotificacion->show();
+    labelNotificacion->raise();
+
+    QTimer::singleShot(2500, labelNotificacion, [=]() {
+        labelNotificacion->hide();
+    });
 
 }

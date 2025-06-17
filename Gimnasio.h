@@ -19,7 +19,7 @@ private:
     Zombie* zombieCercano;
 
 public:
-    Gimnasio(QWidget* parent = nullptr);
+   explicit Gimnasio(personaje* jugadorExistente,QWidget* parent=nullptr);
     bool eventFilter(QObject* obj, QEvent* event) override;
     void keyPressEvent(QKeyEvent* event) override;
     void mostrarNotificacion(const QString& texto);

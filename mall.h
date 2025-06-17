@@ -19,7 +19,7 @@ private:
     Zombie* zombieCercano;
 
 public:
-    Mall(QWidget* parent = nullptr);
+    explicit Mall(personaje* jugadorExistente,QWidget* parent=nullptr);
     void keyPressEvent(QKeyEvent* event) override;
     void mostrarNotificacion(const QString& texto);
     bool eventFilter(QObject* obj, QEvent* event) override;
