@@ -12,7 +12,14 @@ Zombie::Zombie(Tipo tipo, QWidget* parent)
     // ASIGNA VIDA SEGÚN TIPO:
     switch(tipo) {
     case Tipo::Z1:
+
+        vida=vidaMaxima=30;
+        break;
+
     case Tipo::Z2:
+
+        vida=vidaMaxima=25;
+        break;
     case Tipo::Z3:
         vida = vidaMaxima = 13;
         break;

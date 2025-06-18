@@ -38,7 +38,6 @@ supermercado::supermercado(personaje*jugadorExistente,QWidget* parent) : Atribut
     labelMuniciones->show();
     ActualizarMuniciones();
 
-    // Crear y registrar 3 zombies rápidos (Z6) y 3 zombies lentos (Z4)
     int posX = 1100;
     for (int i = 0; i < 3; ++i) {
         // Zombie rápido
@@ -47,6 +46,12 @@ supermercado::supermercado(personaje*jugadorExistente,QWidget* parent) : Atribut
         z6->setVelocidad(4);
         z6->show();
         zombies.append(z6);
+
+        Zombie*z2=new Zombie(Zombie::Tipo::Z2,this);
+        z2->move(posX,485);
+        z2->setVelocidad(5);
+        z2->show();
+        zombies.append(z2);
 
         // Zombie lento
         Zombie* z4 = new Zombie(Zombie::Tipo::Z4, this);
@@ -153,7 +158,7 @@ bool supermercado::eventFilter(QObject* obj, QEvent* event) {
                         Caminos* c = new Caminos(jugador);
                         Inventario::getInstance()->setBalas(jugador->getMuniciones());
                         c->cambiarRuta(9); // <---- Manda a Ruta 9
-                        c->posicionarJugadorEnCalleRuta9(); // <---- Debe existir este método
+                        c->posicionarJugadorEnCalleRuta9();
                         c->show();
                         ResetearMovimiento();
                         this->close();

@@ -226,7 +226,7 @@ void AtributosPersonaje::keyPressEvent(QKeyEvent* event)
     if(estadoCurandose)return;//si esta curandose no mover
 
     //aqui tecla l para abrir y cerrar el inventario
-    if (event->key() == Qt::Key_L) {
+    if (event->key() == Qt::Key_I) {
         if (tabWidget) {
             if (tabWidget->isVisible()) {
                 tabWidget->hide();
