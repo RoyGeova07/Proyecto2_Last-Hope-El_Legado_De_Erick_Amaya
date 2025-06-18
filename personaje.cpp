@@ -244,7 +244,7 @@ personaje::DatosAnimacion personaje::obtenerAnimacion(const QString &tipo, TipoP
         else if(tipo=="shot")datos={base+"Shot_1.png",       4};
         else if(tipo=="curar")datos={base+"curandose.png",   7};
         else if(tipo=="dead") datos={base+"Dead.png",        4};
-        else if(tipo=="melee") datos = {"C:/Users/moiza/Documents/QT/Proyecto2_Last-Hope-El_Legado_De_Erick_Amaya/assets/protagonista/Attack_P1.png", 6};
+        else if(tipo=="melee") datos={base+"Attack_P1.png", 3};
 
 
     }else if(personaje==P2){
@@ -255,7 +255,7 @@ personaje::DatosAnimacion personaje::obtenerAnimacion(const QString &tipo, TipoP
         else if(tipo=="shot")datos={base+"Shot_1_P2.png",    4};
         else if(tipo=="curar")datos={base+"Curandose_P2.png",9};
         else if(tipo=="dead") datos={base+"Dead_P2.png",     4};
-        else if(tipo=="melee") datos = {"C:/Users/moiza/Documents/QT/Proyecto2_Last-Hope-El_Legado_De_Erick_Amaya/assets/protagonista/Attack_P2.png", 6};
+        else if(tipo=="melee")datos={base+"Attack_P2.png", 4};
 
 
     }else if(personaje==P3){
@@ -266,7 +266,7 @@ personaje::DatosAnimacion personaje::obtenerAnimacion(const QString &tipo, TipoP
         else if(tipo=="shot")datos={base+"Shot_1_P3.png",    4};
         else if(tipo=="curar")datos={base+"Curandose_P3.png",7};
         else if(tipo=="dead") datos={base+"Dead_P3.png",     5};
-        else if(tipo=="melee") datos = {"C:/Users/moiza/Documents/QT/Proyecto2_Last-Hope-El_Legado_De_Erick_Amaya/assets/protagonista/Attack_P3.png", 6};
+        else if(tipo=="melee") datos={base+"Attack_P3.png", 5};
 
 
     }

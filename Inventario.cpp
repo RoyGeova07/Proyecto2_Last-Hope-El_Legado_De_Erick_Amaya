@@ -50,7 +50,7 @@ NodoInventario* Inventario::insertar(NodoInventario *nodo, NodoInventario *nuevo
     else
     {
         // Si ya existe el objeto, simplemente aumentar cantidad
-        nodo->cantidad += nuevo->cantidad;
+        nodo->cantidad+=nuevo->cantidad;
         delete nuevo; // evitar fuga
     }
 

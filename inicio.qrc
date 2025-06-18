@@ -106,5 +106,8 @@
         <file>assets/protagonista/P1.png</file>
         <file>assets/protagonista/P2.png</file>
         <file>assets/protagonista/P3.png</file>
+        <file>assets/protagonista/Attack_P1.png</file>
+        <file>assets/protagonista/Attack_P2.png</file>
+        <file>assets/protagonista/Attack_P3.png</file>
     </qresource>
 </RCC>

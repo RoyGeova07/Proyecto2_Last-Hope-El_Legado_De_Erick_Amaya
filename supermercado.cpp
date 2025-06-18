@@ -154,7 +154,7 @@ bool supermercado::eventFilter(QObject* obj, QEvent* event) {
                         c->cambiarRuta(9); // <---- Manda a Ruta 9
                         c->posicionarJugadorEnCalleRuta9(); // <---- Debe existir este método
                         c->show();
-                        // ResetearMovimiento(); // si la usas, descomenta esto
+                        ResetearMovimiento();
                         this->close();
                     });
                     return true;

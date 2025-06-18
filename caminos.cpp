@@ -1121,6 +1121,7 @@ void Caminos::keyPressEvent(QKeyEvent *event)
 
         // Crear la ciudad y mostrarla
         Mall* mallWindow = new Mall(jugador);
+        ResetearMovimiento();
         mallWindow->show();
 
         // Cerrar esta ventana
@@ -1136,6 +1137,7 @@ void Caminos::keyPressEvent(QKeyEvent *event)
 
         // Crear la ciudad y mostrarla
         supermercado* mallWindow = new supermercado(jugador);
+        ResetearMovimiento();
         mallWindow->show();
 
         // Cerrar esta ventana
