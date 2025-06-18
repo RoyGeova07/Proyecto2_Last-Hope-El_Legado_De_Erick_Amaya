@@ -14,16 +14,16 @@ Zombie::Zombie(Tipo tipo, QWidget* parent)
     case Tipo::Z1:
     case Tipo::Z2:
     case Tipo::Z3:
-        vida = vidaMaxima = 10;
+        vida = vidaMaxima = 13;
         break;
     case Tipo::Z4:
-        vida = vidaMaxima = 10;   // Z4: rapido
+        vida = vidaMaxima = 15;   // Z4: rapido
         break;
     case Tipo::Z5:
-        vida = vidaMaxima = 12;  // Z5: intermedio
+        vida = vidaMaxima = 17;  // Z5: intermedio
         break;
     case Tipo::Z6:
-        vida = vidaMaxima = 20;  // Z6: lento
+        vida = vidaMaxima = 25;  // Z6: lento
         break;
     }
 

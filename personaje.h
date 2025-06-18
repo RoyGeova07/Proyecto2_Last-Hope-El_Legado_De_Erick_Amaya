@@ -8,7 +8,7 @@
 #include <QMap>
 #include <QStringList>
 #include <QRect>
-#include "zombie.h" // Necesario para usar QList<Zombie*>
+#include "zombie.h"
 
 // Clase personaje
 class personaje : public QLabel
