@@ -271,6 +271,9 @@ void AtributosPersonaje::keyPressEvent(QKeyEvent* event)
     case Qt::Key_C:
         intentarCurarse();
         break;
+    case Qt::Key_X:
+        intentarMelee();
+        break;
 
     }
 }
@@ -883,3 +886,50 @@ void AtributosPersonaje::mostrarNotificacion(const QString &texto)
     });
 
 }
+void AtributosPersonaje::intentarMelee()
+{
+    if (!puedeMelee || !jugador || jugador->estaMuertoPersonaje() || estadoCurandose)
+        return;
+
+    puedeMelee = false;
+
+    // Animación melee
+    auto anim = jugador->obtenerAnimacion("melee", jugador->personajeActual);
+    jugador->SetAnimacion(anim.ruta, anim.frames);
+
+    // --- HITBOX MELEE ---
+    QRect hitbox;
+    if (jugador->miradoDerecha)
+        hitbox = QRect(jugador->x() + jugador->width(), jugador->y() + 32, 50, 60);
+    else
+        hitbox = QRect(jugador->x() - 50, jugador->y() + 32, 50, 60);
+
+    // Busca zombies en la escena (todos los QLabel hijos)
+    QList<QLabel*> posibles = this->findChildren<QLabel*>();
+    bool golpeoAlMenosUno = false;
+    for (QLabel* obj : posibles) {
+        if (obj->inherits("Zombie")) {
+            Zombie* z = static_cast<Zombie*>(obj);
+            if (!z->muerto && z->geometry().intersects(hitbox)) {
+                z->recibirDanio(1); // Quita 1 de vida por golpe
+                golpeoAlMenosUno = true;
+            }
+        }
+    }
+    if (golpeoAlMenosUno) {
+        mostrarNotificacion("👊 ¡Golpeaste a un zombie!");
+    }
+
+    // --- COOLDOWN ---
+    if (meleeTimer)
+        meleeTimer->stop();
+    else
+        meleeTimer = new QTimer(this);
+
+    meleeTimer->setSingleShot(true);
+    connect(meleeTimer, &QTimer::timeout, this, [=]() {
+        puedeMelee = true;
+    });
+    meleeTimer->start(450); // 450ms de cooldown, ajusta si quieres
+}
+

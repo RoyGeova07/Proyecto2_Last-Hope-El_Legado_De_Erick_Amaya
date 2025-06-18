@@ -71,6 +71,9 @@ private:
     personaje::TipoPersonaje personajeActual=personaje::P1;
     QLabel*labelNotificacion=nullptr;
     void mostrarNotificacion(const QString& texto);
+    void intentarMelee();
+    QTimer* meleeTimer = nullptr;
+    bool puedeMelee = true;
 
 public:
     explicit AtributosPersonaje(QWidget* parent = nullptr);
