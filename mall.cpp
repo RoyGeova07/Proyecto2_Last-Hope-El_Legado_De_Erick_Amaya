@@ -69,6 +69,7 @@ Mall::Mall(personaje* jugadorExistente,QWidget* parent) : AtributosPersonaje(jug
             if (jugador->getVidas() <= 0) return;
 
             jugador->setVidas(jugador->getVidas() - 1);
+            CancelarCuracion();
             ActualizarBarraVida();
             ActualizarMuniciones();
 

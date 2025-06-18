@@ -243,6 +243,16 @@ void AtributosPersonaje::keyPressEvent(QKeyEvent* event)
         }
     }
 
+    //Si estamos disparando y la tecla NO es Z, cancelar disparo
+    if(ZPresionado&&event->key()!=Qt::Key_Z)
+    {
+
+        detenerDisparo();
+
+    }
+
+
+
     switch (event->key()) {
     case Qt::Key_Shift:
         shiftPresionado = true;
@@ -959,4 +969,56 @@ void AtributosPersonaje::intentarMelee()
     });
 
     meleeTimer->start(450);
+}
+
+void AtributosPersonaje::detenerDisparo()
+{
+
+    //marcamos aqui ya no queremos disparar
+    ZPresionado=false;
+
+    //aqui se cancela el timer de cadencia y resetea la bandera
+    if(disparoTimer)
+    {
+
+        disparoTimer->stop();
+        disparoTimer->deleteLater();
+        disparoTimer=nullptr;
+
+    }
+    disparandoAhora=false;
+
+    //si no se esta moviendo vuelve al idle
+    if(!izquierdaPresionada&&!derechaPresionada&&!arribaPresionado&&!abajoPresionado&&jugador)
+    {
+
+        jugador->DetenerAnimacion();
+        auto animIdle=jugador->obtenerAnimacion("idle", jugador->personajeActual);
+        jugador->SetAnimacion(animIdle.ruta, animIdle.frames);
+
+    }
+
+}
+
+void AtributosPersonaje::CancelarCuracion()
+{
+
+    if(!estadoCurandose)return;
+
+    estadoCurandose=false;
+
+    if(curacionTimer)
+    {
+
+        curacionTimer->stop();
+        curacionTimer->deleteLater();
+        curacionTimer=nullptr;
+
+    }
+
+    auto animIdle=jugador->obtenerAnimacion("idle",jugador->personajeActual);
+    jugador->SetAnimacion(animIdle.ruta,animIdle.frames);
+
+      mostrarNotificacion("CURACION INTERRUMPIDA POR DAÑO");
+
 }

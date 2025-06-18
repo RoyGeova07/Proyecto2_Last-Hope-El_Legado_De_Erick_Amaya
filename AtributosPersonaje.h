@@ -76,6 +76,8 @@ private:
     QTimer* meleeTimer = nullptr;
     bool puedeMelee = true;
 
+    void detenerDisparo();
+
 public:
     explicit AtributosPersonaje(QWidget* parent = nullptr);
     explicit AtributosPersonaje(personaje*jugador,QWidget*parent=nullptr);
@@ -87,6 +89,7 @@ public:
     void keyReleaseEvent(QKeyEvent* event) override;
     void ActualizarMuniciones();
     void intentarDisparar();
+    void CancelarCuracion();
 
 };
 

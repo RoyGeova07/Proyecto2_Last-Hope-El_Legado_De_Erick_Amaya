@@ -76,6 +76,7 @@ Ciudad::Ciudad(personaje* jugadorExistente,QWidget* parent) : AtributosPersonaje
 
                 jugador->setVidas(jugador->getVidas()-1);//por ahora el zombie solo baja 1 de vida
                 ActualizarBarraVida();
+                CancelarCuracion();
                 ActualizarMuniciones();
 
                 if(jugador->getVidas()<=0)

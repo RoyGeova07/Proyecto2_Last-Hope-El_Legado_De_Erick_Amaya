@@ -70,6 +70,7 @@ Gasolinera::Gasolinera(personaje* jugadorExistente, QWidget* parent) : Atributos
             if (jugador->getVidas() <= 0) return;
 
             jugador->setVidas(jugador->getVidas() - 1);
+            CancelarCuracion();
             ActualizarBarraVida();
             ActualizarMuniciones();
 

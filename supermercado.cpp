@@ -67,6 +67,7 @@ supermercado::supermercado(personaje*jugadorExistente,QWidget* parent) : Atribut
 
             jugador->setVidas(jugador->getVidas() - 1);
             ActualizarBarraVida();
+            CancelarCuracion();
             ActualizarMuniciones();
 
             if (jugador->getVidas() <= 0) {
