@@ -272,7 +272,10 @@ void AtributosPersonaje::keyPressEvent(QKeyEvent* event)
         intentarCurarse();
         break;
     case Qt::Key_X:
-        intentarMelee();
+        if (!XPresionado) {           // se acaba de pulsar
+            XPresionado = true;
+            intentarMelee();          // primer golpe
+        }
         break;
 
     }
@@ -312,7 +315,14 @@ void AtributosPersonaje::keyReleaseEvent(QKeyEvent* event) {
         }
 
         break;
+
+    case Qt::Key_X:
+        XPresionado = false;          // se solto la tecla
+        break;
+
+
     }
+
 }
 
 void AtributosPersonaje::ResetearMovimiento()
@@ -525,7 +535,7 @@ void AtributosPersonaje::inicializarTabWidget() {
     tabWidget->addTab(inventarioWidget, "Inventario");
 
 
-//==================================Crear pestaña de personajes/habilidades=================================================================
+    //==================================Crear pestaña de personajes/habilidades=================================================================
     QScrollArea*scrollArea=new QScrollArea();
     scrollArea->setWidgetResizable(true);
     scrollArea->setStyleSheet("background-color: #222; border: none;");
@@ -548,125 +558,125 @@ void AtributosPersonaje::inicializarTabWidget() {
     QVector<Skin> skins=
     {
 
-        {"P1",":/imagenes/assets/protagonista/P1.png",true},
+    {"P1",":/imagenes/assets/protagonista/P1.png",true},
         {"P2",":/imagenes/assets/protagonista/P2.png",Inventario::getInstance()->getPersonajeP2Desbloqueado()},
-        {"P3",":/imagenes/assets/protagonista/P3.png",Inventario::getInstance()->getPersonajeP3Desbloqueado()}
+    {"P3",":/imagenes/assets/protagonista/P3.png",Inventario::getInstance()->getPersonajeP3Desbloqueado()}
 
-    };
+};
 
-    QVector<QPushButton*> botonesUsar;
+QVector<QPushButton*> botonesUsar;
 
-    for(int i=0;i<skins.size();++i)
-    {
-        QVBoxLayout*skinLayout=new QVBoxLayout();
+for(int i=0;i<skins.size();++i)
+{
+    QVBoxLayout*skinLayout=new QVBoxLayout();
 
-        QLabel*imagenLabel=new QLabel();
-        QPixmap img(skins[i].rutaImagen);
-        imagenLabel->setPixmap(img.scaled(220, 220, Qt::KeepAspectRatio, Qt::SmoothTransformation));
-        imagenLabel->setAlignment(Qt::AlignCenter);
-        imagenLabel->setStyleSheet("background-color: black; border-radius: 10px;");
-        skinLayout->addWidget(imagenLabel);
+    QLabel*imagenLabel=new QLabel();
+    QPixmap img(skins[i].rutaImagen);
+    imagenLabel->setPixmap(img.scaled(220, 220, Qt::KeepAspectRatio, Qt::SmoothTransformation));
+    imagenLabel->setAlignment(Qt::AlignCenter);
+    imagenLabel->setStyleSheet("background-color: black; border-radius: 10px;");
+    skinLayout->addWidget(imagenLabel);
 
-        QLabel* nombreLabel = new QLabel(skins[i].nombre);
-        nombreLabel->setAlignment(Qt::AlignCenter);
-        nombreLabel->setStyleSheet("color: white; font-weight: bold; font-size: 18px;");
-        skinLayout->addWidget(nombreLabel);
+    QLabel* nombreLabel = new QLabel(skins[i].nombre);
+    nombreLabel->setAlignment(Qt::AlignCenter);
+    nombreLabel->setStyleSheet("color: white; font-weight: bold; font-size: 18px;");
+    skinLayout->addWidget(nombreLabel);
 
-        QPushButton* usarBtn = new QPushButton();
-        usarBtn->setEnabled(skins[i].desbloqueado);
+    QPushButton* usarBtn = new QPushButton();
+    usarBtn->setEnabled(skins[i].desbloqueado);
+    usarBtn->setText("Cambiar");
+    if (skins[i].desbloqueado) {
         usarBtn->setText("Cambiar");
-        if (skins[i].desbloqueado) {
-            usarBtn->setText("Cambiar");
-            usarBtn->setStyleSheet(
-                "QPushButton {"
-                "   background-color: #5a5aff;"
-                "   color: white;"
-                "   font-size: 14px;"
-                "   font-weight: bold;"
-                "   padding: 6px 20px;"
-                "   border-radius: 8px;"
-                "}"
-                "QPushButton:hover { background-color: #7373ff; }"
-                );
-        } else {
-            usarBtn->setText("🔒 Arma bloqueada");
-            usarBtn->setStyleSheet(
-                "QPushButton {"
-                "   background-color: #444;"
-                "   color: red;"
-                "   font-size: 14px;"
-                "   font-weight: bold;"
-                "   padding: 6px 20px;"
-                "   border-radius: 8px;"
-                "}"
-                );
-        }
-        botonesUsar.append(usarBtn);
-        skinLayout->addWidget(usarBtn);
-
-        QLabel* habilidad1 = new QLabel("Habilidad 1: Vacía");
-        QLabel* habilidad2 = new QLabel("Habilidad 2: Vacía");
-        habilidad1->setStyleSheet("color: lightgray; font-style: italic;");
-        habilidad2->setStyleSheet("color: lightgray; font-style: italic;");
-        habilidad1->setAlignment(Qt::AlignCenter);
-        habilidad2->setAlignment(Qt::AlignCenter);
-        skinLayout->addWidget(habilidad1);
-        skinLayout->addWidget(habilidad2);
-
-        QFrame* skinFrame = new QFrame();
-        skinFrame->setStyleSheet("background-color: #2d2d2d; border: 2px solid #555; border-radius: 12px;");
-        skinFrame->setLayout(skinLayout);
-
-        layoutPersonajes->addWidget(skinFrame);
-
-        connect(usarBtn, &QPushButton::clicked, this, [=]() {
-
-            if (!skins[i].desbloqueado)
-                return;
-
-            //aqui verifica si el jugador ya esta usando este personaje
-            if (jugador->personajeActual==static_cast<personaje::TipoPersonaje>(i))
-                return;
-
-            //aqui cambia el personaje actual del jugador
-            jugador->personajeActual=static_cast<personaje::TipoPersonaje>(i);
-
-            //aqui cambia animacion a idle con el nuevo personaje
-            auto anim = jugador->obtenerAnimacion("idle", jugador->personajeActual);
-            jugador->SetAnimacion(anim.ruta, anim.frames);
-
-            //aqui muestra notificacion visual del cambio
-            mostrarNotificacion(QString("🧍 Atuendo cambiado a: %1").arg(skins[i].nombre));
-        });
+        usarBtn->setStyleSheet(
+            "QPushButton {"
+            "   background-color: #5a5aff;"
+            "   color: white;"
+            "   font-size: 14px;"
+            "   font-weight: bold;"
+            "   padding: 6px 20px;"
+            "   border-radius: 8px;"
+            "}"
+            "QPushButton:hover { background-color: #7373ff; }"
+            );
+    } else {
+        usarBtn->setText("🔒 Arma bloqueada");
+        usarBtn->setStyleSheet(
+            "QPushButton {"
+            "   background-color: #444;"
+            "   color: red;"
+            "   font-size: 14px;"
+            "   font-weight: bold;"
+            "   padding: 6px 20px;"
+            "   border-radius: 8px;"
+            "}"
+            );
     }
+    botonesUsar.append(usarBtn);
+    skinLayout->addWidget(usarBtn);
 
-    layoutPersonajes->addStretch();
-    contenidoScroll->setLayout(layoutPersonajes);
-    scrollArea->setWidget(contenidoScroll);
-    tabWidget->addTab(scrollArea, "Personajes - Habilidades");
+    QLabel* habilidad1 = new QLabel("Habilidad 1: Vacía");
+    QLabel* habilidad2 = new QLabel("Habilidad 2: Vacía");
+    habilidad1->setStyleSheet("color: lightgray; font-style: italic;");
+    habilidad2->setStyleSheet("color: lightgray; font-style: italic;");
+    habilidad1->setAlignment(Qt::AlignCenter);
+    habilidad2->setAlignment(Qt::AlignCenter);
+    skinLayout->addWidget(habilidad1);
+    skinLayout->addWidget(habilidad2);
+
+    QFrame* skinFrame = new QFrame();
+    skinFrame->setStyleSheet("background-color: #2d2d2d; border: 2px solid #555; border-radius: 12px;");
+    skinFrame->setLayout(skinLayout);
+
+    layoutPersonajes->addWidget(skinFrame);
+
+    connect(usarBtn, &QPushButton::clicked, this, [=]() {
+
+        if (!skins[i].desbloqueado)
+            return;
+
+        //aqui verifica si el jugador ya esta usando este personaje
+        if (jugador->personajeActual==static_cast<personaje::TipoPersonaje>(i))
+            return;
+
+        //aqui cambia el personaje actual del jugador
+        jugador->personajeActual=static_cast<personaje::TipoPersonaje>(i);
+
+        //aqui cambia animacion a idle con el nuevo personaje
+        auto anim = jugador->obtenerAnimacion("idle", jugador->personajeActual);
+        jugador->SetAnimacion(anim.ruta, anim.frames);
+
+        //aqui muestra notificacion visual del cambio
+        mostrarNotificacion(QString("🧍 Atuendo cambiado a: %1").arg(skins[i].nombre));
+    });
+}
+
+layoutPersonajes->addStretch();
+contenidoScroll->setLayout(layoutPersonajes);
+scrollArea->setWidget(contenidoScroll);
+tabWidget->addTab(scrollArea, "Personajes - Habilidades");
 
 //=======================TERMINA HABILIDADES===========================================================================
-    tabWidget->resize(700, 450);
+tabWidget->resize(700, 450);
 
-    // Boton de cerrar
-    QPushButton* closeButton = new QPushButton("×", tabWidget);
-    closeButton->setStyleSheet(
-        "QPushButton {"
-        "   background: #ff5555;"
-        "   color: white;"
-        "   border: none;"
-        "   border-radius: 10px;"
-        "   min-width: 20px;"
-        "   max-width: 20px;"
-        "   min-height: 20px;"
-        "   max-height: 20px;"
-        "}"
-        "QPushButton:hover {"
-        "   background: #ff3333;"
-        "}"
-        );
-    closeButton->move(tabWidget->width() - 30, 10);
-    connect(closeButton, &QPushButton::clicked, tabWidget, &QWidget::hide);
+// Boton de cerrar
+QPushButton* closeButton = new QPushButton("×", tabWidget);
+closeButton->setStyleSheet(
+    "QPushButton {"
+    "   background: #ff5555;"
+    "   color: white;"
+    "   border: none;"
+    "   border-radius: 10px;"
+    "   min-width: 20px;"
+    "   max-width: 20px;"
+    "   min-height: 20px;"
+    "   max-height: 20px;"
+    "}"
+    "QPushButton:hover {"
+    "   background: #ff3333;"
+    "}"
+    );
+closeButton->move(tabWidget->width() - 30, 10);
+connect(closeButton, &QPushButton::clicked, tabWidget, &QWidget::hide);
 }
 
 void AtributosPersonaje::intentarCurarse()
@@ -738,12 +748,12 @@ void AtributosPersonaje::iniciarCuracion(int cantidad, const QString &tipo)
     curacionTimer=new QTimer(this);
     curacionTimer->setSingleShot(true);
     connect(curacionTimer,&QTimer::timeout,this,[=]()
-    {
+            {
 
-        terminarCuracion(cantidad);
-        Inventario::getInstance()->insertarObjeto(tipo,-1,"","");
+                terminarCuracion(cantidad);
+                Inventario::getInstance()->insertarObjeto(tipo,-1,"","");
 
-    });
+            });
     curacionTimer->start(2000);//2 segundos en curarse
 
 }
@@ -821,12 +831,12 @@ void AtributosPersonaje::intentarDisparar()
 
 
     connect(bala,&Bala::impactoBala,this,[=](Bala*b)
-    {
+            {
 
-        balasActivas.removeOne(b);
-        b->deleteLater();
+                balasActivas.removeOne(b);
+                b->deleteLater();
 
-    });
+            });
 
     // Timer para permitir el siguiente disparo
     if(disparoTimer)
@@ -840,25 +850,25 @@ void AtributosPersonaje::intentarDisparar()
     disparoTimer=new QTimer(this);
     disparoTimer->setSingleShot(true);
     connect(disparoTimer, &QTimer::timeout,this,[=]()
-    {
+            {
 
-        disparandoAhora=false;
+                disparandoAhora=false;
 
-        // Si no hay municion, cancelar el estado Z
-        if(jugador->getMuniciones()==0)
-            ZPresionado=false;
+                // Si no hay municion, cancelar el estado Z
+                if(jugador->getMuniciones()==0)
+                    ZPresionado=false;
 
-        if(!ZPresionado&&!izquierdaPresionada&&!derechaPresionada&&!arribaPresionado&&!abajoPresionado)
-        {
+                if(!ZPresionado&&!izquierdaPresionada&&!derechaPresionada&&!arribaPresionado&&!abajoPresionado)
+                {
 
-            auto anim=jugador->obtenerAnimacion("idle",jugador->personajeActual);
-            jugador->SetAnimacion(anim.ruta,anim.frames);
+                    auto anim=jugador->obtenerAnimacion("idle",jugador->personajeActual);
+                    jugador->SetAnimacion(anim.ruta,anim.frames);
 
-        }
+                }
 
-        delete disparoTimer;
-        disparoTimer=nullptr;
-    });
+                delete disparoTimer;
+                disparoTimer=nullptr;
+            });
     disparoTimer->start(400);
 
 }
@@ -907,29 +917,46 @@ void AtributosPersonaje::intentarMelee()
     // Busca zombies en la escena (todos los QLabel hijos)
     QList<QLabel*> posibles = this->findChildren<QLabel*>();
     bool golpeoAlMenosUno = false;
-    for (QLabel* obj : posibles) {
-        if (obj->inherits("Zombie")) {
-            Zombie* z = static_cast<Zombie*>(obj);
-            if (!z->muerto && z->geometry().intersects(hitbox)) {
-                z->recibirDanio(1); // Quita 1 de vida por golpe
-                golpeoAlMenosUno = true;
+
+    for(QLabel* obj:posibles)
+    {
+        if(obj->inherits("Zombie"))
+        {
+            Zombie* z=static_cast<Zombie*>(obj);
+            if (z->muerto) continue;
+
+            QRect zRect=z->geometry();
+
+            //Verificar distancia simple entre centro del jugador y zombieeee
+            int dx=std::abs(z->x()-jugador->x());
+            int dy=std::abs(z->y()-jugador->y());
+
+            if(dx<50 && dy<50&&hitbox.intersects(zRect))
+            {
+                z->recibirDanio(1);
+                golpeoAlMenosUno=true;
             }
         }
     }
+
     if (golpeoAlMenosUno) {
         mostrarNotificacion("👊 ¡Golpeaste a un zombie!");
     }
 
-    // --- COOLDOWN ---
-    if (meleeTimer)
-        meleeTimer->stop();
-    else
+    // COOLDOWN
+    if (!meleeTimer)
         meleeTimer = new QTimer(this);
 
     meleeTimer->setSingleShot(true);
     connect(meleeTimer, &QTimer::timeout, this, [=]() {
-        puedeMelee = true;
-    });
-    meleeTimer->start(450); // 450ms de cooldown, ajusta si quieres
-}
+        puedeMelee=true;
 
+        if(!XPresionado&&jugador)
+        {
+            auto animIdle = jugador->obtenerAnimacion("idle", jugador->personajeActual);
+            jugador->SetAnimacion(animIdle.ruta, animIdle.frames);
+        }
+    });
+
+    meleeTimer->start(450);
+}

@@ -30,6 +30,7 @@ protected:
     bool arribaPresionado;
     bool abajoPresionado;
     bool ZPresionado;
+    bool XPresionado;
 
     bool disparandoAhora=false;//me servira para sincronizar los municiones con la animacion de disparo del personje
     bool puedeDisparar=false;
