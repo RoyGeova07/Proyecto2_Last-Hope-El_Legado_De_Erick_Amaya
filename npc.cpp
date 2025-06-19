@@ -1,5 +1,6 @@
 #include "npc.h"
 #include "dialogonpc.h"
+#include <QDebug>
 
 NPC::NPC(Tipo tipo, QWidget* parent)
     : QLabel(parent),
@@ -7,8 +8,16 @@ NPC::NPC(Tipo tipo, QWidget* parent)
     frameActual(0),
     indiceDialogo(0),
     hablando(false),
-    labelPresionaH(nullptr)
+    labelPresionaH(nullptr),
+    labelNotificacion(nullptr),
+    arbolDialogos(nullptr),
+    nodoActual(nullptr),
+    yaHabloCompleto(false),
+    inventarioRef(nullptr),
+    dialogoActualUI(nullptr)
 {
+    qDebug() << "Creando NPC tipo:" << static_cast<int>(tipo);
+
     this->setFixedSize(128, 128);
     this->move(600, 500);
 
@@ -62,11 +71,18 @@ NPC::NPC(Tipo tipo, QWidget* parent)
             "Callejón C tiene municiones!!"
         };
         break;
+    default:
+        qDebug() << "Tipo de NPC no reconocido";
+        break;
     }
+
+    qDebug() << "Diálogos inicializados:" << dialogos.size();
 }
 
 void NPC::SetAnimacion(const QString& ruta, int cantidadFrames)
 {
+    qDebug() << "Cargando animación:" << ruta;
+
     QPixmap spriteSheet(ruta);
     if (spriteSheet.isNull()) {
         qDebug() << "Error al cargar animacion:" << ruta;
@@ -78,79 +94,87 @@ void NPC::SetAnimacion(const QString& ruta, int cantidadFrames)
 
     int frameAncho = spriteSheet.width() / cantidadFrames;
 
-    for(int i=0;i<cantidadFrames;++i)
-    {
-
-        QPixmap frame = spriteSheet.copy(i*frameAncho,0,frameAncho,spriteSheet.height());
+    for(int i=0; i<cantidadFrames; ++i) {
+        QPixmap frame = spriteSheet.copy(i*frameAncho, 0, frameAncho, spriteSheet.height());
         frames.append(frame.scaled(this->size(), Qt::KeepAspectRatio));
-
     }
 
     if (!frames.isEmpty()) {
         setPixmap(frames.first());
         animacionTimer->start(100);
+        qDebug() << "Animación iniciada con" << frames.size() << "frames";
     }
 }
 
 void NPC::AvanzarFrame()
 {
-    if(frames.isEmpty()||frames.size()<=1) return;
+    if(frames.isEmpty() || frames.size() <= 1) {
+        qDebug() << "No hay suficientes frames para animar";
+        return;
+    }
 
-    frameActual=(frameActual+1)%frames.size();
+    frameActual = (frameActual + 1) % frames.size();
     setPixmap(frames[frameActual]);
 }
 
 void NPC::mostrarDialogo(DialogoNPC* dialogoUI)
 {
-    if (dialogos.isEmpty() || !dialogoUI) return;
+    qDebug() << "=== INICIANDO MOSTRAR DIÁLOGO ===";
+    qDebug() << "NPC tipo:" << static_cast<int>(tipo);
+    qDebug() << "Dialogo UI válido:" << (dialogoUI != nullptr);
+    qDebug() << "Índice actual:" << indiceDialogo;
+    qDebug() << "Total diálogos:" << dialogos.size();
+
+    if (dialogos.isEmpty() || !dialogoUI) {
+        qDebug() << "Error: Diálogos vacíos o UI inválida";
+        return;
+    }
 
     hablando = true;
     dialogoActualUI = dialogoUI;
 
-    //aqui si YA leyo completo, mostrar directamente el mensaje final
-    if (yaHabloCompleto)
-    {
+    if (yaHabloCompleto) {
+        qDebug() << "Mostrando diálogo final";
         QString textoFinal;
+        QStringList opcionesFinales;
+
         switch(tipo) {
         case Tipo::NPC1:
-            textoFinal = "...La encontraste?";
+            textoFinal = tieneItem("llave")
+                             ? "¡Encontraste mi llave! ¿Quieres intercambiarla por municiones?"
+                             : "¿Trajiste mi llave?";
+            opcionesFinales = {"Sí", "No"};
             break;
         case Tipo::NPC2:
-            textoFinal = "No tengo más botiquines, sigue el camino para encontrar más.";
+            textoFinal = "No tengo nada más que decir...";
+            opcionesFinales = {"Entendido"};
             break;
         case Tipo::NPC3:
-            textoFinal = "No tengo más botiquines, sigue el camino para encontrar más.";
+            textoFinal = "¿Necesitas más ayuda?";
+            opcionesFinales = {"Sí", "No"};
             break;
         case Tipo::NPC4:
-            textoFinal = "¿Recuperaste a mi perro?";
+            textoFinal = "¿Encontraste a mi perro?";
+            opcionesFinales = {"Sí", "No"};
             break;
         default:
             textoFinal = "No tengo nada más que decirte...";
+            opcionesFinales = {"Entendido"};
             break;
         }
 
-        dialogoActualUI->mostrarDialogo(textoFinal, obtenerImagenNPC(), {});
-
-        QTimer::singleShot(2000, dialogoActualUI, [this]() {
-            if (dialogoActualUI)
-                dialogoActualUI->ocultarDialogo();
-
-            hablando = false;
-            indiceDialogo = 0;
-            emit dialogoTerminado();
-        });
-
-        return; // salir
+        qDebug() << "Texto final:" << textoFinal;
+        dialogoUI->mostrarDialogo(textoFinal, obtenerImagenNPC(), opcionesFinales);
+        return;
     }
 
-
-    //aqui si es la primera vez, mostrar los dialogos normales
+    qDebug() << "Mostrando diálogo normal";
     dialogoActual = dialogos.at(indiceDialogo);
-
     QPixmap imagenNPC = obtenerImagenNPC();
     QStringList opciones = obtenerOpcionesDialogo();
 
-    dialogoActualUI->mostrarDialogo(dialogoActual, imagenNPC, opciones);
+    qDebug() << "Diálogo actual:" << dialogoActual;
+    dialogoUI->mostrarDialogo(dialogoActual, imagenNPC, opciones);
 
     disconnect(dialogoActualUI, &DialogoNPC::opcionSeleccionada, this, nullptr);
     connect(dialogoActualUI, &DialogoNPC::opcionSeleccionada, this, &NPC::manejarOpcionSeleccionada);
@@ -158,16 +182,19 @@ void NPC::mostrarDialogo(DialogoNPC* dialogoUI)
 
 void NPC::mostrarHintInteractuar()
 {
+    qDebug() << "Mostrando hint de interacción";
+
     if (!labelPresionaH) {
         labelPresionaH = new QLabel("Presiona H para hablar", this->parentWidget());
         labelPresionaH->setStyleSheet("background: rgba(0, 0, 0, 180); color: white; padding: 5px; border-radius: 5px;");
         labelPresionaH->setAlignment(Qt::AlignCenter);
         labelPresionaH->setWordWrap(true);
         labelPresionaH->setFixedSize(150, 30);
+        qDebug() << "Label de hint creado";
     }
 
-    QPoint posicionLabel=this->pos();
-    posicionLabel.setY(posicionLabel.y()-35);// Posicion sobre el NPC
+    QPoint posicionLabel = this->pos();
+    posicionLabel.setY(posicionLabel.y() - 35);
     labelPresionaH->move(posicionLabel);
     labelPresionaH->show();
     labelPresionaH->raise();
@@ -175,91 +202,173 @@ void NPC::mostrarHintInteractuar()
 
 void NPC::ocultarHintInteractuar()
 {
+    qDebug() << "Ocultando hint de interacción";
 
-    if (labelPresionaH)
+    if (labelPresionaH) {
         labelPresionaH->hide();
-
+    }
 }
 
 void NPC::manejarOpcionSeleccionada(int opcion)
 {
-    qDebug() << "Opcion seleccionada en NPC:" << opcion;
+    qDebug() << "=== MANEJANDO OPCIÓN ===";
+    qDebug() << "Opción seleccionada:" << opcion;
+    qDebug() << "NPC tipo:" << static_cast<int>(tipo);
+    qDebug() << "Ya habló completo:" << yaHabloCompleto;
 
-    QStringList opcionesActuales = obtenerOpcionesDialogo();
+    QStringList opciones = obtenerOpcionesDialogo();
+    qDebug() << "Opciones disponibles:" << opciones;
 
-    if (opcion < 0 || opcion >= opcionesActuales.size())
+    if (opcion < 0 || opcion >= opciones.size()) {
+        qDebug() << "Opción inválida";
         return;
+    }
 
-    QString opcionTexto = opcionesActuales[opcion].toLower();
+    QString opcionTexto = opciones[opcion];
+    qDebug() << "Texto de opción:" << opcionTexto;
 
-    if (opcionTexto.contains("entendido"))
-    {
-        indiceDialogo++;
-
-        if (indiceDialogo < dialogos.size())
-        {
-            mostrarDialogo(dialogoActualUI);
-        }
-        else
-        {
-            //aqui MARCAMOS que ya habla completo
-            yaHabloCompleto = true;
-
-            //si el npc2 se le agrega el botiquin
-            if(tipo==Tipo::NPC2&&inventarioRef)
-            {
-
-                inventarioRef->insertarObjeto("curar1",2,"Botiquin","Restaura vidaaa");
-                qDebug() << "Botiquines agregados al inventario";
-
-                mostrarNotificacion("¡Has obtenido un botiquín pequeño! Revisa tu inventario presionando L.");
-
-            }
-
-            if(tipo==Tipo::NPC3&&inventarioRef)
-            {
-
-                inventarioRef->insertarObjeto("curar2",1,"Botiquin","Restaura vidaaa");
-                qDebug() << "Botiquines agregados al inventario";
-
-                mostrarNotificacion("¡Has obtenido un botiquín grande! Revisa tu inventario presionando L.");
-
-            }
-
-            // NO mostramos el mensaje final esta primera vez
-            if(dialogoActualUI)
-            {
+    switch(tipo) {
+    case Tipo::NPC1:
+        if (!yaHabloCompleto) {
+            if (opcionTexto == "Entendido") {
+                indiceDialogo++;
+                if (indiceDialogo < dialogos.size()) {
+                    mostrarDialogo(dialogoActualUI);
+                } else {
+                    yaHabloCompleto = true;
+                    emit dialogoTerminado();
+                }
+            } else if (opcionTexto == "Adios") {
                 dialogoActualUI->ocultarDialogo();
+                hablando = false;
+                indiceDialogo = 0;
+                emit dialogoTerminado();
             }
-
+        } else {
+            if (opcionTexto == "Sí" && tieneItem("llave") && inventarioRef) {
+                inventarioRef->eliminarObjeto("llave");
+                inventarioRef->insertarObjeto("municiones", 1, "Munición", "Balas 9mm");
+                mostrarNotificacion("¡Intercambio realizado! Recibiste municiones.");
+            }
+            dialogoActualUI->ocultarDialogo();
             hablando = false;
             indiceDialogo = 0;
             emit dialogoTerminado();
         }
-    }
+        break;
 
-    else if (opcionTexto.contains("adios"))
-    {
-        if (dialogoActualUI)
+    case Tipo::NPC2:
+        if (!yaHabloCompleto) {
+            if (opcionTexto == "Entendido") {
+                indiceDialogo++;
+                if (indiceDialogo < dialogos.size()) {
+                    mostrarDialogo(dialogoActualUI);
+                } else {
+                    yaHabloCompleto = true;
+                    if (inventarioRef) {
+                        inventarioRef->insertarObjeto("curar1", 2, "Botiquín", "Cura vida");
+                        mostrarNotificacion("¡Obtuviste 2 botiquines! Presiona L para ver tu inventario.");
+                    }
+                    emit dialogoTerminado();
+                }
+            } else if (opcionTexto == "Adios") {
+                dialogoActualUI->ocultarDialogo();
+                hablando = false;
+                indiceDialogo = 0;
+                emit dialogoTerminado();
+            }
+        } else {
             dialogoActualUI->ocultarDialogo();
+            hablando = false;
+            indiceDialogo = 0;
+            emit dialogoTerminado();
+        }
+        break;
 
-        hablando = false;
-        indiceDialogo = 0;
-        emit dialogoTerminado();
+    case Tipo::NPC3:
+        if (yaHabloCompleto) {
+            if (opcionTexto == "Sí") {
+                mostrarNotificacion("Busca las municiones en el gimnasio");
+            }
+            dialogoActualUI->ocultarDialogo();
+            hablando = false;
+            indiceDialogo = 0;
+            emit dialogoTerminado();
+        } else {
+            if (opcionTexto == "Entendido") {
+                indiceDialogo++;
+                if (indiceDialogo < dialogos.size()) {
+                    mostrarDialogo(dialogoActualUI);
+                } else {
+                    yaHabloCompleto = true;
+                    emit dialogoTerminado();
+                }
+            } else if (opcionTexto == "Adios") {
+                dialogoActualUI->ocultarDialogo();
+                hablando = false;
+                indiceDialogo = 0;
+                emit dialogoTerminado();
+            }
+        }
+        break;
 
-    }else{
-        qDebug() << "Opcion secundaria seleccionada:" << opcionTexto;
+    case Tipo::NPC4:
+        if (yaHabloCompleto) {
+            if (opcionTexto == "Sí") {
+                mostrarNotificacion("Busca el perro en el mall");
+            }
+            dialogoActualUI->ocultarDialogo();
+            hablando = false;
+            indiceDialogo = 0;
+            emit dialogoTerminado();
+        } else {
+            if (opcionTexto == "Entendido") {
+                indiceDialogo++;
+                if (indiceDialogo < dialogos.size()) {
+                    mostrarDialogo(dialogoActualUI);
+                } else {
+                    yaHabloCompleto = true;
+                    emit dialogoTerminado();
+                }
+            } else if (opcionTexto == "Adios") {
+                dialogoActualUI->ocultarDialogo();
+                hablando = false;
+                indiceDialogo = 0;
+                emit dialogoTerminado();
+            }
+        }
+        break;
+
+    default:
+        if (opcionTexto == "Entendido") {
+            indiceDialogo++;
+            if (indiceDialogo < dialogos.size()) {
+                mostrarDialogo(dialogoActualUI);
+            } else {
+                yaHabloCompleto = true;
+                emit dialogoTerminado();
+            }
+        } else if (opcionTexto == "Adios") {
+            dialogoActualUI->ocultarDialogo();
+            hablando = false;
+            indiceDialogo = 0;
+            emit dialogoTerminado();
+        }
+        break;
     }
 }
+
 QPixmap NPC::obtenerImagenNPC() const
 {
+    qDebug() << "Obteniendo imagen para NPC tipo:" << static_cast<int>(tipo);
+
     QPixmap imagenCompleta;
     QRect areaCara;
 
     switch(tipo) {
     case Tipo::NPC1:
         imagenCompleta = QPixmap(":/imagenes/assets/NPC/Hablar1_NPC1.png");
-        areaCara = QRect(26, 40, 70, 70); // x, y, width, height
+        areaCara = QRect(26, 40, 70, 70);
         break;
     case Tipo::NPC2:
         imagenCompleta = QPixmap(":/imagenes/assets/NPC/Hablar1_NPC2.png");
@@ -282,44 +391,83 @@ QPixmap NPC::obtenerImagenNPC() const
         areaCara = QRect(26, 40, 60, 60);
         break;
     default:
+        qDebug() << "Tipo de NPC no reconocido para imagen";
         return QPixmap();
     }
 
-    if(imagenCompleta.isNull()) return QPixmap();
+    if(imagenCompleta.isNull()) {
+        qDebug() << "Error al cargar imagen para NPC";
+        return QPixmap();
+    }
+
+    qDebug() << "Imagen cargada correctamente";
     return imagenCompleta.copy(areaCara).scaled(150, 150, Qt::KeepAspectRatio, Qt::SmoothTransformation);
 }
 
 QStringList NPC::obtenerOpcionesDialogo() const
 {
+    qDebug() << "Obteniendo opciones para NPC tipo:" << static_cast<int>(tipo);
+
     switch(tipo) {
     case Tipo::NPC1:
-        return {"Entendido", "Adios"};
+        return yaHabloCompleto ? QStringList{"Sí", "No"} : QStringList{"Entendido", "Adios"};
     case Tipo::NPC2:
-        return {"Entendido!", "Adios"};
+        return yaHabloCompleto ? QStringList{"Entendido"} : QStringList{"Entendido", "Adios"};
+    case Tipo::NPC3:
+        return yaHabloCompleto ? QStringList{"Sí", "No"} : QStringList{"Entendido", "Adios"};
+    case Tipo::NPC4:
+        return {"Entendido", "Adios"};
+    case Tipo::NPC5:
+        return {"Entendido", "Adios"};
+    case Tipo::NPC6:
+        return {"Entendido", "Adios"};
     default:
+        qDebug() << "Tipo de NPC no reconocido para opciones";
         return {"Entendido", "Adios"};
     }
 }
 
 void NPC::mostrarNotificacion(const QString& texto)
 {
-    if (!labelNotificacion)
-    {
+    qDebug() << "Mostrando notificación:" << texto;
+
+    if (!labelNotificacion) {
         labelNotificacion = new QLabel(texto, this->parentWidget());
         labelNotificacion->setStyleSheet("background: rgba(0, 0, 0, 200); color: lime; font-size: 16px; padding: 10px; border-radius: 8px; border: 2px solid lime;");
         labelNotificacion->setAlignment(Qt::AlignCenter);
-        labelNotificacion->setFixedSize(550,100);
+        labelNotificacion->setFixedSize(550, 100);
+        qDebug() << "Label de notificación creado";
     }
 
     labelNotificacion->setText(texto);
-
-    // centrar arriba
     labelNotificacion->move((parentWidget()->width() - labelNotificacion->width()) / 2, 50);
     labelNotificacion->show();
     labelNotificacion->raise();
 
-    //aqui ocultar automaticamente después de 2.5 segundos
-    QTimer::singleShot(2500, labelNotificacion, [this]() {
-        labelNotificacion->hide();
+    QTimer::singleShot(2500, this, [this]() {
+        qDebug() << "Ocultando notificación";
+        if (labelNotificacion) {
+            labelNotificacion->hide();
+        }
     });
+}
+
+bool NPC::tieneItem(const QString& nombreItem)
+{
+    qDebug() << "Verificando si tiene item:" << nombreItem;
+
+    if (!inventarioRef) {
+        qDebug() << "Error: inventarioRef es nullptr";
+        return false;
+    }
+
+    NodoInventario* nodoEncontrado = inventarioRef->buscar(inventarioRef->obtenerRaiz(), nombreItem);
+
+    if (nodoEncontrado) {
+        qDebug() << "Item encontrado en inventario. Cantidad:" << nodoEncontrado->cantidad;
+        return true;
+    } else {
+        qDebug() << "Item NO encontrado en inventario";
+        return false;
+    }
 }

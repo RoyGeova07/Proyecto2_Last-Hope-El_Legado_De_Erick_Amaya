@@ -7,6 +7,7 @@
 #include <QPixmap>
 #include <QStringList>
 #include"inventario.h"
+#include "NodoDialogo.h"
 
 class QLabel;
 
@@ -18,7 +19,7 @@ public:
 
     NPC(Tipo tipo, QWidget* parent = nullptr);
     void SetAnimacion(const QString& ruta, int cantidadFrames);
-    void mostrarDialogo(class DialogoNPC* dialogoUI);  // Cambiado a DialogoNPC
+    void mostrarDialogo(class DialogoNPC* dialogoUI);
     void mostrarHintInteractuar();
     void ocultarHintInteractuar();
     bool estaHablando() const { return hablando; }
@@ -48,11 +49,20 @@ private:
     Inventario* inventarioRef = nullptr;
     QLabel* labelNotificacion = nullptr;
 
-    void mostrarNotificacion(const QString& texto);
+    NodoDialogo* arbolDialogos;
+    NodoDialogo* nodoActual;
 
+    void mostrarNotificacion(const QString& texto);
+    bool tieneItem(const QString& nombreItem);
 
     QPixmap obtenerImagenNPC() const;
     QStringList obtenerOpcionesDialogo() const;
+
+    void construirArbolDecisiones();
+
+    bool misionCompletada; // Ej: "llave_entregada"
+    QString itemRequerido; // Ej: "llave"
+    QString itemRecompensa; // Ej: "municiones"
 };
 
 #endif // NPC_H

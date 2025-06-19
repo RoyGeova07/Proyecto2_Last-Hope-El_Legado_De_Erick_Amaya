@@ -14,6 +14,7 @@ public:
     explicit DialogoNPC(QWidget *parent = nullptr);
     void mostrarDialogo(const QString &texto, const QPixmap &imagenNPC, const QStringList &opciones);
     void ocultarDialogo();
+    void limpiarBotones();
 
 signals:
     void opcionSeleccionada(int index);

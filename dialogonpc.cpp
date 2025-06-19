@@ -1,25 +1,23 @@
 #include "dialogonpc.h"
 #include <QDebug>
 
-DialogoNPC::DialogoNPC(QWidget *parent) : QWidget(parent)
+DialogoNPC::DialogoNPC(QWidget *parent) : QWidget(parent),
+    lblImagenNPC(new QLabel(this)),
+    lblTexto(new QLabel(this)),
+    layoutPrincipal(new QVBoxLayout(this)),
+    layoutContenido(new QHBoxLayout()),
+    layoutOpciones(new QVBoxLayout()),
+    botonesOpciones()  // Inicialización explícita
 {
-    // Configurar la ventana de diálogo
     setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint);
     setStyleSheet("background: rgba(0, 0, 0, 200); border-radius: 10px; border: 2px solid white;");
     setFixedSize(800, 250);
 
-    // Crear layouts
-    layoutPrincipal = new QVBoxLayout(this);
-    layoutContenido = new QHBoxLayout();
-    layoutOpciones = new QVBoxLayout();
-
-    // Crear widgets
-    lblImagenNPC = new QLabel(this);
+    // Configurar widgets
     lblImagenNPC->setFixedSize(150, 150);
     lblImagenNPC->setStyleSheet("border: 1px solid white;");
     lblImagenNPC->setScaledContents(true);
 
-    lblTexto = new QLabel(this);
     lblTexto->setWordWrap(true);
     lblTexto->setStyleSheet("color: white; font-size: 16px; padding: 10px;");
     lblTexto->setAlignment(Qt::AlignLeft | Qt::AlignTop);
@@ -27,7 +25,6 @@ DialogoNPC::DialogoNPC(QWidget *parent) : QWidget(parent)
     // Organizar layout
     layoutContenido->addWidget(lblImagenNPC);
     layoutContenido->addWidget(lblTexto, 1);
-
     layoutPrincipal->addLayout(layoutContenido);
     layoutPrincipal->addLayout(layoutOpciones);
 
@@ -36,15 +33,14 @@ DialogoNPC::DialogoNPC(QWidget *parent) : QWidget(parent)
 
 void DialogoNPC::mostrarDialogo(const QString &texto, const QPixmap &imagenNPC, const QStringList &opciones)
 {
-    // Configurar imagen y texto
+    // Limpiar botones anteriores (seguro)
+    limpiarBotones();
+
+    // Configurar contenido
     lblImagenNPC->setPixmap(imagenNPC);
     lblTexto->setText(texto);
 
-    // Limpiar opciones anteriores
-    qDeleteAll(botonesOpciones);
-    botonesOpciones.clear();
-
-    // Crear nuevas opciones
+    // Crear botones nuevos
     for (int i = 0; i < opciones.size(); ++i) {
         QPushButton *btn = new QPushButton(QString("%1. %2").arg(QChar('A' + i)).arg(opciones[i]), this);
         btn->setStyleSheet(
@@ -63,16 +59,16 @@ void DialogoNPC::mostrarDialogo(const QString &texto, const QPixmap &imagenNPC, 
             );
         btn->setCursor(Qt::PointingHandCursor);
 
+        // Conexión segura con lambda capture correcta
         connect(btn, &QPushButton::clicked, this, [this, i]() {
-            emit opcionSeleccionada(i); // Usando el nombre correcto de la señal
-
+            emit opcionSeleccionada(i);
         });
 
         layoutOpciones->addWidget(btn);
         botonesOpciones.append(btn);
     }
 
-    // Mostrar en la parte inferior de la pantalla
+    // Posicionamiento
     if (parentWidget()) {
         move(
             (parentWidget()->width() - width()) / 2,
@@ -84,7 +80,18 @@ void DialogoNPC::mostrarDialogo(const QString &texto, const QPixmap &imagenNPC, 
     raise();
 }
 
+void DialogoNPC::limpiarBotones()
+{
+    // Desconectar todas las señales primero
+    for (QPushButton* btn : qAsConst(botonesOpciones)) {
+        disconnect(btn, nullptr, nullptr, nullptr);
+        btn->deleteLater(); // Eliminación segura
+    }
+    botonesOpciones.clear();
+}
+
 void DialogoNPC::ocultarDialogo()
 {
+    limpiarBotones();
     hide();
 }
