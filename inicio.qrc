@@ -109,5 +109,7 @@
         <file>assets/protagonista/Attack_P1.png</file>
         <file>assets/protagonista/Attack_P2.png</file>
         <file>assets/protagonista/Attack_P3.png</file>
+        <file>assets/mapas/CONTROLES.png</file>
+        <file>assets/mapas/infoCONTROLES.png</file>
     </qresource>
 </RCC>

@@ -8,6 +8,9 @@
 #include <QDialog>
 #include <QVBoxLayout>
 #include "caminos.h"
+#include <QTimer>
+#include <QGraphicsOpacityEffect>
+#include <QPropertyAnimation>
 
 lobby::lobby(personaje* jugadorExistente, QWidget* parent)
     : AtributosPersonaje(jugadorExistente, parent)
@@ -36,26 +39,23 @@ lobby::lobby(personaje* jugadorExistente, QWidget* parent)
     labelPresionarR->setFixedSize(200, 30);
     labelPresionarR->hide();
 
-    // Boton para ver el mapa
-    QPushButton* btnMapa = new QPushButton(this);
-    QPixmap pixmap(":/imagenes/assets/items/btnMapa.png");
-    btnMapa->setIcon(QIcon(pixmap));
-    btnMapa->setIconSize(pixmap.size());
-    btnMapa->setFixedSize(pixmap.size());
-    btnMapa->setStyleSheet("QPushButton { border: white; background: transparent; }");
-    btnMapa->setFocusPolicy(Qt::NoFocus);
-    //btnMapa->move(640, 150);
 
     // ----- BOTÓN DE CONTROLES -----
     QPushButton* btnControles = new QPushButton(this);
-    QPixmap imgInfo("C:/Users/moiza/Documents/QT/Proyecto2_Last-Hope-El_Legado_De_Erick_Amaya/assets/mapas/infoCONTROLES.PNG");
+    QPixmap imgInfo(":/imagenes/assets/mapas/infoCONTROLES.png");
+    if(imgInfo.isNull())
+    {
+
+        qDebug() << "No se pudo cargar la imagen infoCONTROLES.png";
+
+    }
     int anchoBtn = 70, altoBtn = 70;  // Tamaño pequeño
     btnControles->setIcon(QIcon(imgInfo));
     btnControles->setIconSize(QSize(anchoBtn, altoBtn));
     btnControles->setFixedSize(anchoBtn, altoBtn);
     btnControles->setStyleSheet("QPushButton { border: none; background: transparent; }");
     btnControles->setFocusPolicy(Qt::NoFocus);
-    btnControles->move(640, 150); // Ajusta la posición a donde prefieras
+    btnControles->move(640, 150);
 
     connect(btnControles, &QPushButton::clicked, this, [=]() {
         QDialog* dlg = new QDialog(this);
@@ -63,7 +63,13 @@ lobby::lobby(personaje* jugadorExistente, QWidget* parent)
         dlg->resize(900, 600);
         QVBoxLayout* lay = new QVBoxLayout(dlg);
         QLabel* imgLabel = new QLabel(dlg);
-        QPixmap info("C:/Users/moiza/Documents/QT/Proyecto2_Last-Hope-El_Legado_De_Erick_Amaya/assets/mapas/CONTROLES.PNG");
+        QPixmap info(":/imagenes/assets/mapas/CONTROLES.png");
+        if(info.isNull())
+        {
+
+            qDebug() << "No se pudo cargar la imagen CONTROLES.png";
+
+        }
         imgLabel->setPixmap(info.scaled(dlg->size(), Qt::KeepAspectRatio, Qt::SmoothTransformation));
         imgLabel->setAlignment(Qt::AlignCenter);
         lay->addWidget(imgLabel);
@@ -71,6 +77,41 @@ lobby::lobby(personaje* jugadorExistente, QWidget* parent)
         dlg->exec();
         dlg->deleteLater();
     });
+
+    //aqui se crea el texto desvanecido
+    QLabel*hintControles=new QLabel(u8"⬇ HAZ CLICK EN EL TECLADO PARA VER LOS CONTROLES", this);
+    hintControles->setStyleSheet(  "QLabel {"
+                                 "  color: white;"
+                                 "  font: bold 14px 'Segoe UI';"
+                                 "  background: rgba(0, 0, 0, 180);"
+                                 "  padding: 4px 8px;"
+                                 "  border-radius: 6px;"
+                                 "}");
+
+    //aqui se ajusta el tamanio y su coordenadas
+    hintControles->adjustSize();//se utiliza para redimensionar un widget, como una ventana o un cuadro, para que se ajuste a su contenido interno
+    hintControles->move(btnControles->x()+(btnControles->width()-hintControles->width())/2,btnControles->y()-hintControles->height()-8);
+    hintControles->show();
+
+    //aqui se hace el efecto de opaciodad para desvacerlo despues de 7 segundos
+    auto*opEffect=new QGraphicsOpacityEffect(hintControles);
+    hintControles->setGraphicsEffect(opEffect);
+
+    QTimer::singleShot(7000,this,[opEffect,hintControles]()
+    {
+
+        QPropertyAnimation*fade=new QPropertyAnimation(opEffect,"opacity");
+        fade->setDuration(1500);//1.5 segundos de desvanecimiento
+        fade->setStartValue(1.0);
+        fade->setEndValue(0.0);
+        fade->start(QAbstractAnimation::DeleteWhenStopped);
+
+        //aqui elimina el label cuando se termina la animacion
+        QObject::connect(fade,&QPropertyAnimation::finished,hintControles,&QWidget::deleteLater);
+
+
+    });
+
     // ------------------------------
 
     // registro de NPCs
