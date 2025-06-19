@@ -3,9 +3,11 @@
 #include <QPixmap>
 #include <QLabel>
 #include <QDebug>
-#include<QPainter>
+#include <QPainter>
 #include <QPushButton>
-#include"caminos.h"
+#include <QDialog>
+#include <QVBoxLayout>
+#include "caminos.h"
 
 lobby::lobby(personaje* jugadorExistente, QWidget* parent)
     : AtributosPersonaje(jugadorExistente, parent)
@@ -31,18 +33,45 @@ lobby::lobby(personaje* jugadorExistente, QWidget* parent)
     labelPresionarR->setStyleSheet("background: rgba(0,0,0,180); color: white; padding: 5px; border-radius: 5px;");
     labelPresionarR->setAlignment(Qt::AlignCenter);
     labelPresionarR->setWordWrap(true);
-    labelPresionarR->setFixedSize(200,30);
+    labelPresionarR->setFixedSize(200, 30);
     labelPresionarR->hide();
 
     // Boton para ver el mapa
-    QPushButton *btnMapa = new QPushButton(this);
+    QPushButton* btnMapa = new QPushButton(this);
     QPixmap pixmap(":/imagenes/assets/items/btnMapa.png");
     btnMapa->setIcon(QIcon(pixmap));
     btnMapa->setIconSize(pixmap.size());
     btnMapa->setFixedSize(pixmap.size());
     btnMapa->setStyleSheet("QPushButton { border: white; background: transparent; }");
     btnMapa->setFocusPolicy(Qt::NoFocus);
-    btnMapa->move(640,150);
+    //btnMapa->move(640, 150);
+
+    // ----- BOTÓN DE CONTROLES -----
+    QPushButton* btnControles = new QPushButton(this);
+    QPixmap imgInfo("C:/Users/moiza/Documents/QT/Proyecto2_Last-Hope-El_Legado_De_Erick_Amaya/assets/mapas/infoCONTROLES.PNG");
+    int anchoBtn = 70, altoBtn = 70;  // Tamaño pequeño
+    btnControles->setIcon(QIcon(imgInfo));
+    btnControles->setIconSize(QSize(anchoBtn, altoBtn));
+    btnControles->setFixedSize(anchoBtn, altoBtn);
+    btnControles->setStyleSheet("QPushButton { border: none; background: transparent; }");
+    btnControles->setFocusPolicy(Qt::NoFocus);
+    btnControles->move(640, 150); // Ajusta la posición a donde prefieras
+
+    connect(btnControles, &QPushButton::clicked, this, [=]() {
+        QDialog* dlg = new QDialog(this);
+        dlg->setWindowTitle("Controles");
+        dlg->resize(900, 600);
+        QVBoxLayout* lay = new QVBoxLayout(dlg);
+        QLabel* imgLabel = new QLabel(dlg);
+        QPixmap info("C:/Users/moiza/Documents/QT/Proyecto2_Last-Hope-El_Legado_De_Erick_Amaya/assets/mapas/CONTROLES.PNG");
+        imgLabel->setPixmap(info.scaled(dlg->size(), Qt::KeepAspectRatio, Qt::SmoothTransformation));
+        imgLabel->setAlignment(Qt::AlignCenter);
+        lay->addWidget(imgLabel);
+        dlg->setLayout(lay);
+        dlg->exec();
+        dlg->deleteLater();
+    });
+    // ------------------------------
 
     // registro de NPCs
     NPC* npc2 = new NPC(NPC::Tipo::NPC2, this);
@@ -59,76 +88,57 @@ lobby::lobby(personaje* jugadorExistente, QWidget* parent)
 
 void lobby::configurarEscena()
 {
-
     QPixmap fondoPixmap(":/imagenes/assets/mapas/lobby.jpg");
-    if(fondoPixmap.isNull())
-    {
-
-        qDebug()<<"Error al cargar imagen desde assets/mapas/lobby.jpg";
-
-    }else{
-
-        QLabel*fondo=new QLabel(this);
+    if (fondoPixmap.isNull()) {
+        qDebug() << "Error al cargar imagen desde assets/mapas/lobby.jpg";
+    } else {
+        QLabel* fondo = new QLabel(this);
         fondo->setPixmap(fondoPixmap.scaled(this->size()));
-        fondo->setGeometry(0,0,width(),height());
-
+        fondo->setGeometry(0, 0, width(), height());
     }
-
 }
 
 void lobby::configurarObstaculos()
 {
-
     // OBSTACULOS FIJOS
-    obstaculos.append(QRect(3,2,1334,227));     // Muro superior
-    obstaculos.append(QRect(44,557,234,118));   // Mesa abajo izquierda
-    obstaculos.append(QRect(5,669,1273,47));    // Piso inferior
-    obstaculos.append(QRect(900,570,160,150));  // Casilleros
-    obstaculos.append(QRect(1,278,3,274));      // Pared izquierda
-    obstaculos.append(QRect(1312,282,3,324));   // Pared derecha
-
+    obstaculos.append(QRect(3, 2, 1334, 227));     // Muro superior
+    obstaculos.append(QRect(44, 557, 234, 118));   // Mesa abajo izquierda
+    obstaculos.append(QRect(5, 669, 1273, 47));    // Piso inferior
+    obstaculos.append(QRect(900, 570, 160, 150));  // Casilleros
+    obstaculos.append(QRect(1, 278, 3, 274));      // Pared izquierda
+    obstaculos.append(QRect(1312, 282, 3, 324));   // Pared derecha
 }
-
 
 void lobby::onMovimientoUpdate()
 {
-
     ActualizarBarraVida();
 
     QRect rectJugador = jugador->geometry();
     bool hayNpcCerca = false;
     npcCercano = nullptr;
 
-    for(NPC* npc : npcs)
-    {
+    for (NPC* npc : npcs) {
         QRect rectNPC = npc->geometry();
         QRect zonaProximidad = rectNPC.adjusted(-20, -20, 20, 20);
 
-        if(rectJugador.intersects(zonaProximidad))
-        {
+        if (rectJugador.intersects(zonaProximidad)) {
             npc->mostrarHintInteractuar();
             npcCercano = npc;
             hayNpcCerca = true;
-        }
-        else
-        {
+        } else {
             npc->ocultarHintInteractuar();
         }
     }
 
-    if(!hayNpcCerca)
-    {
+    if (!hayNpcCerca) {
         npcCercano = nullptr;
     }
 
     QRect zonaPuerta1(120, 280, 80, 120);
-    if(rectJugador.intersects(zonaPuerta1))
-    {
+    if (rectJugador.intersects(zonaPuerta1)) {
         mostrarHintPuerta();
         hayPuertaCerca = true;
-    }
-    else
-    {
+    } else {
         ocultarHintPuerta();
         hayPuertaCerca = false;
     }
@@ -139,8 +149,7 @@ void lobby::keyPressEvent(QKeyEvent* event)
     AtributosPersonaje::keyPressEvent(event);
 
     // Interaccion con NPC
-    if(event->key() == Qt::Key_H && npcCercano && !npcCercano->estaHablando())
-    {
+    if (event->key() == Qt::Key_H && npcCercano && !npcCercano->estaHablando()) {
         npcCercano->mostrarDialogo(dialogoNPC);
 
         connect(npcCercano, &NPC::dialogoTerminado, this, [this]() {
@@ -161,18 +170,16 @@ void lobby::keyPressEvent(QKeyEvent* event)
             }
 
             //reactivar movimiento del personaje despues de terminar la conversacion
-            if(movimientoTimer&&!movimientoTimer->isActive())
+            if (movimientoTimer && !movimientoTimer->isActive())
                 movimientoTimer->start();
 
             this->activateWindow();
             this->setFocus();
-
         });
     }
 
     // Interaccion con puerta
-    if(event->key() == Qt::Key_A && labelPresionarR->isVisible())
-    {
+    if (event->key() == Qt::Key_A && labelPresionarR->isVisible()) {
         qDebug() << "Explorar la puerta.";
         ResetearMovimiento();
         Caminos* caminos = new Caminos(jugador);
@@ -183,8 +190,7 @@ void lobby::keyPressEvent(QKeyEvent* event)
 
 void lobby::mostrarHintPuerta()
 {
-    if (!labelPresionarR->isVisible())
-    {
+    if (!labelPresionarR->isVisible()) {
         QRect zonaPuerta1(120, 280, 80, 120);
         labelPresionarR->move(zonaPuerta1.center().x() - labelPresionarR->width() / 2,
                               zonaPuerta1.top() - labelPresionarR->height() - 10);
