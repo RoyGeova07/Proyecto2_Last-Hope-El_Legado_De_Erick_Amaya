@@ -178,11 +178,19 @@ void Ciudad::onMovimientoUpdate() {
     verificarZombiesYMostrarMensaje();
 }
 
-
+//SE HEREDA LOS BOTONES A LOS MAPAS
 void Ciudad::keyPressEvent(QKeyEvent* event)
 {
-    // (tu lógica personalizada aquí, si la hay)
-    AtributosPersonaje::keyPressEvent(event); // <--- SIEMPRE AL FINAL O AL PRINCIPIO
+
+
+    if(event->key()==Qt::Key_I)
+    {
+
+        return;//se bloquea el inventario
+
+    }
+
+    AtributosPersonaje::keyPressEvent(event);
 }
 
 void Ciudad::mostrarNotificacion(const QString& texto)

@@ -173,9 +173,20 @@ bool supermercado::eventFilter(QObject* obj, QEvent* event) {
     return QWidget::eventFilter(obj, event);
 }
 
+//SE HEREDA LOS BOTONES A LOS MAPAS
 void supermercado::keyPressEvent(QKeyEvent* event)
 {
+
+
+    if(event->key()==Qt::Key_I)
+    {
+
+        return;//se bloquea el inventario
+
+    }
+
     AtributosPersonaje::keyPressEvent(event);
+
 }
 
 void supermercado::mostrarNotificacion(const QString& texto) {
@@ -213,3 +224,4 @@ void supermercado::verificarZombiesYMostrarMensaje() {
         mostrarNotificacion("🏆 ¡Has limpiado el Supermercado!\nPodés abrir el cofre.");
     }
 }
+

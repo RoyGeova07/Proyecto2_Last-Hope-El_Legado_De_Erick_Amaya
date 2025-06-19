@@ -1,68 +1,29 @@
 #include "npc.h"
 #include "dialogonpc.h"
+#include"QDebug"
 
-NPC::NPC(Tipo tipo, QWidget* parent)
-    : QLabel(parent),
-    tipo(tipo),
-    frameActual(0),
-    indiceDialogo(0),
-    hablando(false),
-    labelPresionaH(nullptr)
+NPC::NPC(Tipo tipo, QWidget* parent): QLabel(parent),tipo(tipo)
 {
-    this->setFixedSize(128, 128);
-    this->move(600, 500);
+    this->setFixedSize(128,128);
+    this->move(600,500);
 
-    animacionTimer = new QTimer(this);
+    animacionTimer=new QTimer(this);
     connect(animacionTimer, &QTimer::timeout, this, &NPC::AvanzarFrame);
 
-    dialogoTimer = new QTimer(this);
-    dialogoTimer->setSingleShot(true);
-
-    switch(tipo) {
-    case Tipo::NPC1:
-        SetAnimacion(":/imagenes/assets/NPC/Hablar1_NPC1.png", 7);
-        dialogos = {
-            "Oye, perdí mis llaves en la Ciudad en Ruinas. ¿Me ayudas a buscarlas?",
-            "Ten cuidado, esta llena de zombies..."
-        };
-        break;
-    case Tipo::NPC2:
-        SetAnimacion(":/imagenes/assets/NPC/Hablar1_NPC2.png", 4);
-        dialogos = {
-            "¡OOH, vaya! Miren que sorpresa... si no es el mismísimo militar Erick. Te habías perdido, sé que fue difícil perder a tus amigos, pero no es hora de lamentarse.",
-            "Es hora de eliminar a estos zombies para poder conseguir ese antídoto y curar a todos.",
-            "Oye, escuché rumores que también quieres ese antídoto, pero en lugar de recuperar a la humanidad, quieres controlar a los zombies.",
-            "Espero tomes el camino correcto mi amigo, aquí te doy 2 botiquines, úsalos bien en tu batalla."
-        };
-        break;
-    case Tipo::NPC3:
-        SetAnimacion(":/imagenes/assets/NPC/Hablar1_NPC3.png", 6);
-        dialogos = {
-            "Ten cuidado con los enemigos",
-            "El gimnasio tiene municiones!!"
-        };
-        break;
-    case Tipo::NPC4:
-        SetAnimacion(":/imagenes/assets/NPC/Idle_NPC4.png", 6);
-        dialogos = {
-            "Ayudame! Secuestraron a mi perro en el mall!!"
-        };
-        break;
-    case Tipo::NPC5:
-        SetAnimacion(":/imagenes/assets/NPC/Idle_NPC5.png", 6);
-        dialogos = {
-            "Ten cuidado con los enemigos",
-            "Callejón C tiene municiones!!"
-        };
-        break;
-    case Tipo::NPC6:
-        SetAnimacion(":/imagenes/assets/NPC/Idle_NPC6.png", 6);
-        dialogos = {
-            "Ten cuidado con los enemigos",
-            "Callejón C tiene municiones!!"
-        };
-        break;
+    /* ---------- VISUAL (sprite idle por defecto) ---------- */
+    switch (tipo)
+    {
+    case Tipo::NPC1: SetAnimacion(":/imagenes/assets/NPC/Hablar1_NPC1.png", 7); break;
+    case Tipo::NPC2: SetAnimacion(":/imagenes/assets/NPC/Hablar1_NPC2.png", 4); break;
+    case Tipo::NPC3: SetAnimacion(":/imagenes/assets/NPC/Hablar1_NPC3.png", 6); break;
+    case Tipo::NPC4: SetAnimacion(":/imagenes/assets/NPC/Idle_NPC4.png",     6); break;
+    case Tipo::NPC5: SetAnimacion(":/imagenes/assets/NPC/Idle_NPC5.png",     6); break;
+    case Tipo::NPC6: SetAnimacion(":/imagenes/assets/NPC/Idle_NPC6.png",     6); break;
     }
+
+    construirArbolDecisiones();
+    nodoActual=arbolDialogos;
+
 }
 
 void NPC::SetAnimacion(const QString& ruta, int cantidadFrames)
@@ -102,58 +63,37 @@ void NPC::AvanzarFrame()
 
 void NPC::mostrarDialogo(DialogoNPC* dialogoUI)
 {
-    if (dialogos.isEmpty() || !dialogoUI) return;
+    if(!dialogoUI)return;
 
+      // *** si la recompensa ya fue dada mostramos un SUERTE sin botones ***
+    if(recompensaEntregada)
+    {
+
+        dialogoUI->mostrarDialogo("SUERTE EN TU BATALLA, DE SALVAR AL MUNDO O CONQUISTARLO!!!",obtenerImagenNPC(),QStringList{});//qstringlist me devuelve una lista vacia
+
+        // Ocultar automaticamente luego de 3.5 segundos (3500 ms)
+        QTimer::singleShot(3500,dialogoUI,[dialogoUI]()
+        {
+
+            dialogoUI->ocultarDialogo();
+
+        });
+
+        return;
+
+    }
+
+    if(!nodoActual)return;
     hablando = true;
     dialogoActualUI = dialogoUI;
 
+    dialogoUI->mostrarDialogo(nodoActual->texto,obtenerImagenNPC(),nodoActual->opciones);
+
+    disconnect(dialogoUI,nullptr,this,nullptr);//limpiaaaaaaaaa
+    connect(dialogoUI,&DialogoNPC::opcionSeleccionada,this,&NPC::manejarOpcionSeleccionada);
+
     //aqui si YA leyo completo, mostrar directamente el mensaje final
-    if (yaHabloCompleto)
-    {
-        QString textoFinal;
-        switch(tipo) {
-        case Tipo::NPC1:
-            textoFinal = "...La encontraste?";
-            break;
-        case Tipo::NPC2:
-            textoFinal = "No tengo más botiquines, sigue el camino para encontrar más.";
-            break;
-        case Tipo::NPC3:
-            textoFinal = "No tengo más botiquines, sigue el camino para encontrar más.";
-            break;
-        case Tipo::NPC4:
-            textoFinal = "¿Recuperaste a mi perro?";
-            break;
-        default:
-            textoFinal = "No tengo nada más que decirte...";
-            break;
-        }
 
-        dialogoActualUI->mostrarDialogo(textoFinal, obtenerImagenNPC(), {});
-
-        QTimer::singleShot(2000, dialogoActualUI, [this]() {
-            if (dialogoActualUI)
-                dialogoActualUI->ocultarDialogo();
-
-            hablando = false;
-            indiceDialogo = 0;
-            emit dialogoTerminado();
-        });
-
-        return; // salir
-    }
-
-
-    //aqui si es la primera vez, mostrar los dialogos normales
-    dialogoActual = dialogos.at(indiceDialogo);
-
-    QPixmap imagenNPC = obtenerImagenNPC();
-    QStringList opciones = obtenerOpcionesDialogo();
-
-    dialogoActualUI->mostrarDialogo(dialogoActual, imagenNPC, opciones);
-
-    disconnect(dialogoActualUI, &DialogoNPC::opcionSeleccionada, this, nullptr);
-    connect(dialogoActualUI, &DialogoNPC::opcionSeleccionada, this, &NPC::manejarOpcionSeleccionada);
 }
 
 void NPC::mostrarHintInteractuar()
@@ -183,74 +123,37 @@ void NPC::ocultarHintInteractuar()
 
 void NPC::manejarOpcionSeleccionada(int opcion)
 {
-    qDebug() << "Opcion seleccionada en NPC:" << opcion;
 
-    QStringList opcionesActuales = obtenerOpcionesDialogo();
+    if(!nodoActual)return;
 
-    if (opcion < 0 || opcion >= opcionesActuales.size())
-        return;
-
-    QString opcionTexto = opcionesActuales[opcion].toLower();
-
-    if (opcionTexto.contains("entendido"))
+    /* Si la opcion seleccionada existe dentro de hijos -> avanzar nodo */
+    if(opcion>=0&&opcion<nodoActual->hijos.size())
     {
-        indiceDialogo++;
-
-        if (indiceDialogo < dialogos.size())
-        {
-            mostrarDialogo(dialogoActualUI);
-        }
-        else
-        {
-            //aqui MARCAMOS que ya habla completo
-            yaHabloCompleto = true;
-
-            //si el npc2 se le agrega el botiquin
-            if(tipo==Tipo::NPC2&&inventarioRef)
-            {
-
-                inventarioRef->insertarObjeto("curar1",2,"Botiquin","Restaura vidaaa");
-                qDebug() << "Botiquines agregados al inventario";
-
-                mostrarNotificacion("¡Has obtenido un botiquín pequeño! Revisa tu inventario presionando I.");
-
-            }
-
-            if(tipo==Tipo::NPC3&&inventarioRef)
-            {
-
-                inventarioRef->insertarObjeto("curar2",1,"Botiquin","Restaura vidaaa");
-                qDebug() << "Botiquines agregados al inventario";
-
-                mostrarNotificacion("¡Has obtenido un botiquín grande! Revisa tu inventario presionando I.");
-
-            }
-
-            // NO mostramos el mensaje final esta primera vez
-            if(dialogoActualUI)
-            {
-                dialogoActualUI->ocultarDialogo();
-            }
-
-            hablando = false;
-            indiceDialogo = 0;
-            emit dialogoTerminado();
-        }
+        nodoActual=nodoActual->hijos[opcion];
+        mostrarDialogo(dialogoActualUI);
+        return;
     }
 
-    else if (opcionTexto.contains("adios"))
-    {
-        if (dialogoActualUI)
-            dialogoActualUI->ocultarDialogo();
+      /* hoja -> ejecutar recompensa / castigo */
+    ejecutarConsecuencia(nodoActual);
 
-        hablando = false;
-        indiceDialogo = 0;
-        emit dialogoTerminado();
+    dialogoActualUI->ocultarDialogo();
+    hablando=false;
+
+    if(!recompensaEntregada)
+    {
+
+        nodoActual=arbolDialogos;// solo reinicia si la misión sigue activa
 
     }else{
-        qDebug() << "Opcion secundaria seleccionada:" << opcionTexto;
+
+        nodoActual=nullptr;// ya no se usara el arbol
+
     }
+
+    emit dialogoTerminado();
 }
+
 QPixmap NPC::obtenerImagenNPC() const
 {
     QPixmap imagenCompleta;
@@ -289,18 +192,6 @@ QPixmap NPC::obtenerImagenNPC() const
     return imagenCompleta.copy(areaCara).scaled(150, 150, Qt::KeepAspectRatio, Qt::SmoothTransformation);
 }
 
-QStringList NPC::obtenerOpcionesDialogo() const
-{
-    switch(tipo) {
-    case Tipo::NPC1:
-        return {"Entendido", "Adios"};
-    case Tipo::NPC2:
-        return {"Entendido!", "Adios"};
-    default:
-        return {"Entendido", "Adios"};
-    }
-}
-
 void NPC::mostrarNotificacion(const QString& texto)
 {
     if (!labelNotificacion)
@@ -322,4 +213,148 @@ void NPC::mostrarNotificacion(const QString& texto)
     QTimer::singleShot(2500, labelNotificacion, [this]() {
         labelNotificacion->hide();
     });
+}
+
+void NPC::construirArbolDecisiones()
+{
+    switch (tipo)
+    {
+    /* ───────── NPC 1 ───────── */
+    case Tipo::NPC1: {
+        //raizzzz
+
+        //mostrarNotificacion("🎯 diste 30 municiones");
+        arbolDialogos=new NodoDialogo(
+            "Perdí mis llaves en la Ciudad en Ruinas. ¿Me ayudas a buscarlas?",
+            {"Sí, te ayudaré", "No puedo"}
+            );
+
+        auto n1_si=new NodoDialogo("¡Gracias! Ten cuidado, está llena de zombies…",
+                                     {"Entendido"});
+        auto n1_no=new NodoDialogo("Oh… Entiendo. Si cambias de opinión, estaré aquí.",
+                                     {"Adiós"});
+
+        auto n1_llave=new NodoDialogo("¡Encontraste mi llave! ¿Quieres intercambiarla por municiones?",
+                                        {"Sí", "No"});
+
+        arbolDialogos->hijos<<n1_si<<n1_no;
+        n1_si->hijos<<n1_llave;          // ruta cuando regreses con la llave
+        break;
+    }
+
+    /* ───────── NPC 2 ───────── */
+    case Tipo::NPC2: {
+        arbolDialogos=new NodoDialogo(
+            "Te habías perdido… Fue duro perder a tus amigos, pero no es hora de lamentarse.\n"
+            "¿Quieres 2 botiquines para tu batalla?",
+            {"Sí", "No"}
+            );
+
+        auto n2_si=new NodoDialogo("Aquí tienes 2 botiquines. ¡Úsalos bien!",
+                                     {"Gracias"},
+                                     "DAR_CURAR1x2");
+        auto n2_no=new NodoDialogo("Como quieras… ¡Suerte!",
+                                     {"Adiós"});
+
+        arbolDialogos->hijos<<n2_si<<n2_no;
+        break;
+    }
+
+    /* ───────── NPC 3 ───────── */
+    case Tipo::NPC3: {
+        arbolDialogos=new NodoDialogo(
+            "Ten cuidado con los zombies ya por estos caminos, hay mas zombies. El gimnasio tiene municiones.\n"
+            "¿Quieres botiquines más potentes (x2)?",
+            {"Sí", "No"}
+            );
+
+        auto g1 = new NodoDialogo("Toma, te servirán mucho.",
+                                  {"Gracias"},
+                                  "DAR_CURAR2x2");
+        auto g2 = new NodoDialogo("De acuerdo, ¡cuídate!",
+                                  {"Adiós"});
+
+        arbolDialogos->hijos<<g1<<g2;
+        break;
+    }
+
+    /* ───────── NPC 4 ───────── */
+    case Tipo::NPC4: {
+        arbolDialogos = new NodoDialogo(
+            "¿Podrías darme una caja de municiones? Te compensaré.",
+            {"Sí","No"});
+
+        auto ok   = new NodoDialogo("¡Gracias! A cambio toma 2 curaciones pequeñas.",
+                                  {"Entendido"},
+                                  "DAR_CURAR1x2;DAR_MUNISIONESx1");
+        auto bye  = new NodoDialogo("Bueno… volveré a intentarlo luego.",
+                                   {"Adiós"});
+
+        arbolDialogos->hijos << ok << bye;
+        break;
+    }
+
+    // /* ───────── NPC 5 ───────── */
+    // case Tipo::NPC5: {
+    //     arbolDialogos=new NodoDialogo(
+    //         "El Callejón C tiene municiones. ¿Quieres un mapa?",
+    //         {"Sí", "No"}
+    //         );
+    //     auto cSi=new NodoDialogo("Aquí está el mapa → Callejón C.",
+    //                                {"Gracias"});
+    //     auto cNo=new NodoDialogo("Hazlo bajo tu propio riesgo.",
+    //                                {"Adiós"});
+    //     arbolDialogos->hijos<<cSi<<cNo;
+    //     break;
+    // }
+
+    // /* ───────── NPC 6 ───────── */
+    // case Tipo::NPC6: {
+    //     arbolDialogos=new NodoDialogo(
+    //         "Puedo mejorar tu arma si traes chatarra de robot.\n¿Aceptar misión?",
+    //         {"Sí", "No"}
+    //         );
+    //     auto mSi=new NodoDialogo("Necesito 3 piezas de chatarra.",
+    //                                {"Entendido"});
+    //     auto mNo=new NodoDialogo("Otra vez será.",
+    //                                {"Adiós"});
+    //     auto mFin=new NodoDialogo("¡Perfecto! Tu arma hace +1 de daño.",
+    //                                 {"Genial"});
+    //     arbolDialogos->hijos<<mSi<<mNo;
+    //     mSi->hijos<<mFin;
+    //     break;
+    // }
+    }
+}
+
+QStringList NPC::obtenerOpcionesDialogo()const
+{
+
+    return nodoActual?nodoActual->opciones:QStringList{};
+
+}
+
+void NPC::ejecutarConsecuencia(NodoDialogo *hoja)
+{
+
+    if(!inventarioRef||!hoja)return;
+
+    if(recompensaEntregada)return;
+
+    const QString& c=hoja->consecuencia;
+
+    if(c=="DAR_CURAR1x2")
+        inventarioRef->insertarObjeto("curar1", 2, "Botiquín", "Cura vida");
+
+    else if(c=="DAR_CURAR2x2")
+        inventarioRef->insertarObjeto("curar2", 2, "Botiquín", "Cura más vida");
+
+    else if(c=="QUITAR_LLAVE")
+        inventarioRef->eliminarObjeto("llave");
+
+    if(!c.isEmpty())
+        mostrarNotificacion("✔️ " + c);        // feedback simple
+
+    recompensaEntregada=true;
+
 }

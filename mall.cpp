@@ -169,9 +169,18 @@ bool Mall::eventFilter(QObject* obj, QEvent* event) {
     }
     return QWidget::eventFilter(obj, event);
 }
-
+//SE HEREDA LOS BOTONES A LOS MAPAS
 void Mall::keyPressEvent(QKeyEvent* event)
 {
+
+
+    if(event->key()==Qt::Key_I)
+    {
+
+        return;//se bloquea el inventario
+
+    }
+
     AtributosPersonaje::keyPressEvent(event);
 }
 

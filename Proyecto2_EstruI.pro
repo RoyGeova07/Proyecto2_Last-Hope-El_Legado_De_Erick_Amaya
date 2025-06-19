@@ -38,6 +38,7 @@ HEADERS += \
     Elemento.h \
     Gimnasio.h \
     Inventario.h \
+    NodoDialogo.h \
     bala.h \
     caminos.h \
     dialogonpc.h \

@@ -500,7 +500,7 @@ void AtributosPersonaje::inicializarTabWidget() {
     connect(mapaWidget, &Mapa::actualizarDistancias, this, [this, textoLabel](float principal, float alterna, const QString& origen, const QString& destino) {
         QString texto;
 
-        QString ruta = QString("<div style='margin-bottom: 5px; font-size: 11px;'>%1 → %2</div><br/>").arg(origen).arg(destino);
+        QString ruta = QString("<div style='margin-bottom: 5px; font-size: 11fpx;'>%1 → %2</div><br/>").arg(origen).arg(destino);
 
         if (principal > 0 && alterna > 0) {
             texto = ruta +

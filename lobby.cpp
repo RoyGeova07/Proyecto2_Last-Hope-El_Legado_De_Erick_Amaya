@@ -97,7 +97,7 @@ lobby::lobby(personaje* jugadorExistente, QWidget* parent)
     auto*opEffect=new QGraphicsOpacityEffect(hintControles);
     hintControles->setGraphicsEffect(opEffect);
 
-    QTimer::singleShot(7000,this,[opEffect,hintControles]()
+    QTimer::singleShot(5000,this,[opEffect,hintControles]()
     {
 
         QPropertyAnimation*fade=new QPropertyAnimation(opEffect,"opacity");

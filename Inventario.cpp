@@ -1,6 +1,11 @@
 #include "Inventario.h"
 
-Inventario::Inventario():raiz(nullptr){}
+Inventario::Inventario():raiz(nullptr)
+{
+
+    setBalas(110);// Asegura que el nodo "municiones" se agregue con cantidad inicial
+
+}
 
 Inventario::~Inventario()
 {
@@ -155,8 +160,43 @@ int Inventario::getBalas() const {
     return balas;
 }
 
-void Inventario::setBalas(int cantidad) {
-    balas = cantidad;
+void Inventario::setBalas(int cantidad)
+{
+
+    balas=cantidad;
+
+    // Tambien actualizar o insertar nodo visual de municiones
+    NodoInventario*existente=buscar(raiz,"municiones");
+    if(cantidad<=0)
+    {
+
+        if(existente)
+        {
+
+            existente->cantidad=cantidad;
+
+        }
+
+    }else{
+
+        if(existente)
+        {
+
+            existente->cantidad=cantidad;//actualiza la cantidadddd
+
+        }else{
+
+            insertarObjeto("municiones",cantidad,"Munición","Balas 9mm");
+
+        }
+
+    }
+
+    //asegurarse de que cuando se actualicen las balas desde el jugador, tambien se actualice el inventario:
+    // jugador->setMuniciones(jugador->getMuniciones() - 30);
+    // Inventario::getInstance()->setBalas(jugador->getMuniciones()); // Esto es clave!!!!
+    // ActualizarMuniciones(); // visual de HUD o contador
+
 }
 
 

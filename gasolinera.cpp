@@ -213,8 +213,18 @@ bool Gasolinera::eventFilter(QObject* obj, QEvent* event) {
     return QWidget::eventFilter(obj, event);
 }
 
+//SE HEREDA LOS BOTONES A LOS MAPAS
 void Gasolinera::keyPressEvent(QKeyEvent* event)
 {
+
+
+    if(event->key()==Qt::Key_I)
+    {
+
+        return;//se bloquea el inventario
+
+    }
+
     AtributosPersonaje::keyPressEvent(event);
 }
 
