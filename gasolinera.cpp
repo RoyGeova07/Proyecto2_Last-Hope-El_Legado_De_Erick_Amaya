@@ -20,6 +20,41 @@ Gasolinera::Gasolinera(personaje* jugadorExistente, QWidget* parent) : Atributos
     cofreCerrado = QPixmap(":/imagenes/assets/items/cofre_cerrado.png");
     cofreAbierto = QPixmap(":/imagenes/assets/items/cofre_abierto.png");
 
+    btnSalir = new QPushButton("Abandonar Partida", this);
+    btnSalir->setFocusPolicy(Qt::NoFocus);  // No interfiere con las teclas
+    btnSalir->setStyleSheet(
+        "QPushButton {"
+        "  background-color: #8B0000;"
+        "  color: white;"
+        "  font-weight: bold;"
+        "  border: 2px solid white;"
+        "  border-radius: 10px;"
+        "  font-size: 14px;"
+        "}"
+        "QPushButton:hover {"
+        "  background-color: #B22222;"
+        "}"
+        "QPushButton:pressed {"
+        "  background-color: #5C0000;"
+        "}"
+        );
+    btnSalir->setGeometry(width() - 180, 60, 170, 40);
+
+    connect(btnSalir, &QPushButton::clicked, this, [=]() {
+        this->hide();
+        QTimer::singleShot(300, this, [=]() {
+
+            Caminos*c=new Caminos(jugador);
+            c->cambiarRuta(3);
+            c->posicionarJugadorEnCalleRuta3();
+            c->show();
+            ResetearMovimiento();//FUNCION SALVADORA, QUE EVITA BUGS, TE ADOROOOOOOOOOOOOOO
+            this->close();
+            deleteLater();
+
+        });
+    });
+
     cofreLabel = new QLabel(this);
     cofreLabel->setGeometry(1112, 508, 164, 164); // hitbox grande
     cofreLabel->setPixmap(cofreCerrado.scaled(64, 64));

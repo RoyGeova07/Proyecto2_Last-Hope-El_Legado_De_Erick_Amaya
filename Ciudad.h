@@ -2,6 +2,7 @@
 #include "zombie.h"
 #include"bala.h"
 #include"personaje.h"
+#include<QPushButton>
 
 
 class Ciudad : public AtributosPersonaje {
@@ -15,6 +16,7 @@ private:
     void onMovimientoUpdate() override;
     void verificarZombiesYMostrarMensaje();
 
+    QPushButton*btnSalir=nullptr;
 
 public:
    explicit Ciudad(personaje* jugadorExistente,QWidget* parent=nullptr);

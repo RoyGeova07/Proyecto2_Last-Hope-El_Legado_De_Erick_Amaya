@@ -76,6 +76,8 @@ private:
     // aquí si la dirección cambió la última vez que se dibujó
     bool ultimaDireccionDerecha;
 
+    bool enPausa=false;
+
     QVector<QRect> obstaculos; // aquí obstáculo
     int vida;
     int energia;

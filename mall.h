@@ -18,6 +18,8 @@ private:
     QList<Zombie*> zombies;
     Zombie* zombieCercano;
 
+    QPushButton*btnSalir=nullptr;
+
 public:
     explicit Mall(personaje* jugadorExistente,QWidget* parent=nullptr);
     void keyPressEvent(QKeyEvent* event) override;

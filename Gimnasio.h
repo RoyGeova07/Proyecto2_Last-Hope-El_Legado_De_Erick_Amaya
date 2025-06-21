@@ -18,6 +18,9 @@ private:
     QList<Zombie*> zombies;
     Zombie* zombieCercano;
 
+    QPushButton*btnSalir=nullptr;
+
+
 public:
    explicit Gimnasio(personaje* jugadorExistente,QWidget* parent=nullptr);
     bool eventFilter(QObject* obj, QEvent* event) override;

@@ -22,6 +22,8 @@ private:
     QLabel* labelNotificacion = nullptr;
     bool cofreAbiertoYa = false;
 
+    QPushButton*btnSalir=nullptr;
+
 public:
     explicit supermercado(personaje*jugadorExistente,QWidget* parent = nullptr);
 

@@ -440,7 +440,6 @@ void Caminos::cambiarRuta(int nuevaRuta)
 
     }
 
-
 }
 
 void Caminos::onMovimientoUpdate()

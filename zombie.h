@@ -40,6 +40,9 @@ public:
     bool muerto=false;
     bool animacionLoop=true;
 
+    void pausar();
+    void reanudar();
+
 signals:
 
     void ColisionConJugador();
@@ -64,6 +67,9 @@ private:
 
     int vida;
     int vidaMaxima;
+
+
+    bool enPausa=false;
 
     QLabel*barraFondo=nullptr;
     QLabel*barraVida=nullptr;

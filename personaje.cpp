@@ -31,6 +31,7 @@ void personaje::SetAnimacion(const QString &ruta, int cantidadFrames)
 {
 
     bool debeRefrescarFlip=false;
+    if(estaMuerto)return;
 
     if(miradoDerecha!=ultimaDireccionDerecha)
     {
@@ -212,22 +213,40 @@ QMap<QString, int> personaje::cargarDatosJugador() {
 
 void personaje::Morir()
 {
+    if (estaMuerto) return;
 
-    if(estaMuerto)return;
+    estaMuerto = true;
 
-    estaMuerto=true;
-    auto anim=obtenerAnimacion("dead",personajeActual);
-    SetAnimacion(anim.ruta,anim.frames);
-    // Detener el timer después de completar la animacion
-    QTimer::singleShot(400, this, [=]()
-    {
-        if (!frames.isEmpty()) {
-            setPixmap(frames.last());  // Mostrar el último frame
+    // Bloquear futuras animaciones
+    timer->stop();
+    animacionActual.clear();  // limpiar animación actual
+
+    // Forzar la animación de muerte
+    auto anim = obtenerAnimacion("dead", personajeActual);
+    frames.clear();
+    QPixmap spriteSheet(anim.ruta);
+    int frameAncho = spriteSheet.width() / anim.frames;
+
+    for (int i = 0; i < anim.frames; ++i) {
+        QPixmap frame = spriteSheet.copy(i * frameAncho, 0, frameAncho, spriteSheet.height());
+        if (!miradoDerecha)
+            frame = frame.transformed(QTransform().scale(-1, 1));
+        frames.append(frame);
+    }
+
+    frameActual = 0;
+    setPixmap(frames[frameActual]);
+
+    // Animar muerte y detener al finalizar
+    timer->start(100);
+    connect(timer, &QTimer::timeout, this, [=]() mutable {
+        if (frameActual + 1 < frames.size()) {
+            ++frameActual;
+            setPixmap(frames[frameActual]);
+        } else {
+            timer->stop();
         }
-        timer->stop();
-
     });
-
 }
 
 personaje::DatosAnimacion personaje::obtenerAnimacion(const QString &tipo, TipoPersonaje personaje)
@@ -291,4 +310,3 @@ void personaje::SetAnimacionMovimiento(int velocidad)
 
 
 }
-

@@ -1019,6 +1019,6 @@ void AtributosPersonaje::CancelarCuracion()
     auto animIdle=jugador->obtenerAnimacion("idle",jugador->personajeActual);
     jugador->SetAnimacion(animIdle.ruta,animIdle.frames);
 
-      mostrarNotificacion("CURACION INTERRUMPIDA POR DAÑO");
+    mostrarNotificacion("CURACION INTERRUMPIDA POR DAÑO");
 
 }

@@ -22,6 +22,42 @@ Ciudad::Ciudad(personaje* jugadorExistente,QWidget* parent) : AtributosPersonaje
     cofreCerrado=QPixmap(":/imagenes/assets/items/cofre_cerrado.png"); // actualiza ruta
     cofreAbierto=QPixmap(":/imagenes/assets/items/cofre_abierto.png");
 
+    btnSalir=new QPushButton("Abandonar Partida", this);
+    btnSalir->setFocusPolicy(Qt::NoFocus);
+    btnSalir->setStyleSheet(
+        "QPushButton {"
+        "  background-color: #8B0000;"        // rojo oscuro
+        "  color: white;"
+        "  font-weight: bold;"
+        "  border: 2px solid white;"
+        "  border-radius: 10px;"
+        "  font-size: 14px;"
+        "}"
+        "QPushButton:hover {"
+        "  background-color: #B22222;"        // mas claro al pasar el mouse
+        "}"
+        "QPushButton:pressed {"
+        "  background-color: #5C0000;"        // mas oscuro al presionar
+        "}"
+        );
+
+    btnSalir->setGeometry(width()-180,60,170,40);  // Ajustado dentro de pantalla
+
+    connect(btnSalir, &QPushButton::clicked, this, [=]() {
+        this->hide();
+        QTimer::singleShot(300, this, [=]() {
+
+            Caminos*c=new Caminos(jugador);
+            c->cambiarRuta(2);
+            c->posicionarJugadorEnCalleRuta2();
+            c->show();
+            ResetearMovimiento();//FUNCION SALVADORA, QUE EVITA BUGS, TE ADOROOOOOOOOOOOOOO
+            this->close();
+            deleteLater();
+
+        });
+    });
+
     cofreLabel=new QLabel(this);
     cofreLabel->setGeometry(1112, 508, 164, 164);
     cofreLabel->setPixmap(cofreCerrado.scaled(64,64)); //tamaño del cofre
@@ -67,45 +103,45 @@ Ciudad::Ciudad(personaje* jugadorExistente,QWidget* parent) : AtributosPersonaje
         z->perseguirJugador(jugador);
 
         connect(z,&Zombie::ColisionConJugador,this,[=]()
-        {
-
-            if (jugador->getVidas() <= 0) return;
-
-            if(jugador->getVidas()>0)
-            {
-
-                jugador->setVidas(jugador->getVidas()-1);//por ahora el zombie solo baja 1 de vida
-                ActualizarBarraVida();
-                CancelarCuracion();
-                ActualizarMuniciones();
-
-                if(jugador->getVidas()<=0)
                 {
 
-                    ResetearMovimiento();
+                    if (jugador->getVidas() <= 0) return;
 
-                    jugador->Morir();
-                    movimientoTimer->stop();
+                    if(jugador->getVidas()>0)
+                    {
 
-                    QTimer::singleShot(1000, this, [=]() {
-                        QMessageBox::information(this, "💀 GAME OVER", "Has muerto...");
-                        this->hide();
+                        jugador->setVidas(jugador->getVidas()-1);//por ahora el zombie solo baja 1 de vida
+                        ActualizarBarraVida();
+                        CancelarCuracion();
+                        ActualizarMuniciones();
+
+                        if(jugador->getVidas()<=0)
+                        {
+
+                            ResetearMovimiento();
+
+                            jugador->Morir();
+                            movimientoTimer->stop();
+
+                            QTimer::singleShot(1000, this, [=]() {
+                                QMessageBox::information(this, "💀 GAME OVER", "Has muerto...");
+                                this->hide();
 
 
-                        QTimer::singleShot(300, this, [=]() {
-                            Inicio* i = new Inicio();
-                            i->show();
-                            deleteLater();  // destruye correctamente esta ventana actual
-                        });
+                                QTimer::singleShot(300, this, [=]() {
+                                    Inicio* i = new Inicio();
+                                    i->show();
+                                    deleteLater();  // destruye correctamente esta ventana actual
+                                });
 
-                        this->close();
-                    });
+                                this->close();
+                            });
 
-                }
+                        }
 
-            }
+                    }
 
-        });
+                });
 
     }
 
@@ -311,6 +347,3 @@ void Ciudad::verificarZombiesYMostrarMensaje()
         mostrarNotificacion("🏆 ¡Felicidades! Has pasado el Nivel 1.\nPuedes reclamar el cofre.");
     }
 }
-
-
-

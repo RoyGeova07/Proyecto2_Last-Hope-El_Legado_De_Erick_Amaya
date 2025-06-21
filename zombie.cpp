@@ -526,3 +526,30 @@ void Zombie::setAnimacionHerido()
     });
 
 }
+
+void Zombie::pausar()
+{
+
+    if(animacionTimer->isActive())animacionTimer->stop();
+    if(movimientoTimer&&movimientoTimer->isActive())
+    {
+
+        movimientoTimer->stop();
+
+    }
+
+}
+
+void Zombie::reanudar()
+{
+
+    if(muerto)return;//si esta muerto no hay nada que reanudar
+    if(!animacionTimer->isActive())animacionTimer->start(100);
+    if(movimientoTimer&&!movimientoTimer->isActive())
+    {
+
+        movimientoTimer->start(50);
+
+    }
+
+}

@@ -21,6 +21,41 @@ supermercado::supermercado(personaje*jugadorExistente,QWidget* parent) : Atribut
     cofreCerrado = QPixmap(":/imagenes/assets/items/cofre_cerrado.png");
     cofreAbierto = QPixmap(":/imagenes/assets/items/cofre_abierto.png");
 
+    btnSalir = new QPushButton("Abandonar Partida", this);
+    btnSalir->setFocusPolicy(Qt::NoFocus);  // No interfiere con las teclas
+    btnSalir->setStyleSheet(
+        "QPushButton {"
+        "  background-color: #8B0000;"
+        "  color: white;"
+        "  font-weight: bold;"
+        "  border: 2px solid white;"
+        "  border-radius: 10px;"
+        "  font-size: 14px;"
+        "}"
+        "QPushButton:hover {"
+        "  background-color: #B22222;"
+        "}"
+        "QPushButton:pressed {"
+        "  background-color: #5C0000;"
+        "}"
+        );
+    btnSalir->setGeometry(width() - 180, 60, 170, 40);
+
+    connect(btnSalir, &QPushButton::clicked, this, [=]() {
+        this->hide();
+        QTimer::singleShot(300, this, [=]() {
+
+            Caminos*c=new Caminos(jugador);
+            c->cambiarRuta(9); // <---- Manda a Ruta 9
+            c->posicionarJugadorEnCalleRuta9();
+            c->show();
+            ResetearMovimiento();
+            this->close();
+            deleteLater();
+
+        });
+    });
+
     cofreLabel = new QLabel(this);
     cofreLabel->setGeometry(1112, 508, 164, 164);
     cofreLabel->setPixmap(cofreCerrado.scaled(64, 64));
@@ -224,4 +259,5 @@ void supermercado::verificarZombiesYMostrarMensaje() {
         mostrarNotificacion("🏆 ¡Has limpiado el Supermercado!\nPodés abrir el cofre.");
     }
 }
+
 
