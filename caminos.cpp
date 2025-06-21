@@ -76,6 +76,24 @@ Caminos::Caminos(personaje*jugadorExistente, QWidget* parent) : AtributosPersona
     npcRuta4->setInventario(Inventario::getInstance());
     npcsPorRuta.insert(4, npcsRuta4);
 
+    // Crear NPC en Ruta 7
+    QList<NPC*> npcsRuta7;
+    NPC* npcRuta7 = new NPC(NPC::Tipo::NPC5, this);
+    npcRuta7->move(400, 180);
+    npcRuta7->hide();  // Inicialmente oculto
+    npcsRuta7.append(npcRuta7);
+    npcRuta7->setInventario(Inventario::getInstance());
+    npcsPorRuta.insert(7, npcsRuta7);
+
+    // Crear NPC en Ruta 8
+    QList<NPC*> npcsRuta8;
+    NPC* npcRuta8 = new NPC(NPC::Tipo::NPC6, this);
+    npcRuta8->move(400, 300);
+    npcRuta8->hide();  // Inicialmente oculto
+    npcsRuta8.append(npcRuta8);
+    npcRuta8->setInventario(Inventario::getInstance());
+    npcsPorRuta.insert(8, npcsRuta8);
+
 }
 //NO BORRAR ESTO ===========================================================
 //son las coordenadas exactas para cambiar ENTRE LAS RUTAASSSSSZZZZ
@@ -96,7 +114,7 @@ QRect zonaEntradaCiudad(236,422,131,127);
 QRect zonaEntradaGasolinera(450,350,131,127);
 QRect zonaEntradaMall(450,400,131,40);
 QRect zonaEntradaGym(450,500,131,40);
-QRect zonaEntradaSuper(700,400,131,100);
+QRect zonaEntradaSuper(700,350,131,50);
 QRect zonaEntradaLab(600,400,131,40);
 
 void Caminos::configurarEscena()
@@ -707,7 +725,7 @@ void Caminos::onMovimientoUpdate()
         {
             if(!labelPresionarT->isVisible())
             {
-                labelPresionarT->move(450, 422);
+                labelPresionarT->move(450, 360);
                 labelPresionarT->show();
                 labelPresionarT->raise();
             }

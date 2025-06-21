@@ -40,6 +40,32 @@ Mall::Mall(personaje* jugadorExistente,QWidget* parent) : AtributosPersonaje(jug
         );
     btnSalir->setGeometry(width() - 180, 60, 170, 40);
 
+    // Funcion para verificar vida
+    auto actualizarEstadoBoton = [this]() {
+        int vidasActuales = jugador->cargarDatosJugador()["Vida"];
+        qDebug() << "Vida actual del jugador:" << vidasActuales;
+
+        bool debeEstarActivo = (vidasActuales >= 5);
+
+        if (btnSalir->isEnabled() != debeEstarActivo) {
+            btnSalir->setEnabled(debeEstarActivo);
+            qDebug() << "Estado del botón cambiado a:" << (debeEstarActivo ? "Activado" : "Desactivado");
+
+            // Mostrar notificación cuando se desactiva el botón (vida <= 5)
+            if (!debeEstarActivo) {
+                mostrarNotificacion("No puedes abandonar la partida con poca vida!");
+                qDebug() << "Mostrando notificación de vida baja";
+            }
+        }
+    };
+
+    actualizarEstadoBoton();
+
+    // Configurar timer para verificar vida
+    QTimer *timerVida = new QTimer(this);
+    connect(timerVida, &QTimer::timeout, this, actualizarEstadoBoton);
+    timerVida->start(1000);
+
     connect(btnSalir, &QPushButton::clicked, this, [=]() {
         this->hide();
         QTimer::singleShot(300, this, [=]() {

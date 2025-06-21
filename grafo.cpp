@@ -58,13 +58,13 @@ void Grafo::crearGrafoCiudad()
 
     // las aristas con sus pesos y puntos intermedios
     agregarArista("Ciudad", "Lobby", 10);
-    agregarArista("Gasolinera", "Ciudad", 20, {QPointF(-220, 100)});
+    agregarArista("Gasolinera", "Ciudad", 15, {QPointF(-220, 100)});
     agregarArista("Ciudad","Mall", 15);
     agregarArista("Mall","Supermercado",15);
     agregarArista("Supermercado","Laboratorio",10);
-    agregarArista("Supermercado","Gimnasio",20,{QPointF(450, 500)});
-    agregarArista("Supermercado","Gasolinera", 25, {QPointF(450, 100)});
-    agregarArista("Gimnasio","Lobby",30,{QPointF(-300,500)});
+    agregarArista("Supermercado","Gimnasio",15,{QPointF(450, 500)});
+    agregarArista("Supermercado","Gasolinera", 20, {QPointF(450, 100)});
+    agregarArista("Gimnasio","Lobby",20,{QPointF(-300,500)});
     agregarArista("Gimnasio","Mall",5);
     agregarArista("Gasolinera", "Mall", 5);
 }

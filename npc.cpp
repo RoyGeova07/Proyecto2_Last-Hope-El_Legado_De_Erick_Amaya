@@ -17,7 +17,7 @@ NPC::NPC(Tipo tipo, QWidget* parent): QLabel(parent),tipo(tipo)
     case Tipo::NPC2: SetAnimacion(":/imagenes/assets/NPC/Hablar1_NPC2.png", 4); break;
     case Tipo::NPC3: SetAnimacion(":/imagenes/assets/NPC/Hablar1_NPC3.png", 6); break;
     case Tipo::NPC4: SetAnimacion(":/imagenes/assets/NPC/Idle_NPC4.png",     6); break;
-    case Tipo::NPC5: SetAnimacion(":/imagenes/assets/NPC/Idle_NPC5.png",     6); break;
+    case Tipo::NPC5: SetAnimacion(":/imagenes/assets/NPC/Idle_NPC5.png",     7); break;
     case Tipo::NPC6: SetAnimacion(":/imagenes/assets/NPC/Idle_NPC6.png",     6); break;
     }
 
@@ -294,36 +294,38 @@ void NPC::construirArbolDecisiones()
         break;
     }
 
-    // /* ───────── NPC 5 ───────── */
-    // case Tipo::NPC5: {
-    //     arbolDialogos=new NodoDialogo(
-    //         "El Callejón C tiene municiones. ¿Quieres un mapa?",
-    //         {"Sí", "No"}
-    //         );
-    //     auto cSi=new NodoDialogo("Aquí está el mapa → Callejón C.",
-    //                                {"Gracias"});
-    //     auto cNo=new NodoDialogo("Hazlo bajo tu propio riesgo.",
-    //                                {"Adiós"});
-    //     arbolDialogos->hijos<<cSi<<cNo;
-    //     break;
-    // }
+     /* ───────── NPC 5 ───────── */
+     case Tipo::NPC5: {
+         arbolDialogos=new NodoDialogo(
+             "El Callejón C tiene municiones. ¿Quieres un mapa?",
+             {"Sí", "No"}
+             );
+       auto cSi=new NodoDialogo("Aquí está el mapa → Callejón C.",
+                                    {"Gracias"});
+         auto cNo=new NodoDialogo("Hazlo bajo tu propio riesgo.",
+                                    {"Adiós"});
+       arbolDialogos->hijos<<cSi<<cNo;
+         break;
+     }
 
-    // /* ───────── NPC 6 ───────── */
-    // case Tipo::NPC6: {
-    //     arbolDialogos=new NodoDialogo(
-    //         "Puedo mejorar tu arma si traes chatarra de robot.\n¿Aceptar misión?",
-    //         {"Sí", "No"}
-    //         );
-    //     auto mSi=new NodoDialogo("Necesito 3 piezas de chatarra.",
-    //                                {"Entendido"});
-    //     auto mNo=new NodoDialogo("Otra vez será.",
-    //                                {"Adiós"});
-    //     auto mFin=new NodoDialogo("¡Perfecto! Tu arma hace +1 de daño.",
-    //                                 {"Genial"});
-    //     arbolDialogos->hijos<<mSi<<mNo;
-    //     mSi->hijos<<mFin;
-    //     break;
-    // }
+     /* ───────── NPC 6 ───────── */
+     case Tipo::NPC6: {
+         arbolDialogos=new NodoDialogo(
+             "Puedo mejorar tu arma si traes chatarra de robot.\n¿Aceptar misión?",
+             {"Sí", "No"}
+             );
+         auto mSi=new NodoDialogo("Necesito 3 piezas de chatarra.",
+                                    {"Entendido"});
+         auto mNo=new NodoDialogo("Otra vez será.",
+                                    {"Adiós"});
+         auto mFin=new NodoDialogo("¡Perfecto! Tu arma hace +1 de daño.",
+                                     {"Genial"});
+         arbolDialogos->hijos<<mSi<<mNo;
+         mSi->hijos<<mFin;
+         break;
+
+
+     }
     }
 }
 

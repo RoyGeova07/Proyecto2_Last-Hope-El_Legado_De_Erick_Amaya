@@ -103,7 +103,7 @@ void Mapa::visualizarGrafo(const Grafo& grafo) {
             QPointF centro = camino.pointAtPercent(0.5);
             QGraphicsTextItem* textoPeso = new QGraphicsTextItem(QString::number(arista.peso));
             textoPeso->setPos(centro);
-            textoPeso->setDefaultTextColor(Qt::gray);
+            textoPeso->setDefaultTextColor(Qt::white);
             textoPeso->setFont(QFont("Arial", 10, QFont::Bold));
             escena->addItem(textoPeso);
         }
