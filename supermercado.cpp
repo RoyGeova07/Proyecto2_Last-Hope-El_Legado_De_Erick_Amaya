@@ -73,30 +73,37 @@ supermercado::supermercado(personaje*jugadorExistente,QWidget* parent) : Atribut
     labelMuniciones->show();
     ActualizarMuniciones();
 
-    int posX = 1100;
-    for (int i = 0; i < 3; ++i) {
-        // Zombie rápido
-        Zombie* z6 = new Zombie(Zombie::Tipo::Z6, this);
-        z6->move(posX, 500);
-        z6->setVelocidad(4);
-        z6->show();
-        zombies.append(z6);
+    // --------------- ZOMBIES ---------------
+    int posX = 80; // a la izquierda
+    int posY = 500;
 
-        Zombie*z2=new Zombie(Zombie::Tipo::Z2,this);
-        z2->move(posX,485);
-        z2->setVelocidad(5);
-        z2->show();
-        zombies.append(z2);
-
-        // Zombie lento
-        Zombie* z4 = new Zombie(Zombie::Tipo::Z4, this);
-        z4->move(posX - 100, 500);
-        z4->setVelocidad(2);
-        z4->show();
-        zombies.append(z4);
-
-        posX -= 300;
+    // 2 zombies grandotes (Z7)
+    for (int i = 0; i < 2; ++i) {
+        Zombie* z7 = new Zombie(Zombie::Tipo::Z7, this);
+        z7->move(posX, posY + i*60);
+        z7->setVelocidad(2); // más lento
+        z7->show();
+        zombies.append(z7);
+        posX += 80; // pequeño desplazamiento para que no se encimen
     }
+
+    // 2 zombies tipo 5 (Z5)
+    posX = 250;
+    for (int i = 0; i < 2; ++i) {
+        Zombie* z5 = new Zombie(Zombie::Tipo::Z5, this);
+        z5->move(posX, posY + 40*i);
+        z5->setVelocidad(3); // velocidad media
+        z5->show();
+        zombies.append(z5);
+        posX += 80;
+    }
+
+    // 1 zombie tipo 3 (Z3)
+    Zombie* z3 = new Zombie(Zombie::Tipo::Z3, this);
+    z3->move(400, posY + 30);
+    z3->setVelocidad(5); // más rápido
+    z3->show();
+    zombies.append(z3);
 
     // Conectar colisiones con jugador
     for (Zombie* z : zombies) {
@@ -124,6 +131,7 @@ supermercado::supermercado(personaje*jugadorExistente,QWidget* parent) : Atribut
         });
     }
 }
+
 
 void supermercado::configurarEscena() {
     QPixmap fondoPixmap(":/imagenes/assets/mapas/War6.png");

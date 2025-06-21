@@ -30,7 +30,10 @@ Zombie::Zombie(Tipo tipo, QWidget* parent)
         vida = vidaMaxima = 17;  // Z5: intermedio
         break;
     case Tipo::Z6:
-        vida = vidaMaxima = 25;  // Z6: lento
+        vida = vidaMaxima = 25;
+        break;
+    case Tipo::Z7:
+        vida = vidaMaxima = 40;   // ¡Z7 más resistente!
         break;
     }
 
@@ -58,13 +61,16 @@ Zombie::Zombie(Tipo tipo, QWidget* parent)
     case Tipo::Z6:
         SetAnimacion(":/imagenes/assets/Zombies/Idle_Z6.png", 6, true);
         break;
+    case Tipo::Z7:
+        SetAnimacion(":/imagenes/assets/Zombies/Idle_Z6.png", 6, true); // Usa los sprites de Z6
+        break;
     }
 
     inicializarBarraVida();
 }
 
 //AGREGO OTRO PARAMETRO PARA PODER CONTROLAR SI UNA ANIMACION DEBE REPETIRSE O NO
-void Zombie::SetAnimacion(const QString& ruta, int cantidadFrames,bool loop)
+void Zombie::SetAnimacion(const QString& ruta, int cantidadFrames, bool loop)
 {
     QPixmap spriteSheet(ruta);
     if(spriteSheet.isNull())
@@ -78,21 +84,24 @@ void Zombie::SetAnimacion(const QString& ruta, int cantidadFrames,bool loop)
 
     int frameAncho = spriteSheet.width() / cantidadFrames;
 
+    // Ajusta el tamaño según el tipo de zombie
+    QSize tamFinal = this->size();
+    if (tipo == Tipo::Z7) {
+        tamFinal = QSize(200, 200); // Cambia este valor si quieres más grande
+        this->setFixedSize(tamFinal); // Asegura que el QLabel también cambie de tamaño
+    }
+
     for(int i=0;i<cantidadFrames;++i)
     {
-
         QPixmap frame = spriteSheet.copy(i*frameAncho,0,frameAncho,spriteSheet.height());
 
         //si no esta volteando a la derecha
         if(!mirandoALaDerecha)
         {
-
-            frame=frame.transformed(QTransform().scale(-1,1));//volteo horizontallll
-
+            frame = frame.transformed(QTransform().scale(-1,1));//volteo horizontallll
         }
         //el smoth me ayuda a mejorar la calidad visual (mas nitido, menos pixelado).
-        frames.append(frame.scaled(this->size(), Qt::KeepAspectRatio,Qt::SmoothTransformation));
-
+        frames.append(frame.scaled(tamFinal, Qt::KeepAspectRatio, Qt::SmoothTransformation));
     }
 
     setPixmap(frames.first());
@@ -101,24 +110,20 @@ void Zombie::SetAnimacion(const QString& ruta, int cantidadFrames,bool loop)
     //si el timer esta detenido.
     if(!loop)
     {
-
         animacionTimer->start(100);
-
-    }else if(!animacionTimer->isActive()){
-
+    } else if(!animacionTimer->isActive()) {
         animacionTimer->start(100);
-
     }
 
     //detectar si es animacion de ataque por su ruta
-    estaAtacando=ruta.contains("Attack");
-    danioEmitido=false;
-    frameAtaqueFinal=cantidadFrames-1;
+    estaAtacando = ruta.contains("Attack");
+    danioEmitido = false;
+    frameAtaqueFinal = cantidadFrames-1;
 
     //guardar si esta animacion debe repetirse
-    animacionLoop=loop;
-
+    animacionLoop = loop;
 }
+
 
 void Zombie::AvanzarFrame()
 {
@@ -129,18 +134,24 @@ void Zombie::AvanzarFrame()
     //si se llega al final de una animacion NO loop, mostrar el ultimo frame y detener el timer
     if(frameActual>=frames.size())
     {
-
         if(!animacionLoop)
         {
-
             frameActual=frames.size()-1;
             animacionTimer->stop();//detener la animacion de muerte
+            // --- Ajuste de tamaño para Z7 ---
+            if (tipo == Tipo::Z7) {
+                this->setFixedSize(200, 200); // Ajusta el tamaño si es necesario
+            }
             setPixmap(frames[frameActual]);
             return;
-
         }
 
         frameActual=0;//reiniciar si es loop
+    }
+
+    // --- Ajuste de tamaño para Z7 ---
+    if (tipo == Tipo::Z7) {
+        this->setFixedSize(200, 200); // Asegura el tamaño en cada frame
     }
 
     setPixmap(frames[frameActual]);
@@ -148,17 +159,12 @@ void Zombie::AvanzarFrame()
     //si es animacion de ataque y estamos en el ultimo frame
     if(estaAtacando&&frameActual==frameAtaqueFinal&&!danioEmitido)
     {
-
         if(this->geometry().intersects(objetivo->geometry()))
         {
-
             emit ColisionConJugador();
-
         }
         danioEmitido=true;//evita q lo haga mas de una vez por ataque
-
     }
-
 }
 
 
@@ -293,12 +299,13 @@ void Zombie::SetAnimacionMovimientoZombie()
         break;
 
     case Tipo::Z6:
-
         ruta=":/imagenes/assets/Zombies/Walk_Z6.png";
         frames=10;
         break;
-
-
+    case Tipo::Z7:
+        ruta=":/imagenes/assets/Zombies/Walk_Z6.png";
+        frames=10;
+        break;
     }
 
     SetAnimacion(ruta,frames,true);
@@ -357,8 +364,10 @@ void Zombie::realizarAtaque()
         rutaAtaque = ":/imagenes/assets/Zombies/Attack_Z6.png";
         cantidadFrames = 4;
         break;
-
-
+    case Tipo::Z7:
+        rutaAtaque = ":/imagenes/assets/Zombies/Attack_Z6.png"; // Usa el mismo sprite que Z6
+        cantidadFrames = 4;
+        break;
     }
     SetAnimacion(rutaAtaque,cantidadFrames,true);
 
@@ -446,6 +455,7 @@ void Zombie::recibirDanio(int cantidad)
             case Tipo::Z4: rutaMuerte=":/imagenes/assets/Zombies/Dead_Z4.png";break;
             case Tipo::Z5: rutaMuerte=":/imagenes/assets/Zombies/Dead_Z5.png";break;
             case Tipo::Z6: rutaMuerte=":/imagenes/assets/Zombies/Dead_Z6.png";break;
+            case Tipo::Z7: rutaMuerte=":/imagenes/assets/Zombies/Dead_Z6.png";break;
 
         }
 
@@ -507,12 +517,13 @@ void Zombie::setAnimacionHerido()
         break;
 
     case Tipo::Z6:
-
         ruta=":/imagenes/assets/Zombies/Hurt_Z6.png";
         frames=4;
         break;
-
-
+    case Tipo::Z7:
+        ruta=":/imagenes/assets/Zombies/Hurt_Z6.png"; // Usa el mismo sprite que Z6
+        frames=4;
+        break;
     }
 
     //aqui se muestra la animacion de herido

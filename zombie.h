@@ -16,7 +16,8 @@ public:
         Z3,
         Z4,
         Z5,
-        Z6
+        Z6,
+        Z7
     };
 
     void perseguirJugador(QWidget*objetivo);
