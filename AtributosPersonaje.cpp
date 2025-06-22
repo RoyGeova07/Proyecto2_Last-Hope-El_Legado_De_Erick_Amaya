@@ -448,7 +448,7 @@ void AtributosPersonaje::inicializarTabWidget() {
     if(!fondoLabel.isNull()) {
         fondoLabel = fondoLabel.scaled(200, 60, Qt::KeepAspectRatioByExpanding, Qt::SmoothTransformation);
         labelDistancias->setPixmap(fondoLabel);
-        labelDistancias->setFixedSize(150,70);
+        labelDistancias->setFixedSize(165,70);
     } else {
         labelDistancias->setStyleSheet(
             "QLabel {"
@@ -540,9 +540,12 @@ void AtributosPersonaje::inicializarTabWidget() {
 
     // Configurar pestaña de inventario
     inventarioWidget = new InventarioWidget(Inventario::getInstance());
+    tablaWidget = new TablaWidget(this);
+    //WidgetDesbloqueo *widget = new WidgetDesbloqueo(this);
 
     tabWidget->addTab(mapaTab, "Mapa");
     tabWidget->addTab(inventarioWidget, "Inventario");
+    tabWidget->addTab(tablaWidget, "Tabla Hash");
 
 
     //==================================Crear pestaña de personajes/habilidades=================================================================

@@ -9,6 +9,8 @@
 #include "personaje.h"
 #include"inventario.h"
 #include"inventariowidget.h"
+#include "TablaHash.h"
+#include "TablaWidget.h"
 #include"bala.h"
 #include "mapa.h"
 #include <QTabWidget>
@@ -40,9 +42,11 @@ protected:
     QTabWidget* tabWidget;
     Mapa* mapaWidget;
     QWidget* mapaTab;
+    QWidget* tablaTab;
     void inicializarTabWidget();
 
     InventarioWidget* inventarioWidget;
+    TablaWidget* tablaWidget;
 
     //aqui Metodos virtuales
     virtual void configurarEscena() = 0;

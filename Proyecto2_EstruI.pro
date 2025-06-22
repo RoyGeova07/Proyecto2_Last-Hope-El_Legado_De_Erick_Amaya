@@ -29,6 +29,7 @@ SOURCES += \
     npc.cpp \
     personaje.cpp \
     supermercado.cpp \
+    tablawidget.cpp \
     zombie.cpp
 
 HEADERS += \
@@ -39,6 +40,7 @@ HEADERS += \
     Gimnasio.h \
     Inventario.h \
     NodoDialogo.h \
+    TablaHash.h \
     bala.h \
     caminos.h \
     dialogonpc.h \
@@ -54,6 +56,7 @@ HEADERS += \
     npc.h \
     personaje.h \
     supermercado.h \
+    tablawidget.h \
     zombie.h
 
 FORMS += \

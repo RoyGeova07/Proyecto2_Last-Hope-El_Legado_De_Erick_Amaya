@@ -11,9 +11,6 @@
         <file>assets/mapas/War4.png</file>
         <file>assets/mapas/War5.png</file>
         <file>assets/mapas/War6.png</file>
-        <file>assets/NPC/Hablar1_NPC1.png</file>
-        <file>assets/NPC/Hablar1_NPC2.png</file>
-        <file>assets/NPC/Hablar1_NPC3.png</file>
         <file>assets/NPC/Hablar2_NPC2.png</file>
         <file>assets/NPC/Hablar2_NPC3.png</file>
         <file>assets/protagonista/Idle.png</file>
@@ -119,5 +116,9 @@
         <file>assets/Info/lab_info.png</file>
         <file>assets/Info/mall_info.png</file>
         <file>assets/Info/super_info.png</file>
+        <file>assets/NPC/Idle_NPC1.png</file>
+        <file>assets/NPC/Idle_NPC2.png</file>
+        <file>assets/NPC/Idle_NPC3.png</file>
+        <file>assets/items/candado.png</file>
     </qresource>
 </RCC>

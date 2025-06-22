@@ -13,9 +13,9 @@ NPC::NPC(Tipo tipo, QWidget* parent): QLabel(parent),tipo(tipo)
     /* ---------- VISUAL (sprite idle por defecto) ---------- */
     switch (tipo)
     {
-    case Tipo::NPC1: SetAnimacion(":/imagenes/assets/NPC/Hablar1_NPC1.png", 7); break;
-    case Tipo::NPC2: SetAnimacion(":/imagenes/assets/NPC/Hablar1_NPC2.png", 4); break;
-    case Tipo::NPC3: SetAnimacion(":/imagenes/assets/NPC/Hablar1_NPC3.png", 6); break;
+    case Tipo::NPC1: SetAnimacion(":/imagenes/assets/NPC/Idle_NPC1.png", 7); break;
+    case Tipo::NPC2: SetAnimacion(":/imagenes/assets/NPC/Idle_NPC2.png", 4); break;
+    case Tipo::NPC3: SetAnimacion(":/imagenes/assets/NPC/Idle_NPC3.png", 6); break;
     case Tipo::NPC4: SetAnimacion(":/imagenes/assets/NPC/Idle_NPC4.png",     6); break;
     case Tipo::NPC5: SetAnimacion(":/imagenes/assets/NPC/Idle_NPC5.png",     7); break;
     case Tipo::NPC6: SetAnimacion(":/imagenes/assets/NPC/Idle_NPC6.png",     6); break;
@@ -65,7 +65,7 @@ void NPC::mostrarDialogo(DialogoNPC* dialogoUI)
 {
     if(!dialogoUI)return;
 
-      // *** si la recompensa ya fue dada mostramos un SUERTE sin botones ***
+    // *** si la recompensa ya fue dada mostramos un SUERTE sin botones ***
     if(recompensaEntregada)
     {
 
@@ -73,11 +73,11 @@ void NPC::mostrarDialogo(DialogoNPC* dialogoUI)
 
         // Ocultar automaticamente luego de 3.5 segundos (3500 ms)
         QTimer::singleShot(3500,dialogoUI,[dialogoUI]()
-        {
+                           {
 
-            dialogoUI->ocultarDialogo();
+                               dialogoUI->ocultarDialogo();
 
-        });
+                           });
 
         return;
 
@@ -134,7 +134,7 @@ void NPC::manejarOpcionSeleccionada(int opcion)
         return;
     }
 
-      /* hoja -> ejecutar recompensa / castigo */
+    /* hoja -> ejecutar recompensa / castigo */
     ejecutarConsecuencia(nodoActual);
 
     dialogoActualUI->ocultarDialogo();
@@ -161,15 +161,15 @@ QPixmap NPC::obtenerImagenNPC() const
 
     switch(tipo) {
     case Tipo::NPC1:
-        imagenCompleta = QPixmap(":/imagenes/assets/NPC/Hablar1_NPC1.png");
+        imagenCompleta = QPixmap(":/imagenes/assets/NPC/Idle_NPC1.png");
         areaCara = QRect(26, 40, 70, 70); // x, y, width, height
         break;
     case Tipo::NPC2:
-        imagenCompleta = QPixmap(":/imagenes/assets/NPC/Hablar1_NPC2.png");
+        imagenCompleta = QPixmap(":/imagenes/assets/NPC/Idle_NPC2.png");
         areaCara = QRect(25, 50, 70, 70);
         break;
     case Tipo::NPC3:
-        imagenCompleta = QPixmap(":/imagenes/assets/NPC/Hablar1_NPC3.png");
+        imagenCompleta = QPixmap(":/imagenes/assets/NPC/Idle_NPC3.png");
         areaCara = QRect(26, 40, 60, 60);
         break;
     case Tipo::NPC4:
@@ -303,16 +303,16 @@ void NPC::construirArbolDecisiones()
         break;
     }
 
-     /* ───────── NPC 5 ───────── */
-     case Tipo::NPC5: {
-         arbolDialogos=new NodoDialogo(
-             "Creo que deje unos chalecos en Mall, ¿Me ayudas a recuperarlos?",
-             {"Sí", "No"}
-             );
+    /* ───────── NPC 5 ───────── */
+    case Tipo::NPC5: {
+        arbolDialogos=new NodoDialogo(
+            "Creo que deje unos chalecos en Mall, ¿Me ayudas a recuperarlos?",
+            {"Sí", "No"}
+            );
         auto cSi=new NodoDialogo("¡Gracias! Necesitaras granadas para ir...",
-                                    {"Entendido"}, "DAR_GRANADAS");
+                                   {"Entendido"}, "DAR_GRANADAS");
         auto cNo=new NodoDialogo("ta bueno pues.",
-                                    {"Adiós"});
+                                   {"Adiós"});
         auto chalecos = new NodoDialogo("¡Mis chalecos! Toma uno por ayudarme",
                                         {"Gracias"}, "DAR_CHALECO");
 
@@ -322,32 +322,32 @@ void NPC::construirArbolDecisiones()
         if (Inventario::getInstance()->objetoExiste("chaleco")) {
             cSi->hijos << chalecos;
         }
-         break;
-     }
+        break;
+    }
 
-     /* ───────── NPC 6 ───────── */
-     case Tipo::NPC6: {
-         arbolDialogos=new NodoDialogo(
-             "Consigueme un casco del gimnasio y te daré mis zapatos especiales!",
-             {"Sí", "No"}
-             );
-         auto cSi=new NodoDialogo("Vé, antes que cambie de opinión",
-                                    {"Entendido"});
-         auto cNo=new NodoDialogo("Estaré aqui por si vuelves...",
-                                    {"Adiós"});
-         auto zapatos = new NodoDialogo("¡El casco! Los zapatos son tuyos",
-                                         {"Gracias"}, "DAR_ZAPATOS");
+    /* ───────── NPC 6 ───────── */
+    case Tipo::NPC6: {
+        arbolDialogos=new NodoDialogo(
+            "Consigueme un casco del gimnasio y te daré mis zapatos especiales!",
+            {"Sí", "No"}
+            );
+        auto cSi=new NodoDialogo("Vé, antes que cambie de opinión",
+                                   {"Entendido"});
+        auto cNo=new NodoDialogo("Estaré aqui por si vuelves...",
+                                   {"Adiós"});
+        auto zapatos = new NodoDialogo("¡El casco! Los zapatos son tuyos",
+                                       {"Gracias"}, "DAR_ZAPATOS");
 
-         arbolDialogos->hijos<<cSi<<cNo;
-
-
-         if (Inventario::getInstance()->objetoExiste("casco")) {
-             cSi->hijos << zapatos;
-         }
-         break;
+        arbolDialogos->hijos<<cSi<<cNo;
 
 
-     }
+        if (Inventario::getInstance()->objetoExiste("casco")) {
+            cSi->hijos << zapatos;
+        }
+        break;
+
+
+    }
     }
 }
 
