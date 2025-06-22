@@ -219,9 +219,8 @@ bool supermercado::eventFilter(QObject* obj, QEvent* event) {
                     cofreLabel->setPixmap(cofreAbierto.scaled(64, 64));
                     mensajeCofre->setText("🎁 Cofre abierto");
                     mensajeCofre->show();
-                    jugador->setMuniciones(jugador->getMuniciones() + 30);
-                    ActualizarMuniciones();
-                    mostrarNotificacion("🎯 Recibiste 30 municiones");
+                    Inventario::getInstance()->insertarObjeto("chaleco",2,"armadura","protege");
+                    mostrarNotificacion("¡Recibiste dos chalecos!");
                     QTimer::singleShot(3000, this, [=]() {
                         mostrarNotificacion("🛒 Nivel completado...");
                         Caminos* c = new Caminos(jugador);

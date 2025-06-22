@@ -68,6 +68,6 @@ private:
 
     void ejecutarConsecuencia(NodoDialogo* hoja);
 
-};
+  };
 
 #endif // NPC_H

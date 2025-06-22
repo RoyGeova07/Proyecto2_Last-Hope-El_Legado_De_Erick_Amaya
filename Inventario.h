@@ -52,7 +52,8 @@ public:
     void listarInventario();
     void setBalas(int cantidad);
     int getBalas() const;
-    NodoInventario* buscar(NodoInventario* nodo, const QString& nombre);
+    NodoInventario* buscar(NodoInventario* nodo, const QString& nombre) const;
+    bool objetoExiste(const QString& nombre) const;
 
     NodoInventario* obtenerRaiz() { return raiz; }
     void listarInOrden(NodoInventario* nodo, bool ascendente = true);

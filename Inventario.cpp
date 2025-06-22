@@ -136,7 +136,7 @@ void Inventario::buscarObjeto(const QString& nombre)
     }
 }
 
-NodoInventario* Inventario::buscar(NodoInventario* nodo, const QString& nombre)
+NodoInventario* Inventario::buscar(NodoInventario* nodo, const QString& nombre) const
 {
     if (!nodo)
         return nullptr;
@@ -225,4 +225,9 @@ void Inventario::listarInOrdenDescendente(NodoInventario* nodo)
         qDebug() << nodo->nombre << "- Cantidad:" << nodo->cantidad << "- Tipo:" << nodo->tipo;
         listarInOrdenDescendente(nodo->izquierda);
     }
+}
+
+bool Inventario::objetoExiste(const QString& nombre) const
+{
+    return buscar(raiz, nombre) != nullptr;
 }

@@ -319,10 +319,9 @@ bool Ciudad::eventFilter(QObject* obj, QEvent* event) {
                     mensajeCofre->setText("🎁 Cofre abierto");
                     mensajeCofre->show();
 
-                    jugador->setMuniciones(jugador->getMuniciones() + 30);
-                    ActualizarMuniciones();
-
-                    mostrarNotificacion("🎯 Recibiste 30 municiones");
+                    //agregar llave al inventario
+                    Inventario::getInstance()->insertarObjeto("llave",1,"objeto","desconocido");
+                    mostrarNotificacion("Recibiste la llave!");
 
                     QTimer::singleShot(3000, this, [=]() {
                         mostrarNotificacion("🏃 Volviendo al camino...");

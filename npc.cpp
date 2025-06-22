@@ -237,8 +237,17 @@ void NPC::construirArbolDecisiones()
         auto n1_llave=new NodoDialogo("¡Encontraste mi llave! ¿Quieres intercambiarla por municiones?",
                                         {"Sí", "No"});
 
+        auto n2_si=new NodoDialogo("¡Aqui tienes!",
+                                     {"Gracias"}, "DAR_MUNICIONES");
+        auto n2_no=new NodoDialogo("Oh… Entiendo. Si cambias de opinión, estaré aquí.",
+                                     {"Adiós"});
+
         arbolDialogos->hijos<<n1_si<<n1_no;
-        n1_si->hijos<<n1_llave;          // ruta cuando regreses con la llave
+        n1_llave->hijos<<n2_si<<n2_no;
+
+        if (Inventario::getInstance()->objetoExiste("llave")) {
+            n1_si->hijos << n1_llave; // ruta cuando regreses con la llave
+        }
         break;
     }
 
@@ -286,7 +295,7 @@ void NPC::construirArbolDecisiones()
 
         auto ok   = new NodoDialogo("¡Gracias! A cambio toma 2 curaciones pequeñas.",
                                   {"Entendido"},
-                                  "DAR_CURAR1x2;DAR_MUNISIONESx1");
+                                  "QUITAR_MUNICIONES");
         auto bye  = new NodoDialogo("Bueno… volveré a intentarlo luego.",
                                    {"Adiós"});
 
@@ -297,31 +306,44 @@ void NPC::construirArbolDecisiones()
      /* ───────── NPC 5 ───────── */
      case Tipo::NPC5: {
          arbolDialogos=new NodoDialogo(
-             "El Callejón C tiene municiones. ¿Quieres un mapa?",
+             "Creo que deje unos chalecos en Mall, ¿Me ayudas a recuperarlos?",
              {"Sí", "No"}
              );
-       auto cSi=new NodoDialogo("Aquí está el mapa → Callejón C.",
-                                    {"Gracias"});
-         auto cNo=new NodoDialogo("Hazlo bajo tu propio riesgo.",
+        auto cSi=new NodoDialogo("¡Gracias! Necesitaras granadas para ir...",
+                                    {"Entendido"}, "DAR_GRANADAS");
+        auto cNo=new NodoDialogo("ta bueno pues.",
                                     {"Adiós"});
-       arbolDialogos->hijos<<cSi<<cNo;
+        auto chalecos = new NodoDialogo("¡Mis chalecos! Toma uno por ayudarme",
+                                        {"Gracias"}, "DAR_CHALECO");
+
+        arbolDialogos->hijos<<cSi<<cNo;
+
+
+        if (Inventario::getInstance()->objetoExiste("chaleco")) {
+            cSi->hijos << chalecos;
+        }
          break;
      }
 
      /* ───────── NPC 6 ───────── */
      case Tipo::NPC6: {
          arbolDialogos=new NodoDialogo(
-             "Puedo mejorar tu arma si traes chatarra de robot.\n¿Aceptar misión?",
+             "Consigueme un casco del gimnasio y te daré mis zapatos especiales!",
              {"Sí", "No"}
              );
-         auto mSi=new NodoDialogo("Necesito 3 piezas de chatarra.",
+         auto cSi=new NodoDialogo("Vé, antes que cambie de opinión",
                                     {"Entendido"});
-         auto mNo=new NodoDialogo("Otra vez será.",
+         auto cNo=new NodoDialogo("Estaré aqui por si vuelves...",
                                     {"Adiós"});
-         auto mFin=new NodoDialogo("¡Perfecto! Tu arma hace +1 de daño.",
-                                     {"Genial"});
-         arbolDialogos->hijos<<mSi<<mNo;
-         mSi->hijos<<mFin;
+         auto zapatos = new NodoDialogo("¡El casco! Los zapatos son tuyos",
+                                         {"Gracias"}, "DAR_ZAPATOS");
+
+         arbolDialogos->hijos<<cSi<<cNo;
+
+
+         if (Inventario::getInstance()->objetoExiste("casco")) {
+             cSi->hijos << zapatos;
+         }
          break;
 
 
@@ -345,17 +367,45 @@ void NPC::ejecutarConsecuencia(NodoDialogo *hoja)
 
     const QString& c=hoja->consecuencia;
 
-    if(c=="DAR_CURAR1x2")
+    if(c=="DAR_CURAR1x2"){
+        mostrarNotificacion("✔️ Ganaste un botiquin pequeño");
         inventarioRef->insertarObjeto("curar1", 2, "Botiquín", "Cura vida");
+    }
 
-    else if(c=="DAR_CURAR2x2")
+    else if(c=="DAR_CURAR2x2"){
+        mostrarNotificacion("✔️ Obtuviste un botiquin grande");
         inventarioRef->insertarObjeto("curar2", 2, "Botiquín", "Cura más vida");
-
-    else if(c=="QUITAR_LLAVE")
+    }
+    else if(c=="QUITAR_LLAVE"){
+        //mostrarNotificacion("✔️ ");
         inventarioRef->eliminarObjeto("llave");
+    }
+    else if(c=="DAR_GRANADAS"){
+        mostrarNotificacion("✔️ Obtuviste 10 granadas");
+        inventarioRef->insertarObjeto("granada",10,"arma","explota");
+    }
+    else if(c=="QUITAR_MUNICIONES"){
+        //mostrarNotificacion("✔️ " + c);
+        inventarioRef->setBalas(inventarioRef->getBalas()-20);
+        inventarioRef->insertarObjeto("curar1", 2, "Botiquín", "Cura vida");
+    }
 
-    if(!c.isEmpty())
-        mostrarNotificacion("✔️ " + c);        // feedback simple
+    else if(c=="DAR_ZAPATOS"){
+        mostrarNotificacion("✔️ Obtuviste los zapatos rapidos! ");
+        inventarioRef->eliminarObjeto("casco");
+        inventarioRef->insertarObjeto("zapato_rapido",1,"armadura","incrementa velocidad");
+    }
+
+    else if(c=="DAR_CHALECO"){
+        mostrarNotificacion("✔️ Tienes un chaleco!");
+        inventarioRef->eliminarObjeto("chaleco");
+        inventarioRef->insertarObjeto("chaleco",1,"armadura","protege");
+    }
+    else if(c=="DAR_MUNICIONES"){
+        mostrarNotificacion("✔️ Obtuviste 30 municiones" );
+        inventarioRef->insertarObjeto("municiones", 30, "arma", "disparar");
+        inventarioRef->eliminarObjeto("llave");
+    }
 
     recompensaEntregada=true;
 
