@@ -169,6 +169,8 @@ void Gasolinera::configurarObstaculos() {
 }
 
 void Gasolinera::onMovimientoUpdate() {
+
+    ActualizarBarraEscudo();
     if (jugador)
     {
 

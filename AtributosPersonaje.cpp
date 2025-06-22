@@ -9,57 +9,6 @@
 #include <QStackedLayout>
 #include<QScrollArea>
 
-AtributosPersonaje::AtributosPersonaje(QWidget* parent)
-    : QWidget(parent),
-    jugador(nullptr), movimientoTimer(nullptr),
-    shiftPresionado(false), izquierdaPresionada(false),
-    derechaPresionada(false), arribaPresionado(false),
-    abajoPresionado(false), ZPresionado(false), tablaNiveles(TablaHash::getInstance())
-{
-
-    inicializarTabWidget();
-    //barra de vida contenedor
-    barraVidaLabel = new QLabel(this);
-    barraVidaLabel->setStyleSheet("background-color: #333333; border: 2px solid black; border-radius: 5px; padding: 0px;");
-    barraVidaLabel->setGeometry(10, 90, 200, 30);
-    barraVidaLabel->show();
-
-    //Barra rellena (acortable)
-    barraVidaInterna = new QWidget(barraVidaLabel);
-    barraVidaInterna->setStyleSheet("background-color: green; border-radius: 3px;");
-    barraVidaInterna->setGeometry(0, 0, 200, 30);
-    barraVidaInterna->show();
-
-    //Texto encima
-    barraVidaTexto = new QLabel(barraVidaLabel);
-    barraVidaTexto->setAlignment(Qt::AlignCenter);
-    barraVidaTexto->setStyleSheet("color: white; font-weight: bold; font-size: 14px; background: transparent;");
-    barraVidaTexto->setGeometry(0, 0, 200, 30);
-    barraVidaTexto->show();
-    ActualizarBarraVida();
-    barraVidaLabel->raise();
-
-    //etiqueta para mostrar las municiones
-    labelMuniciones=new QLabel(this);
-    labelMuniciones->setGeometry(10,45,300,40);
-    labelMuniciones->setStyleSheet(
-        "color: #FFD700;"
-        "font-size: 18px;"
-        "font-weight: bold;"
-        "background: rgba(0,0,0,100);"
-        "padding: 5px;"
-        );
-    labelMuniciones->show();
-
-    if(!puedeDisparar)
-    {
-
-        labelMuniciones->hide();//ocultar el label de municiones si no esta habilitado
-
-    }
-
-}
-
 AtributosPersonaje::AtributosPersonaje(personaje *jugadorExistente, QWidget *parent):QWidget(parent),
 
     jugador(jugadorExistente), movimientoTimer(nullptr),
@@ -91,6 +40,25 @@ AtributosPersonaje::AtributosPersonaje(personaje *jugadorExistente, QWidget *par
     barraVidaTexto->setGeometry(0, 0, 200, 30);
     barraVidaTexto->show();
 
+    // Barra de escudo (contenedor)
+    barraEscudoLabel = new QLabel(this);
+    barraEscudoLabel->setStyleSheet("background-color: #333333; border: 2px solid black; border-radius: 5px; padding: 0px;");
+    barraEscudoLabel->setGeometry(10, 125, 200, 20); // debajo de la barra de vida
+    barraEscudoLabel->show();
+
+    // Barra azul interna (relleno)
+    barraEscudoInterna = new QWidget(barraEscudoLabel);
+    barraEscudoInterna->setStyleSheet("background-color: blue; border-radius: 3px;");
+    barraEscudoInterna->setGeometry(0, 0, 0, 20); // inicia en 0
+    barraEscudoInterna->show();
+
+    // Texto encima de escudo
+    barraEscudoTexto = new QLabel(barraEscudoLabel);
+    barraEscudoTexto->setAlignment(Qt::AlignCenter);
+    barraEscudoTexto->setStyleSheet("color: white; font-weight: bold; font-size: 12px; background: transparent;");
+    barraEscudoTexto->setGeometry(0, 0, 200, 20);
+    barraEscudoTexto->show();
+
     //etiqueta para mostrar las municiones
     labelMuniciones=new QLabel(this);
     labelMuniciones->setGeometry(10,45,300,40);
@@ -106,6 +74,9 @@ AtributosPersonaje::AtributosPersonaje(personaje *jugadorExistente, QWidget *par
 
     ActualizarBarraVida();
     barraVidaLabel->raise();
+
+    ActualizarBarraEscudo();
+    barraEscudoLabel->raise();
 
 
 }
@@ -1027,4 +998,27 @@ void AtributosPersonaje::CancelarCuracion()
 
     mostrarNotificacion("CURACION INTERRUMPIDA POR DAÑO");
 
+}
+
+void AtributosPersonaje::ActualizarBarraEscudo()
+{
+    if(!jugador)return;
+
+    int escudoActual=jugador->getEscudo();
+    int escudoMaximo=20;
+
+    escudoActual=std::clamp(escudoActual,0,escudoMaximo);
+
+    float porcentaje=static_cast<float>(escudoActual)/escudoMaximo;
+    int anchoTotal=barraEscudoLabel->contentsRect().width();
+    int altoTotal=barraEscudoLabel->contentsRect().height();
+
+    int anchoBarra=static_cast<int>(porcentaje* anchoTotal);
+
+    barraEscudoInterna->setGeometry(0,0,anchoBarra,altoTotal);
+
+    QString texto=QString("ESCUDO: %1 / %2").arg(escudoActual).arg(escudoMaximo);
+    barraEscudoTexto->setText(texto);
+
+    barraEscudoLabel->raise();
 }

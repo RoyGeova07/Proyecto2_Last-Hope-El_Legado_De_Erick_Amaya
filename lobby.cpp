@@ -30,6 +30,7 @@ lobby::lobby(personaje* jugadorExistente, QWidget* parent)
     dialogoNPC = new DialogoNPC(this);
     dialogoNPC->hide();
     barraVidaLabel->raise();
+    barraEscudoLabel->raise();
 
     // Label para el hint de interaccion con puerta
     labelPresionarR = new QLabel("PRESIONE A PARA EXPLORAR", this);
@@ -152,6 +153,7 @@ void lobby::configurarObstaculos()
 
 void lobby::onMovimientoUpdate()
 {
+    ActualizarBarraEscudo();
     ActualizarBarraVida();
 
     QRect rectJugador = jugador->geometry();

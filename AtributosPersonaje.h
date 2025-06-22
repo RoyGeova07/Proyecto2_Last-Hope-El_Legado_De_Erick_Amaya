@@ -61,6 +61,12 @@ protected:
     QWidget* barraVidaInterna;
     QLabel* barraVidaTexto;
     QLabel*labelMuniciones;
+
+    QLabel* barraEscudoLabel;
+    QWidget* barraEscudoInterna;
+    QLabel* barraEscudoTexto;
+    void ActualizarBarraEscudo();
+
     QList<Bala*>balasActivas;
     void ActualizarBarraVida();
     void iniciarCuracion(int cantidad,const QString& tipo);
@@ -84,6 +90,9 @@ private:
 
     void detenerDisparo();
 
+    QString habilidad1 = "";
+    QString habilidad2 = "";
+
 public:
     explicit AtributosPersonaje(QWidget* parent = nullptr);
     explicit AtributosPersonaje(personaje*jugador,QWidget*parent=nullptr);
@@ -96,6 +105,7 @@ public:
     void ActualizarMuniciones();
     void intentarDisparar();
     void CancelarCuracion();
+
 
 };
 

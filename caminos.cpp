@@ -524,6 +524,8 @@ void Caminos::cambiarRuta(int nuevaRuta)
 
 void Caminos::onMovimientoUpdate()
 {
+
+    ActualizarBarraEscudo();
     if (!jugador) return;
     QRect rectJugador = jugador->geometry();
 

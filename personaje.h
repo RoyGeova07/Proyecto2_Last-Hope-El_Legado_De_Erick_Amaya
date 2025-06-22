@@ -68,6 +68,9 @@ public:
     void guardarDatosJugador();
     QMap<QString, int> cargarDatosJugador();
 
+    void setEscudo(int valor){escudo=std::clamp(valor,0,20);}
+    int getEscudo()const{return escudo;}
+
 private:
 
     QVector<QPixmap> frames;
@@ -75,6 +78,8 @@ private:
     QTimer* timer;
     // aquí si la dirección cambió la última vez que se dibujó
     bool ultimaDireccionDerecha;
+
+    int escudo=0;
 
     bool enPausa=false;
 

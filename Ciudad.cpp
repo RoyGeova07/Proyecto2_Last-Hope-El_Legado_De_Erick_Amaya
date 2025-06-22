@@ -196,6 +196,7 @@ void Ciudad::configurarObstaculos()
 }
 
 void Ciudad::onMovimientoUpdate() {
+    ActualizarBarraEscudo();
     if (jugador)
     {
 

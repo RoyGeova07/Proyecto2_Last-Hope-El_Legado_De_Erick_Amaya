@@ -143,6 +143,8 @@ void laboratorio::keyPressEvent(QKeyEvent* event) {
 }
 
 void laboratorio::onMovimientoUpdate() {
+
+    ActualizarBarraEscudo();
     if (jugador)
     {
         int distancia = std::abs(jugador->x() - 1142);

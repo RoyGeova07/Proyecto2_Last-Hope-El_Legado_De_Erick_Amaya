@@ -168,6 +168,7 @@ void Mall::configurarObstaculos() {
 }
 
 void Mall::onMovimientoUpdate() {
+    ActualizarBarraEscudo();
     verificarZombiesYMostrarMensaje();
 }
 

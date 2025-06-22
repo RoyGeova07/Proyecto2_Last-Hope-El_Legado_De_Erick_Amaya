@@ -178,6 +178,7 @@ void supermercado::configurarObstaculos() {
 }
 
 void supermercado::onMovimientoUpdate() {
+    ActualizarBarraEscudo();
     verificarZombiesYMostrarMensaje();
 }
 

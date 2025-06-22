@@ -164,6 +164,7 @@ void Gimnasio::configurarObstaculos() {
 }
 
 void Gimnasio::onMovimientoUpdate() {
+    ActualizarBarraEscudo();
     verificarZombiesYMostrarMensaje();
 }
 
