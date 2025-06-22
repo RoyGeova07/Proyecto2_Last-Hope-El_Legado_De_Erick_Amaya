@@ -13,6 +13,7 @@ SOURCES += \
     Ciudad.cpp \
     Gimnasio.cpp \
     Inventario.cpp \
+    TablaHash.cpp \
     bala.cpp \
     caminos.cpp \
     dialogonpc.cpp \

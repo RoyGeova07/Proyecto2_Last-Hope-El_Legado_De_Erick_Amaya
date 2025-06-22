@@ -270,5 +270,6 @@ void laboratorio::verificarZombiesYMostrarMensaje()
     {
         mensajeMostrado = true;
         mostrarNotificacion("🏆 ¡Has derrotado al jefe! Ahora puedes abrir el cofre.");
+        TablaHash::getInstance().descubrir("Nivel7");
     }
 }

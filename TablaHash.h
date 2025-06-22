@@ -1,52 +1,33 @@
 #ifndef TABLAHASH_H
 #define TABLAHASH_H
 
+#include <QObject>
 #include <QString>
 #include <vector>
 #include <list>
+#include <mutex>
 
-class TablaHash {
+class TablaHash : public QObject {
+    Q_OBJECT
+
 private:
     int capacidad;
     std::vector<std::list<std::pair<QString, bool>>> tabla;
 
-    int funcionHash(const QString &clave) {
-        int hash = 0;
-        for (QChar c : clave) {
-            hash += c.unicode();
-        }
-        return hash % capacidad;
-    }
+    explicit TablaHash(QObject *parent = nullptr, int cap = 10);
+    TablaHash(const TablaHash&) = delete;
+    TablaHash& operator=(const TablaHash&) = delete;
+
+    int funcionHash(const QString &clave);
+
+signals:
+    void datoModificado(const QString& clave);
 
 public:
-    TablaHash(int cap = 10) : capacidad(cap), tabla(cap) {}
-
-    void insertar(const QString &clave, bool descubierto) {
-        int indice = funcionHash(clave);
-        tabla[indice].push_back({clave, descubierto});
-    }
-
-    bool estaDescubierto(const QString &clave) {
-        int indice = funcionHash(clave);
-        for (auto &par : tabla[indice]) {
-            if (par.first == clave) {
-                return par.second;
-            }
-        }
-        return false; // Por defecto, no descubierto
-    }
-
-    void descubrir(const QString &clave) {
-        int indice = funcionHash(clave);
-        for (auto &par : tabla[indice]) {
-            if (par.first == clave) {
-                par.second = true;
-                return;
-            }
-        }
-        insertar(clave, true); // Si no existe, lo inserta
-    }
-
+    static TablaHash& getInstance();
+    void insertar(const QString &clave, bool descubierto);
+    bool estaDescubierto(const QString &clave);
+    void descubrir(const QString &clave);
 };
 
 #endif // TABLAHASH_H

@@ -6,6 +6,7 @@
 #include <QVector>
 #include <QPixmap>
 #include"inventario.h"
+#include "TablaHash.h"
 #include"NodoDialogo.h"
 #include"dialogonpc.h"
 
@@ -46,6 +47,7 @@ private:
     QLabel* labelPresionaH=nullptr;
     DialogoNPC* dialogoActualUI = nullptr;
     Inventario* inventarioRef = nullptr;
+    TablaHash& tablaNPCs;
     QLabel* labelNotificacion = nullptr;
 
     NodoDialogo* arbolDialogos=nullptr;

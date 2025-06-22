@@ -171,6 +171,8 @@ Ciudad::Ciudad(personaje* jugadorExistente,QWidget* parent) : AtributosPersonaje
 
     }
 
+
+
 }
 
 void Ciudad::configurarEscena() {
@@ -370,5 +372,6 @@ void Ciudad::verificarZombiesYMostrarMensaje()
     {
         mensajeMostrado = true;
         mostrarNotificacion("🏆 ¡Felicidades! Has pasado el Nivel 1.\nPuedes reclamar el cofre.");
+        TablaHash::getInstance().descubrir("Nivel2");
     }
 }

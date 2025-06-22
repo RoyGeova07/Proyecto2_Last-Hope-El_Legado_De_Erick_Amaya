@@ -22,17 +22,23 @@ void TablaWidget::configurarRutasNPCs() {
     rutasNPCs["NPC6"] = ":/imagenes/assets/NPC/Idle_NPC6.png";
 }
 
-TablaWidget::TablaWidget(QWidget *parent) : QWidget(parent) {
+TablaWidget::TablaWidget(TablaHash* nivelesRef, TablaHash* npcsRef, QWidget *parent)
+    : QWidget(parent), tablaNiveles(nivelesRef), tablaNPCS(npcsRef) {
+
     QVBoxLayout *layoutPrincipal = new QVBoxLayout(this);
 
-    QLabel *titulo = new QLabel("Last Hope: Unlocked");
+    QLabel *titulo = new QLabel("CONTENIDO DESBLOQUEADO");
     titulo->setAlignment(Qt::AlignCenter);
-    titulo->setStyleSheet("font-size: 16px; font-weight: bold; color: white; margin-bottom: 10px;");
+    titulo->setStyleSheet(
+        "font-size: 18px;"
+        "font-weight: bold;"
+        "color: #FFD700;"
+        "margin-bottom: 5px;"
+        );
 
     layout = new QGridLayout();
-    layout->setContentsMargins(5, 5, 5, 5);
-    layout->setHorizontalSpacing(10);
-    layout->setVerticalSpacing(15);
+    layout->setHorizontalSpacing(15);  // Espacio entre columnas
+    layout->setVerticalSpacing(10);    // Espacio entre filas
 
     layoutPrincipal->addWidget(titulo);
     layoutPrincipal->addLayout(layout);
@@ -45,21 +51,23 @@ TablaWidget::TablaWidget(QWidget *parent) : QWidget(parent) {
     configurarRutasNPCs();
 
     // Inicializar tablas
-    tablaNiveles.insertar("Nivel1", true);
-    tablaNiveles.insertar("Nivel2", false);
-    tablaNiveles.insertar("Nivel3", false);
-    tablaNiveles.insertar("Nivel4", false);
-    tablaNiveles.insertar("Nivel5", false);
-    tablaNiveles.insertar("Nivel6", false);
-    tablaNiveles.insertar("Nivel7", false);
+    tablaNiveles->insertar("Nivel1", true);
+    tablaNiveles->insertar("Nivel2", false);
+    tablaNiveles->insertar("Nivel3", false);
+    tablaNiveles->insertar("Nivel4", false);
+    tablaNiveles->insertar("Nivel5", false);
+    tablaNiveles->insertar("Nivel6", false);
+    tablaNiveles->insertar("Nivel7", false);
 
-    tablaNPCS.insertar("NPC1", false);
-    tablaNPCS.insertar("NPC2", false);
-    tablaNPCS.insertar("NPC3", false);
-    tablaNPCS.insertar("NPC4", false);
-    tablaNPCS.insertar("NPC5", false);
-    tablaNPCS.insertar("NPC6", false);
+    tablaNPCS->insertar("NPC1", false);
+    tablaNPCS->insertar("NPC2", false);
+    tablaNPCS->insertar("NPC3", false);
+    tablaNPCS->insertar("NPC4", false);
+    tablaNPCS->insertar("NPC5", false);
+    tablaNPCS->insertar("NPC6", false);
 
+    connect(tablaNiveles, &TablaHash::datoModificado, this, &TablaWidget::actualizarUI);
+    connect(tablaNPCS, &TablaHash::datoModificado, this, &TablaWidget::actualizarUI);
     cargarImagenes();
 }
 
@@ -71,7 +79,7 @@ void TablaWidget::cargarImagenes() {
         delete item;
     }
 
-    // Nombres personalizados para niveles
+    // Nombres de los niveles
     QHash<QString, QString> nombresNiveles = {
         {"Nivel1", "Lobby"},
         {"Nivel2", "Ciudad en Ruinas"},
@@ -85,7 +93,7 @@ void TablaWidget::cargarImagenes() {
     // Cargar niveles
     int columna = 0;
     for (const QString &clave : ordenNiveles) {
-        bool descubierto = tablaNiveles.estaDescubierto(clave);
+        bool descubierto = tablaNiveles->estaDescubierto(clave);
         QString ruta = rutasNiveles.value(clave);
 
         if(QFile::exists(ruta)) {
@@ -100,7 +108,7 @@ void TablaWidget::cargarImagenes() {
     // Cargar NPCs
     columna = 0;
     for (const QString &clave : ordenNPCs) {
-        bool descubierto = tablaNPCS.estaDescubierto(clave);
+        bool descubierto = tablaNPCS->estaDescubierto(clave);
         QString ruta = rutasNPCs.value(clave);
 
         if(QFile::exists(ruta)) {
@@ -158,7 +166,12 @@ QWidget* TablaWidget::crearImagenConCandado(const QString &ruta, bool descubiert
 
     QLabel *labelNombre = new QLabel(nombre);
     labelNombre->setAlignment(Qt::AlignCenter);
-    labelNombre->setStyleSheet("margin-top: 2px; font-size: 10px;");
+    labelNombre->setStyleSheet(
+        "font-size: 11px;"
+        "font-weight: bold;"
+        "color: #FFFFFF;"
+        "margin-top: 3px;"
+        );
 
     QVBoxLayout *layoutContenedor = new QVBoxLayout();
     layoutContenedor->addWidget(labelImagen);
@@ -175,12 +188,22 @@ QWidget* TablaWidget::crearImagenConCandado(const QString &ruta, bool descubiert
 }
 
 QPixmap TablaWidget::aplicarCandado(const QPixmap &pixmap) {
-    QPixmap resultado = pixmap.copy();
+    QPixmap resultado = pixmap.scaled(100, 100, Qt::KeepAspectRatio, Qt::SmoothTransformation);
     QPainter painter(&resultado);
-    painter.fillRect(resultado.rect(), QColor(0, 0, 0, 150));
+    painter.fillRect(resultado.rect(), QColor(0, 0, 0, 160));
+
     if(QFile::exists(":/imagenes/assets/items/candado.png")) {
-        painter.drawPixmap(resultado.width()/2 - 16, resultado.height()/2 - 16,
-                           QPixmap(":/imagenes/assets/items/candado.png").scaled(32, 32));
+        QPixmap candado(":/imagenes/assets/items/candado.png");
+        candado = candado.scaled(32, 32, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+        painter.drawPixmap(
+            resultado.width()/2 - 16,
+            resultado.height()/2 - 16,
+            candado
+            );
     }
     return resultado;
 }
+
+void TablaWidget::actualizarUI() {
+    cargarImagenes();
+ }

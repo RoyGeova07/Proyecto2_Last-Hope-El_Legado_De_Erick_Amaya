@@ -12,20 +12,13 @@ class TablaWidget : public QWidget {
     Q_OBJECT
 
 public:
-    TablaWidget(QWidget *parent = nullptr);
+    explicit TablaWidget( TablaHash* nivelesRef, TablaHash* npcsRef,QWidget *parent = nullptr);
     void actualizarUI();
-    QStringList ordenNiveles = {
-        "Nivel1", "Nivel2", "Nivel3", "Nivel4", "Nivel5", "Nivel6", "Nivel7"
-    };
-
-    QStringList ordenNPCs = {
-        "NPC1", "NPC2", "NPC3", "NPC4", "NPC5", "NPC6"
-    };
 
 
 private:
-    TablaHash tablaNiveles;
-    TablaHash tablaNPCS;
+    TablaHash* tablaNiveles;
+    TablaHash* tablaNPCS;
     QGridLayout *layout;
     QHash<QString, QString> rutasNiveles;
     QHash<QString, QString> rutasNPCs;
@@ -35,6 +28,15 @@ private:
     void configurarRutasNPCs();
     QWidget* crearImagenConCandado(const QString &ruta, bool descubierto,const QString &nombre);
     QPixmap aplicarCandado(const QPixmap &pixmap);
+
+    //listas para que se impriman en orden
+    QStringList ordenNiveles = {
+        "Nivel1", "Nivel2", "Nivel3", "Nivel4", "Nivel5", "Nivel6", "Nivel7"
+    };
+
+    QStringList ordenNPCs = {
+        "NPC1", "NPC2", "NPC3", "NPC4", "NPC5", "NPC6"
+    };
 };
 
 #endif // TABLAWIDGET_H

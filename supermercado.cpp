@@ -290,6 +290,7 @@ void supermercado::verificarZombiesYMostrarMensaje() {
     if (!zombiesVivos) {
         mensajeMostrado = true;
         mostrarNotificacion("🏆 ¡Has limpiado el Supermercado!\nPodés abrir el cofre.");
+        TablaHash::getInstance().descubrir("Nivel6");
     }
 }
 

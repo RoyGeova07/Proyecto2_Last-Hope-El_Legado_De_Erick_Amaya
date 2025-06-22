@@ -25,6 +25,8 @@ protected:
 
     QLabel* labelDistancias;
 
+    TablaHash& tablaNiveles;
+
     // Estado de teclas
     bool shiftPresionado;
     bool izquierdaPresionada;

@@ -322,5 +322,6 @@ void Gasolinera::verificarZombiesYMostrarMensaje() {
     if (!zombiesVivos) {
         mensajeMostrado = true;
         mostrarNotificacion("🏆 ¡Has limpiado la Gasolinera!\nPodés abrir el cofre.");
+        TablaHash::getInstance().descubrir("Nivel4");
     }
 }

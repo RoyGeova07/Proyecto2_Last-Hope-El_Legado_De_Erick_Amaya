@@ -2,7 +2,7 @@
 #include "dialogonpc.h"
 #include"QDebug"
 
-NPC::NPC(Tipo tipo, QWidget* parent): QLabel(parent),tipo(tipo)
+NPC::NPC(Tipo tipo, QWidget* parent): QLabel(parent),tipo(tipo), tablaNPCs(TablaHash::getInstance())
 {
     this->setFixedSize(128,128);
     this->move(600,500);
@@ -64,6 +64,11 @@ void NPC::AvanzarFrame()
 void NPC::mostrarDialogo(DialogoNPC* dialogoUI)
 {
     if(!dialogoUI)return;
+
+    // Marcar como descubierto SOLO cuando inicias diálogo
+    QString npcKey = QString("NPC%1").arg(static_cast<int>(tipo) + 1);
+    TablaHash::getInstance().descubrir(npcKey);
+    qDebug() << "Descubierto:" << npcKey << TablaHash::getInstance().estaDescubierto(npcKey);
 
     // *** si la recompensa ya fue dada mostramos un SUERTE sin botones ***
     if(recompensaEntregada)
@@ -223,7 +228,9 @@ void NPC::construirArbolDecisiones()
     case Tipo::NPC1: {
         //raizzzz
 
-        //mostrarNotificacion("🎯 diste 30 municiones");
+        //Marcar como npc descubierto
+        qDebug() << "Estado NPC1:" << TablaHash::getInstance().estaDescubierto("NPC1");
+
         arbolDialogos=new NodoDialogo(
             "Perdí mis llaves en la Ciudad en Ruinas. ¿Me ayudas a buscarlas?",
             {"Sí, te ayudaré", "No puedo"}

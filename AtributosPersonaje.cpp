@@ -14,7 +14,7 @@ AtributosPersonaje::AtributosPersonaje(QWidget* parent)
     jugador(nullptr), movimientoTimer(nullptr),
     shiftPresionado(false), izquierdaPresionada(false),
     derechaPresionada(false), arribaPresionado(false),
-    abajoPresionado(false), ZPresionado(false)
+    abajoPresionado(false), ZPresionado(false), tablaNiveles(TablaHash::getInstance())
 {
 
     inicializarTabWidget();
@@ -65,10 +65,12 @@ AtributosPersonaje::AtributosPersonaje(personaje *jugadorExistente, QWidget *par
     jugador(jugadorExistente), movimientoTimer(nullptr),
     shiftPresionado(false), izquierdaPresionada(false),
     derechaPresionada(false), arribaPresionado(false),
-    abajoPresionado(false), ZPresionado(false)
+    abajoPresionado(false), ZPresionado(false), tablaNiveles(TablaHash::getInstance())
 {
 
     inventarioWidget=new InventarioWidget(Inventario::getInstance());
+    tablaWidget = new TablaWidget(&TablaHash::getInstance(), &TablaHash::getInstance(), this);
+   // tablaWidget = new TablaWidget(TablaHash::getInstance(), TablaHash::getInstance());
     inicializarTabWidget();
     //barra de vida contenedor
     barraVidaLabel = new QLabel(this);
@@ -540,12 +542,12 @@ void AtributosPersonaje::inicializarTabWidget() {
 
     // Configurar pestaña de inventario
     inventarioWidget = new InventarioWidget(Inventario::getInstance());
-    tablaWidget = new TablaWidget(this);
+    tablaWidget = new TablaWidget(&TablaHash::getInstance(), &TablaHash::getInstance(), this);
     //WidgetDesbloqueo *widget = new WidgetDesbloqueo(this);
 
     tabWidget->addTab(mapaTab, "Mapa");
     tabWidget->addTab(inventarioWidget, "Inventario");
-    tabWidget->addTab(tablaWidget, "Tabla Hash");
+
 
 
     //==================================Crear pestaña de personajes/habilidades=================================================================
@@ -667,6 +669,7 @@ layoutPersonajes->addStretch();
 contenidoScroll->setLayout(layoutPersonajes);
 scrollArea->setWidget(contenidoScroll);
 tabWidget->addTab(scrollArea, "Personajes - Habilidades");
+tabWidget->addTab(tablaWidget, "Niveles - NPCs");
 
 //=======================TERMINA HABILIDADES===========================================================================
 tabWidget->resize(700, 450);

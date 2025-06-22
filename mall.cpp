@@ -278,6 +278,7 @@ void Mall::verificarZombiesYMostrarMensaje() {
     if (!zombiesVivos) {
         mensajeMostrado = true;
         mostrarNotificacion("🏆 ¡Has limpiado el Mall!\nPodés abrir el cofre.");
+        TablaHash::getInstance().descubrir("Nivel5");
     }
 }
 

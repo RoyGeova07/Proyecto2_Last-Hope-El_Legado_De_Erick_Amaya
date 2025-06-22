@@ -275,5 +275,6 @@ void Gimnasio::verificarZombiesYMostrarMensaje() {
     if (!zombiesVivos) {
         mensajeMostrado = true;
         mostrarNotificacion("🏆 ¡Has limpiado el Gimnasio!\nPodés abrir el cofre.");
+        TablaHash::getInstance().descubrir("Nivel3");
     }
 }
