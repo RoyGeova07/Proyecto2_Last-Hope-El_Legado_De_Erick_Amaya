@@ -31,6 +31,7 @@ public:
     void SetAnimacion(const QString& ruta, int cantidadFrames, bool loop);
     void AvanzarFrame();
 
+
     // UI contextual
     void mostrarHintInteractuar();
     void ocultarHintInteractuar();

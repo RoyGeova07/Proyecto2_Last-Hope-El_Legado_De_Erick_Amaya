@@ -112,5 +112,12 @@
         <file>assets/mapas/CONTROLES.png</file>
         <file>assets/mapas/infoCONTROLES.png</file>
         <file>assets/items/llave.png</file>
+        <file>assets/Info/ciudad_info.png</file>
+        <file>assets/Info/gasolinera_info.png</file>
+        <file>assets/Info/gimnasio_info.png</file>
+        <file>assets/Info/info_default.png</file>
+        <file>assets/Info/lab_info.png</file>
+        <file>assets/Info/mall_info.png</file>
+        <file>assets/Info/super_info.png</file>
     </qresource>
 </RCC>

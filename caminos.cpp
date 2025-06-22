@@ -30,7 +30,7 @@ Caminos::Caminos(personaje*jugadorExistente, QWidget* parent) : AtributosPersona
     jugador->move(42,190);
 
     labelPresionarT = new QLabel(this);
-    labelPresionarT->setText("¿Quieres entrar al nivel?\nA. Sí    B. Ignorar");
+    labelPresionarT->setText("¿Quieres entrar al nivel?\nA. Sí    B. Info");
 
     QPixmap letreroPixmap(":/imagenes/assets/mapas/LetreroEntrar.png");
     if (!letreroPixmap.isNull()) {
@@ -40,7 +40,7 @@ Caminos::Caminos(personaje*jugadorExistente, QWidget* parent) : AtributosPersona
         painter.setPen(QPen(Qt::white));
         painter.setFont(QFont("Arial", 10, QFont::Bold));
         painter.drawText(letreroEscalado.rect(), Qt::AlignCenter | Qt::TextWordWrap,
-                         "¿Quieres entrar al nivel?\nA. Sí    B. Ignorar");
+                         "¿Quieres entrar al nivel?\nA. Sí    B. Info");
 
         labelPresionarT->setPixmap(letreroEscalado);
         labelPresionarT->setText("");
@@ -217,6 +217,68 @@ void Caminos::configurarObstaculos()
         obstaculos.append(QRect(700,20,1100,800)); //PARTE  DERECHA
 
     }
+}
+void Caminos::mostrarInfoDelNivel(int nivel) {
+    QString rutaImagen;
+    switch (nivel) {
+    case 2:
+        rutaImagen = ":/imagenes/assets/Info/ciudad_info.png";
+        break;
+    case 3:
+        rutaImagen = ":/imagenes/assets/Info/gasolinera_info.png";
+        break;
+    case 5:
+        rutaImagen = ":/imagenes/assets/Info/gimnasio_info.png";
+        break;
+    case 6:
+        rutaImagen = ":/imagenes/assets/Info/mall_info.png";
+        break;
+    case 9:
+        rutaImagen = ":/imagenes/assets/Info/super_info.png";
+        break;
+    case 10:
+        rutaImagen = ":/imagenes/assets/Info/lab_info.png";
+        break;
+    default:
+        rutaImagen = ":/imagenes/assets/Info/info_default.png";
+        break;
+    }
+
+    QDialog* dlg = new QDialog(this);
+    dlg->setWindowTitle("Información del nivel");
+    dlg->setFixedSize(560, 350); // Ajusta el tamaño a tu gusto
+    dlg->setStyleSheet("background: #222; border-radius: 14px;");
+
+    QLabel* imgLabel = new QLabel(dlg);
+    QPixmap infoImg(rutaImagen);
+    if (infoImg.isNull()) {
+        imgLabel->setText("No se pudo cargar la imagen.");
+        imgLabel->setStyleSheet("color: white;");
+    } else {
+        imgLabel->setPixmap(infoImg.scaled(dlg->size(), Qt::KeepAspectRatio, Qt::SmoothTransformation));
+        imgLabel->setAlignment(Qt::AlignCenter);
+    }
+    imgLabel->setGeometry(0, 0, dlg->width(), dlg->height());
+
+    // Opcional: cerrar al hacer clic en cualquier parte del dialog
+    dlg->installEventFilter(this);
+    infoLabelInfoActual = imgLabel; // Para eventFilter si quieres usarlo para cerrar con clic
+
+    dlg->exec();
+    dlg->deleteLater();
+}
+
+
+
+bool Caminos::eventFilter(QObject* obj, QEvent* event) {
+    if (infoLabelInfoActual && obj == infoLabelInfoActual) {
+        if (event->type() == QEvent::MouseButtonPress) {
+            infoLabelInfoActual->close();
+            infoLabelInfoActual = nullptr;
+            return true;
+        }
+    }
+    return QWidget::eventFilter(obj, event);
 }
 
 void Caminos::posicionarJugadorEnCalleRuta1()
@@ -1048,7 +1110,6 @@ void Caminos::onMovimientoUpdate()
 
 void Caminos::keyPressEvent(QKeyEvent *event)
 {
-
     // Primero siempre llamar a la base
     AtributosPersonaje::keyPressEvent(event);
 
@@ -1083,108 +1144,84 @@ void Caminos::keyPressEvent(QKeyEvent *event)
         });
     }
 
-    //aqui accion con T para entrar a Ciudad (solo si estamos en ruta 2)
-    if (rutaActual == 2 && event->key() ==Qt::Key_A&&labelPresionarT->isVisible())
+    // Entrar a la Ciudad (Ruta 2)
+    if (rutaActual == 2 && event->key() == Qt::Key_A && labelPresionarT->isVisible())
     {
         qDebug() << "Entrando a la Ciudad...";
-
-        // Crear la ciudad y mostrarla
         Ciudad* ciudadWindow = new Ciudad(jugador);
         ResetearMovimiento();
         ciudadWindow->show();
-
-        // Cerrar esta ventana
         this->close();
-
-        return; // salir
+        return;
     }
 
-    //aqui accion con T para entrar a la Gasolinera (solo si estamos en ruta 3)
-    if (rutaActual == 3 && event->key() ==Qt::Key_A&&labelPresionarT->isVisible())
+    // Entrar a la Gasolinera (Ruta 3)
+    if (rutaActual == 3 && event->key() == Qt::Key_A && labelPresionarT->isVisible())
     {
-        qDebug() << "Entrando a la Ciudad...";
-
-        // Crear la ciudad y mostrarla
+        qDebug() << "Entrando a la Gasolinera...";
         Gasolinera* w = new Gasolinera(jugador);
         ResetearMovimiento();
         w->show();
-
-        // Cerrar esta ventana
         this->close();
-
-        return; // salir
+        return;
     }
 
-    //aqui accion con T para entrar a la Gasolinera (solo si estamos en ruta 3)
-    if (rutaActual == 5 && event->key() ==Qt::Key_A&&labelPresionarT->isVisible())
+    // Entrar al Gimnasio (Ruta 5)
+    if (rutaActual == 5 && event->key() == Qt::Key_A && labelPresionarT->isVisible())
     {
         qDebug() << "Entrando al gimnasio...";
-
-        // Crear la ciudad y mostrarla
         Gimnasio* w = new Gimnasio(jugador);
         ResetearMovimiento();
         w->show();
-
-        // Cerrar esta ventana
         this->close();
-
-        return; // salir
+        return;
     }
 
-    //aqui accion con T para entrar al Mall (solo si estamos en ruta 6)
-    if (rutaActual == 6 && event->key() ==Qt::Key_A&&labelPresionarT->isVisible())
+    // Entrar al Mall (Ruta 6)
+    if (rutaActual == 6 && event->key() == Qt::Key_A && labelPresionarT->isVisible())
     {
-        qDebug() << "Entrando a la Ciudad...";
-
-        // Crear la ciudad y mostrarla
+        qDebug() << "Entrando al Mall...";
         Mall* mallWindow = new Mall(jugador);
         ResetearMovimiento();
         mallWindow->show();
-
-        // Cerrar esta ventana
         this->close();
-
-        return; // salir
+        return;
     }
 
-    //aqui accion con T para entrar al Super (solo si estamos en ruta 9)
-    if (rutaActual == 9 && event->key() ==Qt::Key_A&&labelPresionarT->isVisible())
+    // Entrar al Supermercado (Ruta 9)
+    if (rutaActual == 9 && event->key() == Qt::Key_A && labelPresionarT->isVisible())
     {
-        qDebug() << "Entrando a la Ciudad...";
-
-        // Crear la ciudad y mostrarla
+        qDebug() << "Entrando al Supermercado...";
         supermercado* mallWindow = new supermercado(jugador);
         ResetearMovimiento();
         mallWindow->show();
-
-        // Cerrar esta ventana
         this->close();
-
-        return; // salir
+        return;
     }
 
-    //aqui accion con T para entrar al lab (solo si estamos en ruta 10)
-    if (rutaActual == 10 && event->key() ==Qt::Key_A&&labelPresionarT->isVisible())
+    // Entrar al Laboratorio (Ruta 10)
+    if (rutaActual == 10 && event->key() == Qt::Key_A && labelPresionarT->isVisible())
     {
-        qDebug() << "Entrando a la Ciudad...";
-
-        // Crear la ciudad y mostrarla
+        qDebug() << "Entrando al Laboratorio...";
         laboratorio* mallWindow = new laboratorio(jugador);
         mallWindow->show();
-
-        // Cerrar esta ventana
         this->close();
-
-        return; // salir
+        return;
     }
+
+    // ----------- AGREGADO: Mostrar Info del Nivel con la tecla B -----------
+    if (labelPresionarT->isVisible() && event->key() == Qt::Key_B)
+    {
+        mostrarInfoDelNivel(rutaActual);
+        return;
+    }
+    // -----------------------------------------------------------------------
 
     if(!jugador)
     {
-
         jugador->DetenerAnimacion();
         auto anim=jugador->obtenerAnimacion("idle",jugador->personajeActual);
         jugador->SetAnimacion(anim.ruta,anim.frames);
-
     }
-
 }
+

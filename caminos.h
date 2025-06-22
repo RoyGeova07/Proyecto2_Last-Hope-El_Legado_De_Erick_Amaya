@@ -24,7 +24,10 @@ private:
     QMap<int, QList<NPC*>> npcsPorRuta;
     NPC* npcCercano;
 
+    void mostrarInfoDelNivel(int nivel);
+    QLabel* infoLabelInfoActual = nullptr;
 
+    bool eventFilter(QObject* obj, QEvent* event) override;
 
     void configurarEscena() override;
     void configurarObstaculos() override;
