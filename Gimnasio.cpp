@@ -240,11 +240,12 @@ bool Gimnasio::eventFilter(QObject* obj, QEvent* event) {
                     cofreLabel->setPixmap(cofreAbierto.scaled(104, 104));
                     mensajeCofre->setText("🎁 Cofre abierto");
                     mensajeCofre->show();
-                    if (TablaHash::getInstance().estaDescubierto("Nivel6")){
+                    if (TablaHash::getInstance().estaDescubierto("Nivel3")){
                         Inventario::getInstance()->insertarObjeto("municiones",20,"arma","disparar");
                         mostrarNotificacion("Recibiste municiones!");
                     }else {
                         Inventario::getInstance()->insertarObjeto("casco",1,"armadura","protege");
+                        TablaHash::getInstance().descubrir("Nivel3");
                         mostrarNotificacion("¡Recuperaste el casco!");
                     }
                     QTimer::singleShot(3000, this, [=]() {
@@ -315,6 +316,5 @@ void Gimnasio::verificarZombiesYMostrarMensaje() {
     if (!zombiesVivos) {
         mensajeMostrado = true;
         mostrarNotificacion("🏆 ¡Has limpiado el Gimnasio!\nPodés abrir el cofre.");
-        TablaHash::getInstance().descubrir("Nivel3");
     }
 }

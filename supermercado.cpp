@@ -257,9 +257,9 @@ bool supermercado::eventFilter(QObject* obj, QEvent* event) {
                         mostrarNotificacion("Recibiste municiones!");
                     } else {
                         Inventario::getInstance()->insertarObjeto("chaleco",2,"armadura","protege");
+                        TablaHash::getInstance().descubrir("Nivel6");
                         mostrarNotificacion("¡Recibiste dos chalecos!");
                     }
-                    TablaHash::getInstance().descubrir("Nivel6");
 
                     QTimer::singleShot(3000, this, [=]() {
                         mostrarNotificacion("🛒 Nivel completado...");

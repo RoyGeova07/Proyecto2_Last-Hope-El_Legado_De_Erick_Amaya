@@ -290,6 +290,7 @@ bool Gasolinera::eventFilter(QObject* obj, QEvent* event) {
                         mostrarNotificacion("Recibiste municiones!");
                     } else {
                         Inventario::getInstance()->desbloquearPersonajeP2();
+                        TablaHash::getInstance().descubrir("Nivel4");
                         mostrarNotificacion("🎯 Felicidades, has conseguido la Famas\n🧍 Personaje P2 desbloqueado");
                     }
                     QTimer::singleShot(3000, this, [=]() {
@@ -360,6 +361,5 @@ void Gasolinera::verificarZombiesYMostrarMensaje() {
     if (!zombiesVivos) {
         mensajeMostrado = true;
         mostrarNotificacion("🏆 ¡Has limpiado la Gasolinera!\nPodés abrir el cofre.");
-        TablaHash::getInstance().descubrir("Nivel4");
     }
 }

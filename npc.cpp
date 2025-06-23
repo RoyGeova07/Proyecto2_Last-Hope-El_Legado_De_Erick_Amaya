@@ -281,7 +281,7 @@ void NPC::construirArbolDecisiones()
                 "¿Seguro que no quieres los botiquines? Te serán útiles.",
                 {"Vale, los acepto", "No, gracias"}
                 );
-            auto n2_si = new NodoDialogo("Aquí tienes. ¡Úsalos bien!", {"Gracias"}, "DAR_CURAR1x2;MARCAR_ACEPTO_NPC2");
+            auto n2_si = new NodoDialogo("Aquí tienes. ¡Úsalos bien!", {"Gracias"}, "MARCAR_ACEPTO_NPC2");
             auto n2_no = new NodoDialogo("Como quieras...", {"Adiós"});
             arbolDialogos->hijos << n2_si << n2_no;
         }
@@ -291,7 +291,7 @@ void NPC::construirArbolDecisiones()
                 "¿Quieres 2 botiquines para tu batalla?",
                 {"Sí", "No"}
                 );
-            auto n2_si = new NodoDialogo("Aquí tienes. ¡Úsalos bien!", {"Gracias"}, "DAR_CURAR1x2;MARCAR_ACEPTO_NPC2");
+            auto n2_si = new NodoDialogo("Aquí tienes. ¡Úsalos bien!", {"Gracias"}, "MARCAR_ACEPTO_NPC2");
             auto n2_no = new NodoDialogo("Como quieras...", {"Adiós"}, "MARCAR_RECHAZO_NPC2");
             arbolDialogos->hijos << n2_si << n2_no;
         }
@@ -542,6 +542,8 @@ void NPC::ejecutarConsecuencia(NodoDialogo *hoja)
     }
     else if (c=="MARCAR_ACEPTO_NPC2"){
         TablaHash::getInstance().setEstadoNPC("NPC2", TablaHash::EstadoNPC::AceptoAyuda);
+        mostrarNotificacion("✔️ Ganaste un botiquin pequeño");
+        inventarioRef->insertarObjeto("curar1", 2, "Botiquín", "Cura vida");
     }
     else if (c=="MARCAR_RECHAZO_NPC2"){
         TablaHash::getInstance().setEstadoNPC("NPC2", TablaHash::EstadoNPC::RechazoAyuda);

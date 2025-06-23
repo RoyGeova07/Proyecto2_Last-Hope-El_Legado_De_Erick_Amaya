@@ -341,10 +341,10 @@ bool Ciudad::eventFilter(QObject* obj, QEvent* event) {
                         mostrarNotificacion("Recibiste municiones!");
                     } else {
                         Inventario::getInstance()->insertarObjeto("llave",1,"objeto","desconocido");
+                        TablaHash::getInstance().descubrir("Nivel2");
                         mostrarNotificacion("Recibiste la llave!");
                     }
 
-                    TablaHash::getInstance().descubrir("Nivel2");
 
                     QTimer::singleShot(3000, this, [=]() {
                         mostrarNotificacion("🏃 Volviendo al camino...");

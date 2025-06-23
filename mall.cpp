@@ -242,11 +242,12 @@ bool Mall::eventFilter(QObject* obj, QEvent* event) {
                     cofreLabel->setPixmap(cofreAbierto.scaled(104, 104));
                     mensajeCofre->setText("🎁 Cofre abierto");
                     mensajeCofre->show();
-                    if (TablaHash::getInstance().estaDescubierto("Nivel6")){
+                    if (TablaHash::getInstance().estaDescubierto("Nivel5")){
                         Inventario::getInstance()->insertarObjeto("curar1",1,"botiquin","curar");
                         mostrarNotificacion("Recibiste un botiquin!");
                     }else {
                     Inventario::getInstance()->desbloquearPersonajeP3();
+                    TablaHash::getInstance().descubrir("Nivel5");
                     mostrarNotificacion("🎯 Felicidades, has conseguido el Francotirador\n🧍 Personaje P3 desbloqueado");
                     }
                     QTimer::singleShot(3000, this, [=]() {
@@ -316,7 +317,6 @@ void Mall::verificarZombiesYMostrarMensaje() {
     if (!zombiesVivos) {
         mensajeMostrado = true;
         mostrarNotificacion("🏆 ¡Has limpiado el Mall!\nPodés abrir el cofre.");
-        TablaHash::getInstance().descubrir("Nivel5");
     }
 }
 
