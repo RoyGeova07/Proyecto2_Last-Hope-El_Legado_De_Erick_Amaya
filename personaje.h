@@ -74,6 +74,8 @@ public:
         escudo = std::clamp(escudo + cantidad, 0, 20);
     }
 
+    void setAnimacionGranada(int msCallback = 0, std::function<void()> cb = {});
+
 private:
 
     QVector<QPixmap> frames;

@@ -19,6 +19,7 @@ Caminos::Caminos(personaje*jugadorExistente, QWidget* parent) : AtributosPersona
     this->setWindowTitle("Caminos - Last hope");
 
     configurarEscena();
+    setPermitirLanzarGranada(false);
     configurarObstaculos();
 
     jugador->setParent(this);

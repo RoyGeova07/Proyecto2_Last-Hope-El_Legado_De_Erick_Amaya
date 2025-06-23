@@ -73,19 +73,29 @@ laboratorio::laboratorio(personaje* jugadorExistente, QWidget* parent) : Atribut
     labelMuniciones->show();
     ActualizarMuniciones();
 
-    // SOLO ZOMBIE BOSS
+    // --- AGREGA BOSS ---
     Zombie* boss = new Zombie(Zombie::Tipo::BOSS, this);
-    boss->move(800, 300); // Ponlo donde quieras en el laboratorio
+    boss->move(950, 540); // Abajo derecha
     boss->setVelocidad(2); // Opcional, más lento por ser jefe
     boss->show();
     zombies.append(boss);
 
-    // Conectar colisiones con jugador
+    // Los Z1 adelante y con espacio entre ellos
+    int xBase = 840; // Más a la izquierda del boss
+    int yBase = 540;  // Nivel inferior
+    int yStep = 60;   // Espaciado vertical
+    for (int i = 0; i < 3; ++i) {
+        Zombie* z = new Zombie(Zombie::Tipo::Z1, this);
+        z->move(xBase, yBase + i * yStep);
+        z->show();
+        zombies.append(z);
+    }
+
+    // Conectar colisiones con jugador (BOSS y todos los Z1)
     for (Zombie* z : zombies) {
         z->perseguirJugador(jugador);
 
         connect(z, &Zombie::ColisionConJugador, this, [=]() {
-
             if (jugador->getVidas() <= 0) return;
 
             jugador->setVidas(jugador->getVidas() - 1);
@@ -143,8 +153,6 @@ void laboratorio::keyPressEvent(QKeyEvent* event) {
 }
 
 void laboratorio::onMovimientoUpdate() {
-
-    ActualizarBarraEscudo();
     if (jugador)
     {
         int distancia = std::abs(jugador->x() - 1142);
@@ -272,6 +280,5 @@ void laboratorio::verificarZombiesYMostrarMensaje()
     {
         mensajeMostrado = true;
         mostrarNotificacion("🏆 ¡Has derrotado al jefe! Ahora puedes abrir el cofre.");
-        TablaHash::getInstance().descubrir("Nivel7");
     }
 }

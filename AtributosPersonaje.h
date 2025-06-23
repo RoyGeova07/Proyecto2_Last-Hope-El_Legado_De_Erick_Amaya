@@ -14,6 +14,7 @@
 #include"bala.h"
 #include "mapa.h"
 #include <QTabWidget>
+#include"granada.h"
 
 class AtributosPersonaje : public QWidget {
     Q_OBJECT
@@ -83,7 +84,6 @@ private:
     void mostrarSeleccionBotiquin();
     personaje::TipoPersonaje personajeActual=personaje::P1;
     QLabel*labelNotificacion=nullptr;
-    void mostrarNotificacion(const QString& texto);
     void intentarMelee();
     QTimer* meleeTimer = nullptr;
     bool puedeMelee = true;
@@ -92,6 +92,7 @@ private:
 
     QString habilidad1 = "";
     QString habilidad2 = "";
+    QList<Zombie*> zombiesEnEscena;
 
 public:
     explicit AtributosPersonaje(QWidget* parent = nullptr);
@@ -105,6 +106,15 @@ public:
     void ActualizarMuniciones();
     void intentarDisparar();
     void CancelarCuracion();
+    void mostrarNotificacion(const QString& texto);
+
+    void setZombiesEnEscena(const QList<Zombie*>& lista);
+
+    bool lanzarGranadaHabilitado = true;
+    void setPermitirLanzarGranada(bool permitido) { lanzarGranadaHabilitado = permitido; }
+
+    QList<Granada*> granadasActivas;
+    void intentarLanzarGranada();
 
 
 };

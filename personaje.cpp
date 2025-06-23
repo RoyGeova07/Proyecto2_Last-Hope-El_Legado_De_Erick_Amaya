@@ -217,11 +217,9 @@ void personaje::Morir()
 
     estaMuerto = true;
 
-    // Bloquear futuras animaciones
     timer->stop();
-    animacionActual.clear();  // limpiar animación actual
+    animacionActual.clear();
 
-    // Forzar la animación de muerte
     auto anim = obtenerAnimacion("dead", personajeActual);
     frames.clear();
     QPixmap spriteSheet(anim.ruta);
@@ -264,6 +262,7 @@ personaje::DatosAnimacion personaje::obtenerAnimacion(const QString &tipo, TipoP
         else if(tipo=="curar")datos={base+"curandose.png",   7};
         else if(tipo=="dead") datos={base+"Dead.png",        4};
         else if(tipo=="melee") datos={base+"Attack_P1.png", 3};
+        else if(tipo=="granada")datos={base+"Grenade_P1.png",9};
 
 
     }else if(personaje==P2){
@@ -309,4 +308,28 @@ void personaje::SetAnimacionMovimiento(int velocidad)
     }
 
 
+}
+
+void personaje::setAnimacionGranada(int msCallback, std::function<void()> cb)
+{
+    if (estaMuerto) return;
+
+    auto datos = obtenerAnimacion("granada", personajeActual);
+    SetAnimacion(datos.ruta, datos.frames);
+
+    /* --- la animacion NO debe hacer loop --- */
+    int duracionTotal = datos.frames * 100;          // 100 ms por frame
+    if (msCallback == 0) msCallback = duracionTotal; // defecto: al terminar
+
+    if (cb) {
+        QTimer::singleShot(msCallback, this, cb);
+    }
+
+    /* Restaurar a idle cuando termine */
+    QTimer::singleShot(duracionTotal, this, [this]{
+        if (!estaMuerto) {
+            auto idle = obtenerAnimacion("idle", personajeActual);
+            SetAnimacion(idle.ruta, idle.frames);
+        }
+    });
 }

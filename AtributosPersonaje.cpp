@@ -261,6 +261,10 @@ void AtributosPersonaje::keyPressEvent(QKeyEvent* event)
         }
         break;
 
+    case Qt::Key_G:
+        intentarLanzarGranada();
+        break;
+
     }
 }
 
@@ -1085,4 +1089,42 @@ void AtributosPersonaje::ActualizarBarraEscudo()
     barraEscudoTexto->setText(texto);
 
     barraEscudoLabel->raise();
+}
+
+void AtributosPersonaje::intentarLanzarGranada()
+{
+
+    if (!lanzarGranadaHabilitado) {
+        mostrarNotificacion("🚫 No puedes lanzar granadas en esta zona.");
+        return;
+    }
+
+    NodoInventario* granadaNodo = Inventario::getInstance()->buscar(
+        Inventario::getInstance()->obtenerRaiz(), "granada");
+
+    if (!granadaNodo || granadaNodo->cantidad <= 0)
+    {
+        mostrarNotificacion("❌ No tienes granadas.");
+        return;
+    }
+
+    jugador->setAnimacionGranada(0, [=]()
+    {
+        Granada*g=new Granada(this);
+        g->move(jugador->x() + (jugador->miradoDerecha ? 64 : -32), jugador->y() + 32);
+        g->lanzar(jugador->miradoDerecha);
+        g->show();
+        g->raise();
+        granadasActivas.append(g);
+
+    });
+
+    granadaNodo->cantidad -= 1;
+    inventarioWidget->actualizarVista();
+    mostrarNotificacion("💣 Granada lanzada.");
+}
+
+void AtributosPersonaje::setZombiesEnEscena(const QList<Zombie*>& lista)
+{
+    zombiesEnEscena = lista;
 }

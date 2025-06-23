@@ -25,7 +25,7 @@ class Inventario
 
 private:
 
-    int balas = 110;
+    int balas = 180;
     NodoInventario* raiz;
 
     //aqui funciones auxiliares recursivos
