@@ -254,8 +254,13 @@ bool Gasolinera::eventFilter(QObject* obj, QEvent* event) {
                     cofreLabel->setPixmap(cofreAbierto.scaled(104, 104));
                     mensajeCofre->setText("🎁 Cofre abierto");
                     mensajeCofre->show();
-                    Inventario::getInstance()->desbloquearPersonajeP2();
-                    mostrarNotificacion("🎯 Felicidades, has conseguido la Famas\n🧍 Personaje P2 desbloqueado");
+                    if (TablaHash::getInstance().estaDescubierto("Nivel4")){
+                        Inventario::getInstance()->insertarObjeto("curar1",1,"botiquin","curar");
+                        mostrarNotificacion("Recibiste municiones!");
+                    } else {
+                        Inventario::getInstance()->desbloquearPersonajeP2();
+                        mostrarNotificacion("🎯 Felicidades, has conseguido la Famas\n🧍 Personaje P2 desbloqueado");
+                    }
                     QTimer::singleShot(3000, this, [=]() {
                         mostrarNotificacion("⛽ Nivel completado...");
                         Caminos* c = new Caminos(jugador);

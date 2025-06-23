@@ -210,8 +210,13 @@ bool Mall::eventFilter(QObject* obj, QEvent* event) {
                     cofreLabel->setPixmap(cofreAbierto.scaled(104, 104));
                     mensajeCofre->setText("🎁 Cofre abierto");
                     mensajeCofre->show();
+                    if (TablaHash::getInstance().estaDescubierto("Nivel6")){
+                        Inventario::getInstance()->insertarObjeto("curar1",1,"botiquin","curar");
+                        mostrarNotificacion("Recibiste un botiquin!");
+                    }else {
                     Inventario::getInstance()->desbloquearPersonajeP3();
                     mostrarNotificacion("🎯 Felicidades, has conseguido el Francotirador\n🧍 Personaje P3 desbloqueado");
+                    }
                     QTimer::singleShot(3000, this, [=]() {
                         mostrarNotificacion("🏬 Nivel completado...");
                         Caminos* c = new Caminos(jugador);

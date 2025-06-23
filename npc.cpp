@@ -313,7 +313,7 @@ void NPC::construirArbolDecisiones()
     /* ───────── NPC 5 ───────── */
     case Tipo::NPC5: {
         arbolDialogos=new NodoDialogo(
-            "Creo que deje unos chalecos en Mall, ¿Me ayudas a recuperarlos?",
+            "Creo que deje unos chalecos en el supermercado, ¿Me ayudas a recuperarlos?",
             {"Sí", "No"}
             );
         auto cSi=new NodoDialogo("¡Gracias! Necesitaras granadas para ir...",

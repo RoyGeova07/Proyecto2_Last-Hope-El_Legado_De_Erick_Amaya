@@ -206,8 +206,13 @@ bool Gimnasio::eventFilter(QObject* obj, QEvent* event) {
                     cofreLabel->setPixmap(cofreAbierto.scaled(104, 104));
                     mensajeCofre->setText("🎁 Cofre abierto");
                     mensajeCofre->show();
-                    Inventario::getInstance()->insertarObjeto("casco",1,"armadura","protege");
-                    mostrarNotificacion("¡Recuperaste el casco!");
+                    if (TablaHash::getInstance().estaDescubierto("Nivel6")){
+                        Inventario::getInstance()->insertarObjeto("municiones",20,"arma","disparar");
+                        mostrarNotificacion("Recibiste municiones!");
+                    }else {
+                        Inventario::getInstance()->insertarObjeto("casco",1,"armadura","protege");
+                        mostrarNotificacion("¡Recuperaste el casco!");
+                    }
                     QTimer::singleShot(3000, this, [=]() {
                         mostrarNotificacion("🏋️ Nivel completado...");
                         Caminos* c = new Caminos(jugador);

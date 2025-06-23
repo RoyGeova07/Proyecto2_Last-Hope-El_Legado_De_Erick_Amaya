@@ -70,6 +70,9 @@ public:
 
     void setEscudo(int valor){escudo=std::clamp(valor,0,20);}
     int getEscudo()const{return escudo;}
+    void aumentarEscudo(int cantidad) {
+        escudo = std::clamp(escudo + cantidad, 0, 20);
+    }
 
 private:
 

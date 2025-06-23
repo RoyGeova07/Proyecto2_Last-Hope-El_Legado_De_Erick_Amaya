@@ -609,6 +609,51 @@ for(int i=0;i<skins.size();++i)
     skinLayout->addWidget(habilidad1);
     skinLayout->addWidget(habilidad2);
 
+    if (skins[i].nombre == "P1") {
+        if (!jugador || !Inventario::getInstance()) {
+            qDebug() << "Error: Punteros no inicializados al verificar P1";
+            continue;
+        }
+
+        // Solo resetear escudo si es la primera vez o si cambiamos a P1
+        if (jugador->personajeActual != static_cast<personaje::TipoPersonaje>(i)) {
+            jugador->setEscudo(0);
+        }
+
+        // Verificar objetos del inventario
+        bool tieneCasco = false;
+        bool tieneChaleco = false;
+
+        try {
+            tieneCasco = Inventario::getInstance()->objetoExiste("casco");
+            tieneChaleco = Inventario::getInstance()->objetoExiste("chaleco");
+        } catch (...) {
+            qDebug() << "Excepción al verificar inventario";
+            continue;
+        }
+
+        // Actualizar UI de habilidades
+        if (tieneCasco) {
+            habilidad1->setText("Casco +10");
+            habilidad1->setStyleSheet("color: white; font-weight: bold;");
+            jugador->aumentarEscudo(10);
+        } else {
+            habilidad1->setText("Habilidad 1: Vacía");
+            habilidad1->setStyleSheet("color: lightgray; font-style: italic;");
+        }
+
+        if (tieneChaleco) {
+            habilidad2->setText("Chaleco +10");
+            habilidad2->setStyleSheet("color: white; font-weight: bold;");
+            jugador->aumentarEscudo(10);
+        } else {
+            habilidad2->setText("Habilidad 2: Vacía");
+            habilidad2->setStyleSheet("color: lightgray; font-style: italic;");
+        }
+
+        QMetaObject::invokeMethod(this, "ActualizarBarraEscudo", Qt::QueuedConnection);
+    }
+
     QFrame* skinFrame = new QFrame();
     skinFrame->setStyleSheet("background-color: #2d2d2d; border: 2px solid #555; border-radius: 12px;");
     skinFrame->setLayout(skinLayout);
@@ -616,22 +661,41 @@ for(int i=0;i<skins.size();++i)
     layoutPersonajes->addWidget(skinFrame);
 
     connect(usarBtn, &QPushButton::clicked, this, [=]() {
+        if (!skins[i].desbloqueado || !jugador) return;
 
-        if (!skins[i].desbloqueado)
+        if (jugador->personajeActual == static_cast<personaje::TipoPersonaje>(i))
             return;
 
-        //aqui verifica si el jugador ya esta usando este personaje
-        if (jugador->personajeActual==static_cast<personaje::TipoPersonaje>(i))
-            return;
+        // Guardar estado anterior del escudo
+        int escudoAnterior = jugador->getEscudo();
 
-        //aqui cambia el personaje actual del jugador
-        jugador->personajeActual=static_cast<personaje::TipoPersonaje>(i);
+        // Cambiar personaje
+        jugador->personajeActual = static_cast<personaje::TipoPersonaje>(i);
 
-        //aqui cambia animacion a idle con el nuevo personaje
+        // Resetear escudo si no es P1, o configurarlo si es P1
+        if (skins[i].nombre != "P1") {
+            jugador->setEscudo(0);
+        } else {
+            jugador->setEscudo(0); // Resetear primero
+
+            if (Inventario::getInstance()->objetoExiste("casco")) {
+                jugador->aumentarEscudo(10);
+            }
+            if (Inventario::getInstance()->objetoExiste("chaleco")) {
+                jugador->aumentarEscudo(10);
+            }
+        }
+
         auto anim = jugador->obtenerAnimacion("idle", jugador->personajeActual);
         jugador->SetAnimacion(anim.ruta, anim.frames);
 
-        //aqui muestra notificacion visual del cambio
+        // Actualizar UI
+        QTimer::singleShot(0, this, [this]() {
+                this->ActualizarBarraEscudo();
+                this->ActualizarBarraVida();
+
+        });
+
         mostrarNotificacion(QString("🧍 Atuendo cambiado a: %1").arg(skins[i].nombre));
     });
 }

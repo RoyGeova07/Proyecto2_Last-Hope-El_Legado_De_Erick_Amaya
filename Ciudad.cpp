@@ -322,9 +322,14 @@ bool Ciudad::eventFilter(QObject* obj, QEvent* event) {
                     mensajeCofre->setText("🎁 Cofre abierto");
                     mensajeCofre->show();
 
-                    //agregar llave al inventario
-                    Inventario::getInstance()->insertarObjeto("llave",1,"objeto","desconocido");
-                    mostrarNotificacion("Recibiste la llave!");
+                    //agregar llave al inventario si es primera vez
+                    if (TablaHash::getInstance().estaDescubierto("Nivel2")){
+                        Inventario::getInstance()->insertarObjeto("municiones",20,"arma","disparar");
+                        mostrarNotificacion("Recibiste municiones!");
+                    } else {
+                        Inventario::getInstance()->insertarObjeto("llave",1,"objeto","desconocido");
+                        mostrarNotificacion("Recibiste la llave!");
+                    }
 
                     QTimer::singleShot(3000, this, [=]() {
                         mostrarNotificacion("🏃 Volviendo al camino...");
