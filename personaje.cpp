@@ -217,11 +217,9 @@ void personaje::Morir()
 
     estaMuerto = true;
 
-    // Bloquear futuras animaciones
     timer->stop();
-    animacionActual.clear();  // limpiar animación actual
+    animacionActual.clear();
 
-    // Forzar la animación de muerte
     auto anim = obtenerAnimacion("dead", personajeActual);
     frames.clear();
     QPixmap spriteSheet(anim.ruta);
