@@ -640,7 +640,7 @@ for(int i=0;i<skins.size();++i)
         if (tieneCasco) {
             habilidad1->setText("Casco +10");
             habilidad1->setStyleSheet("color: white; font-weight: bold;");
-            jugador->aumentarEscudo(10);
+            jugador->aplicarCasco();
         } else {
             habilidad1->setText("Habilidad 1: Vacía");
             habilidad1->setStyleSheet("color: lightgray; font-style: italic;");
@@ -649,7 +649,7 @@ for(int i=0;i<skins.size();++i)
         if (tieneChaleco) {
             habilidad2->setText("Chaleco +10");
             habilidad2->setStyleSheet("color: white; font-weight: bold;");
-            jugador->aumentarEscudo(10);
+            jugador->aplicarChaleco();
         } else {
             habilidad2->setText("Habilidad 2: Vacía");
             habilidad2->setStyleSheet("color: lightgray; font-style: italic;");
@@ -677,8 +677,11 @@ for(int i=0;i<skins.size();++i)
         jugador->personajeActual = static_cast<personaje::TipoPersonaje>(i);
 
         // Resetear escudo si no es P1, o configurarlo si es P1
-        if (skins[i].nombre != "P1") {
+        if(skins[i].nombre!="P1")
+        {
             jugador->setEscudo(0);
+            jugador->cascoAplicado=false;
+            jugador->chalecoAplicado=false;
         } else {
             jugador->setEscudo(0); // Resetear primero
 

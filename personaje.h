@@ -67,6 +67,7 @@ public:
     int getMuniciones() { return municiones; }
     void guardarDatosJugador();
     QMap<QString, int> cargarDatosJugador();
+    void reiniciarEstadoDefensivo();
 
     void setEscudo(int valor){escudo=std::clamp(valor,0,20);}
     int getEscudo()const{return escudo;}
@@ -75,6 +76,30 @@ public:
     }
 
     void setAnimacionGranada(int msCallback = 0, std::function<void()> cb = {});
+
+    bool esCascoAplicado() const { return cascoAplicado; }
+    bool esChalecoAplicado() const { return chalecoAplicado; }
+
+    void aplicarCasco()
+    {
+        if(!cascoAplicado)
+        {
+            aumentarEscudo(10);
+            cascoAplicado=true;
+        }
+    }
+    \
+    void aplicarChaleco()
+    {
+        if(!chalecoAplicado)
+        {
+            aumentarEscudo(10);
+            chalecoAplicado=true;
+        }
+    }
+
+    bool cascoAplicado=false;
+    bool chalecoAplicado=false;
 
 private:
 

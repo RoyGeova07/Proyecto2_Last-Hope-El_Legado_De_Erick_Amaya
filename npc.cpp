@@ -74,15 +74,15 @@ void NPC::mostrarDialogo(DialogoNPC* dialogoUI)
     if(recompensaEntregada)
     {
 
-        dialogoUI->mostrarDialogo("SUERTE EN TU BATALLA, DE SALVAR AL MUNDO O CONQUISTARLO!!!",obtenerImagenNPC(),QStringList{});//qstringlist me devuelve una lista vacia
+        dialogoUI->mostrarDialogo(".......",obtenerImagenNPC(),QStringList{});//qstringlist me devuelve una lista vacia
 
         // Ocultar automaticamente luego de 3.5 segundos (3500 ms)
         QTimer::singleShot(3500,dialogoUI,[dialogoUI]()
-                           {
+        {
 
-                               dialogoUI->ocultarDialogo();
+            dialogoUI->ocultarDialogo();
 
-                           });
+        });
 
         return;
 

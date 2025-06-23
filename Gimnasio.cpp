@@ -123,24 +123,57 @@ Gimnasio::Gimnasio(personaje* jugadorExistente,QWidget* parent) : AtributosPerso
         z->perseguirJugador(jugador);
 
         connect(z, &Zombie::ColisionConJugador, this, [=]() {
-            if (jugador->getVidas() <= 0) return;
+            if(jugador->getVidas()<=0) return;
 
-            jugador->setVidas(jugador->getVidas() - 1);
-            CancelarCuracion();
-            ActualizarBarraVida();
-            ActualizarMuniciones();
+            if(jugador->getVidas()>0)
+            {
 
-            if (jugador->getVidas() <= 0) {
-                jugador->Morir();
-                movimientoTimer->stop();
+                if(jugador->getEscudo()>0)
+                {
+                    int escudoActual=jugador->getEscudo();
+                    jugador->setEscudo(escudoActual-1);//QUITA ESCUDO
+                    ActualizarBarraEscudo();
 
-                QTimer::singleShot(1000, this, [=]() {
-                    QMessageBox::information(this, "💀 GAME OVER", "Has muerto...");
-                    Inicio* i = new Inicio();
-                    i->show();
-                    this->close();
-                });
+                }else{
+
+                    jugador->setVidas(jugador->getVidas()-1);//QUITA VIDA
+                    ActualizarBarraVida();
+
+                }
+                CancelarCuracion();
+                ActualizarMuniciones();
+
+                if(jugador->getVidas()<=0)
+                {
+
+                    ResetearMovimiento();
+
+                    jugador->Morir();
+                    movimientoTimer->stop();
+
+                    QTimer::singleShot(1000, this, [=]() {
+                        QMessageBox::information(this, "💀 GAME OVER", "Has muerto...");
+
+                        jugador->reiniciarEstadoDefensivo();
+
+                        this->hide();
+                        QTimer::singleShot(300, this, [=]()
+                        {
+
+                            Inicio*i=new Inicio();
+                            i->show();
+                            deleteLater();  // destruye correctamente esta ventana actual
+
+                        });
+
+                        this->close();
+
+                    });
+
+                }
+
             }
+
         });
     }
 }
@@ -156,7 +189,8 @@ void Gimnasio::configurarEscena() {
     }
 }
 
-void Gimnasio::configurarObstaculos() {
+void Gimnasio::configurarObstaculos()
+{
     obstaculos.append(QRect(3, 2, 1334, 470));     // Muro superior
     obstaculos.append(QRect(5, 669, 1273, 47));    // Piso inferior
     obstaculos.append(QRect(3, 278, 5, 388));      // Pared izquierda
@@ -215,7 +249,7 @@ bool Gimnasio::eventFilter(QObject* obj, QEvent* event) {
                     }
                     QTimer::singleShot(3000, this, [=]() {
                         mostrarNotificacion("🏋️ Nivel completado...");
-                        Caminos* c = new Caminos(jugador);
+                        Caminos* c=new Caminos(jugador);
                         Inventario::getInstance()->setBalas(jugador->getMuniciones());
                         c->cambiarRuta(5); // <---- Manda a Ruta 5
                         c->posicionarJugadorEnCalleRuta5();

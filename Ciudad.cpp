@@ -129,15 +129,25 @@ Ciudad::Ciudad(personaje* jugadorExistente,QWidget* parent) : AtributosPersonaje
         z->perseguirJugador(jugador);
 
         connect(z,&Zombie::ColisionConJugador,this,[=]()
-                {
+        {
 
-                    if (jugador->getVidas() <= 0) return;
+                    if(jugador->getVidas()<=0) return;
 
                     if(jugador->getVidas()>0)
                     {
 
-                        jugador->setVidas(jugador->getVidas()-1);//por ahora el zombie solo baja 1 de vida
-                        ActualizarBarraVida();
+                        if(jugador->getEscudo()>0)
+                        {
+                            int escudoActual=jugador->getEscudo();
+                            jugador->setEscudo(escudoActual-1);
+                            ActualizarBarraEscudo();
+
+                        }else{
+
+                            jugador->setVidas(jugador->getVidas()-1);
+                            ActualizarBarraVida();
+
+                        }
                         CancelarCuracion();
                         ActualizarMuniciones();
 
@@ -151,11 +161,14 @@ Ciudad::Ciudad(personaje* jugadorExistente,QWidget* parent) : AtributosPersonaje
 
                             QTimer::singleShot(1000, this, [=]() {
                                 QMessageBox::information(this, "💀 GAME OVER", "Has muerto...");
+
+                                jugador->reiniciarEstadoDefensivo();
+
                                 this->hide();
+                                QTimer::singleShot(300, this, [=]()
+                                {
 
-
-                                QTimer::singleShot(300, this, [=]() {
-                                    Inicio* i = new Inicio();
+                                    Inicio*i=new Inicio();
                                     i->show();
                                     deleteLater();  // destruye correctamente esta ventana actual
                                 });

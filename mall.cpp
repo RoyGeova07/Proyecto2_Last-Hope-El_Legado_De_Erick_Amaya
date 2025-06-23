@@ -127,24 +127,56 @@ Mall::Mall(personaje* jugadorExistente,QWidget* parent) : AtributosPersonaje(jug
         z->perseguirJugador(jugador);
 
         connect(z, &Zombie::ColisionConJugador, this, [=]() {
-            if (jugador->getVidas() <= 0) return;
+            if(jugador->getVidas()<=0) return;
 
-            jugador->setVidas(jugador->getVidas() - 1);
-            CancelarCuracion();
-            ActualizarBarraVida();
-            ActualizarMuniciones();
+            if(jugador->getVidas()>0)
+            {
 
-            if (jugador->getVidas() <= 0) {
-                jugador->Morir();
-                movimientoTimer->stop();
+                if(jugador->getEscudo()>0)
+                {
+                    int escudoActual=jugador->getEscudo();
+                    jugador->setEscudo(escudoActual-1);
+                    ActualizarBarraEscudo();
 
-                QTimer::singleShot(1000, this, [=]() {
-                    QMessageBox::information(this, "💀 GAME OVER", "Has muerto...");
-                    Inicio* i = new Inicio();
-                    i->show();
-                    this->close();
-                });
+                }else{
+
+                    jugador->setVidas(jugador->getVidas()-1);
+                    ActualizarBarraVida();
+
+                }
+                CancelarCuracion();
+                ActualizarMuniciones();
+
+                if(jugador->getVidas()<=0)
+                {
+
+                    ResetearMovimiento();
+
+                    jugador->Morir();
+                    movimientoTimer->stop();
+
+                    QTimer::singleShot(1000, this, [=]() {
+                        QMessageBox::information(this, "💀 GAME OVER", "Has muerto...");
+
+                        jugador->reiniciarEstadoDefensivo();
+
+                        this->hide();
+                        QTimer::singleShot(300, this, [=]()
+                        {
+
+                            Inicio*i=new Inicio();
+                            i->show();
+                            deleteLater();  // destruye correctamente esta ventana actual
+
+                        });
+
+                        this->close();
+                    });
+
+                }
+
             }
+
         });
     }
 }

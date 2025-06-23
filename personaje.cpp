@@ -333,3 +333,12 @@ void personaje::setAnimacionGranada(int msCallback, std::function<void()> cb)
         }
     });
 }
+
+void personaje::reiniciarEstadoDefensivo()
+{
+
+    escudo=0;
+    cascoAplicado=false;
+    chalecoAplicado=false;
+
+}
