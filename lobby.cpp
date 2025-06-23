@@ -19,6 +19,7 @@ lobby::lobby(personaje* jugadorExistente, QWidget* parent)
     this->setWindowTitle("Lobby - Last hope");
 
     configurarEscena();
+    setPermitirLanzarGranada(false);
     configurarObstaculos();
 
     jugador = jugadorExistente;

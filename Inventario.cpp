@@ -3,7 +3,8 @@
 Inventario::Inventario():raiz(nullptr)
 {
 
-    setBalas(110);// Asegura que el nodo "municiones" se agregue con cantidad inicial
+    setBalas(180);// Asegura que el nodo "municiones" se agregue con cantidad inicial
+    //insertarObjeto("granada",20,"Explosivo","Granada de mano");
 
 }
 

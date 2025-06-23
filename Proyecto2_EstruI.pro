@@ -19,6 +19,7 @@ SOURCES += \
     dialogonpc.cpp \
     gasolinera.cpp \
     grafo.cpp \
+    granada.cpp \
     inicio.cpp \
     inventariowidget.cpp \
     laboratorio.cpp \
@@ -47,6 +48,7 @@ HEADERS += \
     dialogonpc.h \
     gasolinera.h \
     grafo.h \
+    granada.h \
     inicio.h \
     inventariowidget.h \
     laboratorio.h \
