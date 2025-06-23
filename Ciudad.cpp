@@ -331,6 +331,8 @@ bool Ciudad::eventFilter(QObject* obj, QEvent* event) {
                         mostrarNotificacion("Recibiste la llave!");
                     }
 
+                    TablaHash::getInstance().descubrir("Nivel2");
+
                     QTimer::singleShot(3000, this, [=]() {
                         mostrarNotificacion("🏃 Volviendo al camino...");
 
@@ -378,6 +380,5 @@ void Ciudad::verificarZombiesYMostrarMensaje()
     {
         mensajeMostrado = true;
         mostrarNotificacion("🏆 ¡Felicidades! Has pasado el Nivel 1.\nPuedes reclamar el cofre.");
-        TablaHash::getInstance().descubrir("Nivel2");
     }
 }

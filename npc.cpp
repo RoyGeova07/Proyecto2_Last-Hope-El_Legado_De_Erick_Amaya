@@ -226,134 +226,253 @@ void NPC::construirArbolDecisiones()
     {
     /* ───────── NPC 1 ───────── */
     case Tipo::NPC1: {
-        //raizzzz
+        TablaHash::EstadoNPC estado = TablaHash::getInstance().getEstadoNPC("NPC1");
 
-        //Marcar como npc descubierto
-        qDebug() << "Estado NPC1:" << TablaHash::getInstance().estaDescubierto("NPC1");
-
-        arbolDialogos=new NodoDialogo(
-            "Perdí mis llaves en la Ciudad en Ruinas. ¿Me ayudas a buscarlas?",
-            {"Sí, te ayudaré", "No puedo"}
-            );
-
-        auto n1_si=new NodoDialogo("¡Gracias! Ten cuidado, está llena de zombies…",
-                                     {"Entendido"});
-        auto n1_no=new NodoDialogo("Oh… Entiendo. Si cambias de opinión, estaré aquí.",
-                                     {"Adiós"});
-
-        auto n1_llave=new NodoDialogo("¡Encontraste mi llave! ¿Quieres intercambiarla por municiones?",
-                                        {"Sí", "No"});
-
-        auto n2_si=new NodoDialogo("¡Aqui tienes!",
-                                     {"Gracias"}, "DAR_MUNICIONES");
-        auto n2_no=new NodoDialogo("Oh… Entiendo. Si cambias de opinión, estaré aquí.",
-                                     {"Adiós"});
-
-        arbolDialogos->hijos<<n1_si<<n1_no;
-        n1_llave->hijos<<n2_si<<n2_no;
-
-        if (Inventario::getInstance()->objetoExiste("llave")) {
-            n1_si->hijos << n1_llave; // ruta cuando regreses con la llave
+        if (estado == TablaHash::EstadoNPC::AceptoAyuda) {
+            // Si YA ACEPTÓ ayudar antes
+            if (Inventario::getInstance()->objetoExiste("llave")) {
+                // Si tiene la llave: intercambio
+                arbolDialogos = new NodoDialogo(
+                    "¡Encontraste mi llave! ¿Quieres intercambiarla por municiones?",
+                    {"Sí", "No"}
+                    );
+                auto n1_si = new NodoDialogo("¡Aquí tienes!", {"Gracias"}, "DAR_MUNICIONES");
+                auto n1_no = new NodoDialogo("Bueno...", {"Adiós"});
+                arbolDialogos->hijos << n1_si << n1_no;
+            }
+        }
+        else if (estado == TablaHash::EstadoNPC::RechazoAyuda) {
+            // Si RECHAZÓ antes: le vuelve a preguntar
+            arbolDialogos = new NodoDialogo(
+                "¿Seguro que no me ayudas a buscar mis llaves?",
+                {"Sí, ahora sí", "No puedo"}
+                );
+            auto n1_si = new NodoDialogo("¡Gracias! Ten cuidado con los zombies...", {"Entendido"}, "MARCAR_ACEPTO_NPC1");
+            auto n1_no = new NodoDialogo("Oh...", {"Adiós"});
+            arbolDialogos->hijos << n1_si << n1_no;
+        }
+        else {
+            // Primera interacción
+            arbolDialogos = new NodoDialogo(
+                "Perdí mis llaves en la Ciudad en Ruinas. ¿Me ayudas a buscarlas?",
+                {"Sí, te ayudaré", "No puedo"}
+                );
+            auto n1_si = new NodoDialogo("¡Gracias! Ten cuidado...", {"Entendido"}, "MARCAR_ACEPTO_NPC1");
+            auto n1_no = new NodoDialogo("Oh...", {"Adiós"}, "MARCAR_RECHAZO_NPC1");
+            arbolDialogos->hijos << n1_si << n1_no;
         }
         break;
     }
 
     /* ───────── NPC 2 ───────── */
     case Tipo::NPC2: {
-        arbolDialogos=new NodoDialogo(
-            "Te habías perdido… Fue duro perder a tus amigos, pero no es hora de lamentarse.\n"
-            "¿Quieres 2 botiquines para tu batalla?",
-            {"Sí", "No"}
-            );
+        TablaHash::EstadoNPC estado = TablaHash::getInstance().getEstadoNPC("NPC2");
 
-        auto n2_si=new NodoDialogo("Aquí tienes 2 botiquines. ¡Úsalos bien!",
-                                     {"Gracias"},
-                                     "DAR_CURAR1x2");
-        auto n2_no=new NodoDialogo("Como quieras… ¡Suerte!",
-                                     {"Adiós"});
-
-        arbolDialogos->hijos<<n2_si<<n2_no;
+        if (estado == TablaHash::EstadoNPC::AceptoAyuda) {
+            // Si YA ACEPTÓ antes: mensaje de agradecimiento
+            arbolDialogos = new NodoDialogo(
+                "¡Usa bien esos botiquines! Cuídate ahí fuera.",
+                {"Gracias"}
+                );
+        }
+        else if (estado == TablaHash::EstadoNPC::RechazoAyuda) {
+            // Si RECHAZÓ antes: le ofrece de nuevo
+            arbolDialogos = new NodoDialogo(
+                "¿Seguro que no quieres los botiquines? Te serán útiles.",
+                {"Vale, los acepto", "No, gracias"}
+                );
+            auto n2_si = new NodoDialogo("Aquí tienes. ¡Úsalos bien!", {"Gracias"}, "DAR_CURAR1x2;MARCAR_ACEPTO_NPC2");
+            auto n2_no = new NodoDialogo("Como quieras...", {"Adiós"});
+            arbolDialogos->hijos << n2_si << n2_no;
+        }
+        else {
+            // Primera interacción
+            arbolDialogos = new NodoDialogo(
+                "¿Quieres 2 botiquines para tu batalla?",
+                {"Sí", "No"}
+                );
+            auto n2_si = new NodoDialogo("Aquí tienes. ¡Úsalos bien!", {"Gracias"}, "DAR_CURAR1x2;MARCAR_ACEPTO_NPC2");
+            auto n2_no = new NodoDialogo("Como quieras...", {"Adiós"}, "MARCAR_RECHAZO_NPC2");
+            arbolDialogos->hijos << n2_si << n2_no;
+        }
         break;
     }
 
     /* ───────── NPC 3 ───────── */
     case Tipo::NPC3: {
-        arbolDialogos=new NodoDialogo(
-            "Ten cuidado con los zombies ya por estos caminos, hay mas zombies. El gimnasio tiene municiones.\n"
-            "¿Quieres botiquines más potentes (x2)?",
-            {"Sí", "No"}
-            );
+        TablaHash::EstadoNPC estado = TablaHash::getInstance().getEstadoNPC("NPC3");
 
-        auto g1 = new NodoDialogo("Toma, te servirán mucho.",
-                                  {"Gracias"},
-                                  "DAR_CURAR2x2");
-        auto g2 = new NodoDialogo("De acuerdo, ¡cuídate!",
-                                  {"Adiós"});
+        if (estado == TablaHash::EstadoNPC::AceptoAyuda) {
+            // Si YA ACEPTÓ antes: Diálogo cortés SIN ofrecer recompensa
+            arbolDialogos = new NodoDialogo(
+                "¡Gracias por tu ayuda antes! Ten cuidado con los zombies.",
+                {"Adiós"}
+                );
+        }
+        else if (estado == TablaHash::EstadoNPC::RechazoAyuda) {
+            // Si RECHAZÓ antes: Le vuelve a preguntar
+            arbolDialogos = new NodoDialogo(
+                "¿Seguro que no quieres esos botiquines potentes?",
+                {"Sí, ahora sí", "No, gracias"}
+                );
 
-        arbolDialogos->hijos<<g1<<g2;
+            auto g1 = new NodoDialogo("Toma, te servirán mucho.", {"Gracias"}, "MARCAR_ACEPTO_NPC3");
+            auto g2 = new NodoDialogo("Bueno...", {"Adiós"});
+            arbolDialogos->hijos << g1 << g2;
+        }
+        else {
+            // Primera vez que habla con él
+            arbolDialogos = new NodoDialogo(
+                "¿Quieres botiquines potentes (x2)?",
+                {"Sí", "No"}
+                );
+
+            auto g1 = new NodoDialogo("Toma, te servirán mucho.", {"Gracias"}, "MARCAR_ACEPTO_NPC3");
+            auto g2 = new NodoDialogo("De acuerdo, ¡cuídate!", {"Adiós"}, "MARCAR_RECHAZO_NPC3");
+            arbolDialogos->hijos << g1 << g2;
+        }
         break;
     }
 
     /* ───────── NPC 4 ───────── */
     case Tipo::NPC4: {
-        arbolDialogos = new NodoDialogo(
-            "¿Podrías darme una caja de municiones? Te compensaré.",
-            {"Sí","No"});
+        TablaHash::EstadoNPC estado = TablaHash::getInstance().getEstadoNPC("NPC4");
 
-        auto ok   = new NodoDialogo("¡Gracias! A cambio toma 2 curaciones pequeñas.",
-                                  {"Entendido"},
-                                  "QUITAR_MUNICIONES");
-        auto bye  = new NodoDialogo("Bueno… volveré a intentarlo luego.",
-                                   {"Adiós"});
+        if (estado == TablaHash::EstadoNPC::AceptoAyuda) {
+            // Si YA ACEPTÓ ayudar antes: Mensaje de agradecimiento
+            arbolDialogos = new NodoDialogo(
+                "¡Gracias de nuevo por las municiones! ¿Necesitas algo más?",
+                {"No, gracias", "Adiós"}
+                );
+        }
+        else if (estado == TablaHash::EstadoNPC::RechazoAyuda) {
+            // Si RECHAZÓ antes: Le vuelve a ofrecer el intercambio
+            arbolDialogos = new NodoDialogo(
+                "¿Seguro que no quieres intercambiar municiones por curaciones? ¡Te serán útiles!",
+                {"Vale, acepto", "No, gracias"}
+                );
 
-        arbolDialogos->hijos << ok << bye;
+            auto n4_si = new NodoDialogo(
+                "¡Gracias! Toma 2 curaciones pequeñas.",
+                {"Entendido"},
+                "MARCAR_ACEPTO_NPC4"
+                );
+
+            auto n4_no = new NodoDialogo("Bueno...", {"Adiós"});
+
+            arbolDialogos->hijos << n4_si << n4_no;
+        }
+        else {
+            // Primera interacción (diálogo inicial)
+            arbolDialogos = new NodoDialogo(
+                "¿Podrías darme una caja de municiones? Te daré 2 curaciones pequeñas.",
+                {"Sí", "No"}
+                );
+
+            auto n4_si = new NodoDialogo(
+                "¡Gracias! A cambio toma 2 curaciones.",
+                {"Entendido"},
+                "MARCAR_ACEPTO_NPC4"
+                );
+
+            auto n4_no = new NodoDialogo(
+                "Bueno... volveré a intentarlo luego.",
+                {"Adiós"},
+                "MARCAR_RECHAZO_NPC4" // <<< Marca que RECHAZÓ
+                );
+
+            arbolDialogos->hijos << n4_si << n4_no;
+        }
         break;
     }
 
     /* ───────── NPC 5 ───────── */
     case Tipo::NPC5: {
-        arbolDialogos=new NodoDialogo(
-            "Creo que deje unos chalecos en el supermercado, ¿Me ayudas a recuperarlos?",
-            {"Sí", "No"}
-            );
-        auto cSi=new NodoDialogo("¡Gracias! Necesitaras granadas para ir...",
-                                   {"Entendido"}, "DAR_GRANADAS");
-        auto cNo=new NodoDialogo("ta bueno pues.",
-                                   {"Adiós"});
-        auto chalecos = new NodoDialogo("¡Mis chalecos! Toma uno por ayudarme",
-                                        {"Gracias"}, "DAR_CHALECO");
+        TablaHash::EstadoNPC estado = TablaHash::getInstance().getEstadoNPC("NPC5");
 
-        arbolDialogos->hijos<<cSi<<cNo;
+        if (estado == TablaHash::EstadoNPC::AceptoAyuda) {
+            if (Inventario::getInstance()->objetoExiste("chaleco")) {
+                // Si YA ACEPTÓ y TIENE el chaleco: Diálogo final
+                arbolDialogos = new NodoDialogo(
+                    "¡Gracias por los chalecos! Toma el tuyo.",
+                    {"Gracias"},
+                    "DAR_CHALECO"
+                    );
+            } else {
+                // Si YA ACEPTÓ pero NO tiene chaleco: Recordatorio
+                arbolDialogos = new NodoDialogo(
+                    "¿Ya encontraste mis chalecos? Necesitas granadas...",
+                    {"Todavía no", "Adiós"}
+                    );
+            }
+        }
+        else if (estado == TablaHash::EstadoNPC::RechazoAyuda) {
+            // Si RECHAZÓ antes: Le vuelve a preguntar
+            arbolDialogos = new NodoDialogo(
+                "¿Seguro que no me ayudas con los chalecos? Te daré granadas...",
+                {"Vaya, te ayudo", "No, gracias"}
+                );
 
+            auto cSi = new NodoDialogo("¡Gracias! Toma estas granadas.", {"Entendido"}, "MARCAR_ACEPTO_NPC5");
+            auto cNo = new NodoDialogo("Bueno...", {"Adiós"});
+            arbolDialogos->hijos << cSi << cNo;
+        }
+        else {
+            // Primera vez que habla con él
+            arbolDialogos = new NodoDialogo(
+                "¿Me ayudas a recuperar mis chalecos del supermercado?",
+                {"Sí", "No"}
+                );
 
-        if (Inventario::getInstance()->objetoExiste("chaleco")) {
-            cSi->hijos << chalecos;
+            auto cSi = new NodoDialogo("¡Gracias! Toma estas granadas.", {"Entendido"}, "MARCAR_ACEPTO_NPC5");
+            auto cNo = new NodoDialogo("Ta bueno pues.", {"Adiós"},"MARCAR_RECHAZO_NPC5");
+            arbolDialogos->hijos << cSi << cNo;
         }
         break;
     }
 
     /* ───────── NPC 6 ───────── */
     case Tipo::NPC6: {
-        arbolDialogos=new NodoDialogo(
-            "Consigueme un casco del gimnasio y te daré mis zapatos especiales!",
-            {"Sí", "No"}
-            );
-        auto cSi=new NodoDialogo("Vé, antes que cambie de opinión",
-                                   {"Entendido"});
-        auto cNo=new NodoDialogo("Estaré aqui por si vuelves...",
-                                   {"Adiós"});
-        auto zapatos = new NodoDialogo("¡El casco! Los zapatos son tuyos",
-                                       {"Gracias"}, "DAR_ZAPATOS");
+        TablaHash::EstadoNPC estado = TablaHash::getInstance().getEstadoNPC("NPC6");
 
-        arbolDialogos->hijos<<cSi<<cNo;
-
-
-        if (Inventario::getInstance()->objetoExiste("casco")) {
-            cSi->hijos << zapatos;
+        if (estado == TablaHash::EstadoNPC::AceptoAyuda) {
+            // Si YA ACEPTÓ antes
+            if (Inventario::getInstance()->objetoExiste("casco")) {
+                // Si tiene el casco: intercambio
+                arbolDialogos = new NodoDialogo(
+                    "¡El casco! Los zapatos son tuyos.",
+                    {"Gracias"},
+                    "DAR_ZAPATOS"
+                    );
+            } else {
+                // Si NO tiene el casco: recordatorio
+                arbolDialogos = new NodoDialogo(
+                    "¿Ya conseguiste el casco del gimnasio?",
+                    {"Todavía no", "Adiós"}
+                    );
+            }
+        }
+        else if (estado == TablaHash::EstadoNPC::RechazoAyuda) {
+            // Si RECHAZÓ antes: le vuelve a ofrecer
+            arbolDialogos = new NodoDialogo(
+                "¿Seguro que no quieres mis zapatos especiales? ¡Son muy útiles!",
+                {"Vale, te ayudaré", "No, gracias"}
+                );
+            auto n6_si = new NodoDialogo("Vé al gimnasio y tráeme el casco.", {"Entendido"}, "MARCAR_ACEPTO_NPC6");
+            auto n6_no = new NodoDialogo("Bueno...", {"Adiós"});
+            arbolDialogos->hijos << n6_si << n6_no;
+        }
+        else {
+            // Primera interacción
+            arbolDialogos = new NodoDialogo(
+                "¿Me consigues un casco del gimnasio? Te daré mis zapatos especiales.",
+                {"Sí", "No"}
+                );
+            auto n6_si = new NodoDialogo("Vé, antes que cambie de opinión.", {"Entendido"}, "MARCAR_ACEPTO_NPC6");
+            auto n6_no = new NodoDialogo("Estaré aquí si vuelves...", {"Adiós"}, "MARCAR_RECHAZO_NPC6");
+            arbolDialogos->hijos << n6_si << n6_no;
         }
         break;
-
-
     }
     }
 }
@@ -412,6 +531,50 @@ void NPC::ejecutarConsecuencia(NodoDialogo *hoja)
         mostrarNotificacion("✔️ Obtuviste 30 municiones" );
         inventarioRef->insertarObjeto("municiones", 30, "arma", "disparar");
         inventarioRef->eliminarObjeto("llave");
+    }
+
+    //Verificar estados de loos dialogos
+    else if (c=="MARCAR_ACEPTO_NPC1"){
+        TablaHash::getInstance().setEstadoNPC("NPC1", TablaHash::EstadoNPC::AceptoAyuda);
+    }
+    else if (c=="MARCAR_RECHAZO_NPC1"){
+        TablaHash::getInstance().setEstadoNPC("NPC1", TablaHash::EstadoNPC::RechazoAyuda);
+    }
+    else if (c=="MARCAR_ACEPTO_NPC2"){
+        TablaHash::getInstance().setEstadoNPC("NPC2", TablaHash::EstadoNPC::AceptoAyuda);
+    }
+    else if (c=="MARCAR_RECHAZO_NPC2"){
+        TablaHash::getInstance().setEstadoNPC("NPC2", TablaHash::EstadoNPC::RechazoAyuda);
+    }
+    else if (c=="MARCAR_ACEPTO_NPC3"){
+        TablaHash::getInstance().setEstadoNPC("NPC3", TablaHash::EstadoNPC::AceptoAyuda);
+        mostrarNotificacion("✔️ Obtuviste un botiquin grande");
+        inventarioRef->insertarObjeto("curar2", 2, "Botiquín", "Cura más vida");
+    }
+    else if (c=="MARCAR_RECHAZO_NPC3"){
+        TablaHash::getInstance().setEstadoNPC("NPC3", TablaHash::EstadoNPC::RechazoAyuda);
+    }
+    else if (c=="MARCAR_ACEPTO_NPC4"){
+        TablaHash::getInstance().setEstadoNPC("NPC4", TablaHash::EstadoNPC::AceptoAyuda);
+        inventarioRef->setBalas(inventarioRef->getBalas()-20);
+        inventarioRef->insertarObjeto("curar1", 2, "Botiquín", "Cura vida");
+    }
+    else if (c=="MARCAR_RECHAZO_NPC4"){
+        TablaHash::getInstance().setEstadoNPC("NPC4", TablaHash::EstadoNPC::RechazoAyuda);
+    }
+    else if (c=="MARCAR_ACEPTO_NPC5"){
+        TablaHash::getInstance().setEstadoNPC("NPC5", TablaHash::EstadoNPC::AceptoAyuda);
+        mostrarNotificacion("✔️ Obtuviste 10 granadas");
+        inventarioRef->insertarObjeto("granada",10,"arma","explota");
+    }
+    else if (c=="MARCAR_RECHAZO_NPC5"){
+        TablaHash::getInstance().setEstadoNPC("NPC5", TablaHash::EstadoNPC::RechazoAyuda);
+    }
+    else if (c=="MARCAR_ACEPTO_NPC6"){
+        TablaHash::getInstance().setEstadoNPC("NPC6", TablaHash::EstadoNPC::AceptoAyuda);
+    }
+    else if (c=="MARCAR_RECHAZO_NPC6"){
+        TablaHash::getInstance().setEstadoNPC("NPC6", TablaHash::EstadoNPC::RechazoAyuda);
     }
 
     recompensaEntregada=true;

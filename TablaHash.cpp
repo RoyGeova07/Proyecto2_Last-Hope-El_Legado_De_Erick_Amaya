@@ -45,3 +45,11 @@ void TablaHash::descubrir(const QString &clave) {
     insertar(clave, true);
     emit datoModificado(clave);
 }
+
+void TablaHash::setEstadoNPC(const QString& npcId, TablaHash::EstadoNPC estado) {
+    estadosNPC[npcId] = estado;
+}
+
+TablaHash::EstadoNPC TablaHash::getEstadoNPC(const QString& npcId) const {
+    return estadosNPC.value(npcId, TablaHash::EstadoNPC::NoInteractuado);
+}

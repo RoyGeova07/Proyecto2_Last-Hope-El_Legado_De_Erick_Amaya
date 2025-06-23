@@ -3,13 +3,27 @@
 
 #include <QObject>
 #include <QString>
+#include <QHash>
 #include <vector>
 #include <list>
 #include <mutex>
 
 class TablaHash : public QObject {
-    Q_OBJECT
+    Q_OBJECT    
 
+public:
+    static TablaHash& getInstance();
+    void insertar(const QString &clave, bool descubierto);
+    bool estaDescubierto(const QString &clave);
+    void descubrir(const QString &clave);
+
+    enum class EstadoNPC { NoInteractuado, AceptoAyuda, RechazoAyuda };
+
+    void setEstadoNPC(const QString& npcId, TablaHash::EstadoNPC estado);
+    EstadoNPC getEstadoNPC(const QString& npcId) const;
+
+signals:
+    void datoModificado(const QString& clave);
 private:
     int capacidad;
     std::vector<std::list<std::pair<QString, bool>>> tabla;
@@ -20,14 +34,7 @@ private:
 
     int funcionHash(const QString &clave);
 
-signals:
-    void datoModificado(const QString& clave);
-
-public:
-    static TablaHash& getInstance();
-    void insertar(const QString &clave, bool descubierto);
-    bool estaDescubierto(const QString &clave);
-    void descubrir(const QString &clave);
+    QHash<QString, EstadoNPC> estadosNPC;
 };
 
 #endif // TABLAHASH_H
