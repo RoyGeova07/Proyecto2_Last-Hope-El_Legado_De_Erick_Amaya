@@ -165,13 +165,13 @@ Mall::Mall(personaje* jugadorExistente,QWidget* parent) : AtributosPersonaje(jug
 
                         this->hide();
                         QTimer::singleShot(300, this, [=]()
-                        {
+                                           {
 
-                            Inicio*i=new Inicio();
-                            i->show();
-                            deleteLater();  // destruye correctamente esta ventana actual
+                                               Inicio*i=new Inicio();
+                                               i->show();
+                                               deleteLater();  // destruye correctamente esta ventana actual
 
-                        });
+                                           });
 
                         this->close();
                     });
@@ -249,9 +249,9 @@ bool Mall::eventFilter(QObject* obj, QEvent* event) {
                         Inventario::getInstance()->insertarObjeto("curar1",1,"botiquin","curar");
                         mostrarNotificacion("Recibiste un botiquin!");
                     }else {
-                    Inventario::getInstance()->desbloquearPersonajeP3();
-                    TablaHash::getInstance().descubrir("Nivel5");
-                    mostrarNotificacion("🎯 Felicidades, has conseguido el Francotirador\n🧍 Personaje P3 desbloqueado");
+                        Inventario::getInstance()->desbloquearPersonajeP3();
+                        TablaHash::getInstance().descubrir("Nivel5");
+                        mostrarNotificacion("🎯 Felicidades, has conseguido el Francotirador\n🧍 Personaje P3 desbloqueado");
                     }
                     QTimer::singleShot(3000, this, [=]() {
                         mostrarNotificacion("🏬 Nivel completado...");
@@ -322,4 +322,3 @@ void Mall::verificarZombiesYMostrarMensaje() {
         mostrarNotificacion("🏆 ¡Has limpiado el Mall!\nPodés abrir el cofre.");
     }
 }
-

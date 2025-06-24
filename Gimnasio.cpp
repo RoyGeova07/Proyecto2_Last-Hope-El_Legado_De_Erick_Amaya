@@ -98,24 +98,27 @@ Gimnasio::Gimnasio(personaje* jugadorExistente,QWidget* parent) : AtributosPerso
     labelMuniciones->show();
     ActualizarMuniciones();
 
-    // Crear y registrar 3 zombies rápidos (Z6) y 3 zombies lentos (Z4)
-    int posX = 1100;
-    for (int i = 0; i < 3; ++i) {
-        // Zombie rápido
+
+    // Crear y registrar 4 zombies rápidos (Z6)
+    int posX6 = 1100;
+    for (int i = 0; i < 4; ++i) {
         Zombie* z6 = new Zombie(Zombie::Tipo::Z6, this);
-        z6->move(posX, 500);
-        z6->setVelocidad(4); // Puedes ajustar la velocidad si lo deseas
+        z6->move(posX6, 500);
+        z6->setVelocidad(5); // Rápido
         z6->show();
         zombies.append(z6);
+        posX6 -= 70;
+    }
 
-        // Zombie lento
+    // Crear y registrar 4 zombies lentos (Z4)
+    int posX4 = 1000;
+    for (int i = 0; i < 4; ++i) {
         Zombie* z4 = new Zombie(Zombie::Tipo::Z4, this);
-        z4->move(posX - 100, 500);
-        z4->setVelocidad(2); // Lento
+        z4->move(posX4, 500);
+        z4->setVelocidad(4); // Lento
         z4->show();
         zombies.append(z4);
-
-        posX -= 300;
+        posX4 -= 70;
     }
 
     // Conectar colisiones con jugador
@@ -154,7 +157,10 @@ Gimnasio::Gimnasio(personaje* jugadorExistente,QWidget* parent) : AtributosPerso
                     QTimer::singleShot(1000, this, [=]() {
                         QMessageBox::information(this, "💀 GAME OVER", "Has muerto...");
 
-                        jugador->reiniciarEstadoDefensivo();
+                        Inventario* inv = Inventario::getInstance();
+                        inv->eliminarObjeto("casco");      // quita el casco
+                        inv->eliminarObjeto("chaleco");    // quita el chaleco (si estaba equipado)
+                        jugador->setEscudo(0);             // pone la barra en 0
 
                         this->hide();
                         QTimer::singleShot(300, this, [=]()
@@ -241,8 +247,8 @@ bool Gimnasio::eventFilter(QObject* obj, QEvent* event) {
                     mensajeCofre->setText("🎁 Cofre abierto");
                     mensajeCofre->show();
                     if (TablaHash::getInstance().estaDescubierto("Nivel3")){
-                        //Inventario::getInstance()->setBalas(Inventario::getInstance()->getBalas()+30);
-                        mostrarNotificacion("No hay premio :(");
+                        Inventario::getInstance()->setBalas(Inventario::getInstance()->getBalas()+30);
+                        mostrarNotificacion("Recibiste 30 municiones!");
                     }else {
                         Inventario::getInstance()->insertarObjeto("casco",1,"armadura","protege");
                         TablaHash::getInstance().descubrir("Nivel3");
