@@ -253,8 +253,8 @@ bool supermercado::eventFilter(QObject* obj, QEvent* event) {
                     mensajeCofre->show();
 
                     if (TablaHash::getInstance().estaDescubierto("Nivel6")){
-                        Inventario::getInstance()->insertarObjeto("municiones",20,"arma","disparar");
-                        mostrarNotificacion("Recibiste municiones!");
+                         Inventario::getInstance()->setBalas(Inventario::getInstance()->getBalas()+30);
+                        mostrarNotificacion("Recibiste 30 municiones!");
                     } else {
                         Inventario::getInstance()->insertarObjeto("chaleco",2,"armadura","protege");
                         TablaHash::getInstance().descubrir("Nivel6");
@@ -328,7 +328,7 @@ void supermercado::verificarZombiesYMostrarMensaje() {
     }
 
     if (!zombiesVivos) {
-        mensajeMostrado = true;
+         mensajeMostrado = true;
         mostrarNotificacion("🏆 ¡Has limpiado el Supermercado!\nPodés abrir el cofre.");
     }
 }

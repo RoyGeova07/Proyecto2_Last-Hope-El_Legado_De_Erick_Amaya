@@ -287,7 +287,7 @@ bool Gasolinera::eventFilter(QObject* obj, QEvent* event) {
                     mensajeCofre->show();
                     if (TablaHash::getInstance().estaDescubierto("Nivel4")){
                         Inventario::getInstance()->insertarObjeto("curar1",1,"botiquin","curar");
-                        mostrarNotificacion("Recibiste municiones!");
+                        mostrarNotificacion("Recibiste un botiquin!");
                     } else {
                         Inventario::getInstance()->desbloquearPersonajeP2();
                         TablaHash::getInstance().descubrir("Nivel4");

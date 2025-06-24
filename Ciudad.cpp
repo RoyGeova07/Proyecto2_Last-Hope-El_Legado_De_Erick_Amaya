@@ -337,8 +337,9 @@ bool Ciudad::eventFilter(QObject* obj, QEvent* event) {
 
                     //agregar llave al inventario si es primera vez
                     if (TablaHash::getInstance().estaDescubierto("Nivel2")){
-                        Inventario::getInstance()->insertarObjeto("municiones",20,"arma","disparar");
-                        mostrarNotificacion("Recibiste municiones!");
+                        //Inventario::getInstance()->insertarObjeto("municiones",20,"arma","disparar");
+                        //Inventario::getInstance()->setBalas(Inventario::getInstance()->getBalas()+30);
+                        mostrarNotificacion("No hay premio :(");
                     } else {
                         Inventario::getInstance()->insertarObjeto("llave",1,"objeto","desconocido");
                         TablaHash::getInstance().descubrir("Nivel2");

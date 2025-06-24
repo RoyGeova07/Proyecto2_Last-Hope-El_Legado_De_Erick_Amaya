@@ -511,7 +511,7 @@ void NPC::ejecutarConsecuencia(NodoDialogo *hoja)
         inventarioRef->insertarObjeto("granada",10,"arma","explota");
     }
     else if(c=="QUITAR_MUNICIONES"){
-        //mostrarNotificacion("✔️ " + c);
+        mostrarNotificacion("¡Ganaste dos botiquines a cambio de 20 municiones! ");
         inventarioRef->setBalas(inventarioRef->getBalas()-20);
         inventarioRef->insertarObjeto("curar1", 2, "Botiquín", "Cura vida");
     }
@@ -528,8 +528,8 @@ void NPC::ejecutarConsecuencia(NodoDialogo *hoja)
         inventarioRef->insertarObjeto("chaleco",1,"armadura","protege");
     }
     else if(c=="DAR_MUNICIONES"){
-        mostrarNotificacion("✔️ Obtuviste 30 municiones" );
-        inventarioRef->insertarObjeto("municiones", 30, "arma", "disparar");
+        mostrarNotificacion("✔️ Obtuviste 60 municiones" );
+        inventarioRef->insertarObjeto("municiones", 60, "arma", "disparar");
         inventarioRef->eliminarObjeto("llave");
     }
 

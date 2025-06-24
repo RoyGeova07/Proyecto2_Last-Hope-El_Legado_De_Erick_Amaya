@@ -241,8 +241,8 @@ bool Gimnasio::eventFilter(QObject* obj, QEvent* event) {
                     mensajeCofre->setText("🎁 Cofre abierto");
                     mensajeCofre->show();
                     if (TablaHash::getInstance().estaDescubierto("Nivel3")){
-                        Inventario::getInstance()->insertarObjeto("municiones",20,"arma","disparar");
-                        mostrarNotificacion("Recibiste municiones!");
+                         Inventario::getInstance()->setBalas(Inventario::getInstance()->getBalas()+30);
+                        mostrarNotificacion("Recibiste 30 municiones!");
                     }else {
                         Inventario::getInstance()->insertarObjeto("casco",1,"armadura","protege");
                         TablaHash::getInstance().descubrir("Nivel3");
