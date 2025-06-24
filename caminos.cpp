@@ -1207,6 +1207,7 @@ void Caminos::keyPressEvent(QKeyEvent *event)
     {
         qDebug() << "Entrando al Laboratorio...";
         laboratorio* mallWindow = new laboratorio(jugador);
+        ResetearMovimiento();
         mallWindow->show();
         this->close();
         return;
