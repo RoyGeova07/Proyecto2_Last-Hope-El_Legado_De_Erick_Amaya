@@ -297,6 +297,7 @@ bool Gasolinera::eventFilter(QObject* obj, QEvent* event) {
                         mostrarNotificacion("🎯 Felicidades, has conseguido la Famas\n🧍 Personaje P2 desbloqueado");
                     }
                     QTimer::singleShot(3000, this, [=]() {
+                         ActualizarBarraEscudo();
                         mostrarNotificacion("⛽ Nivel completado...");
                         Caminos* c = new Caminos(jugador);
                         Inventario::getInstance()->setBalas(jugador->getMuniciones());

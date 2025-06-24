@@ -67,6 +67,8 @@ public:
     void desbloquearPersonajeP2() { personajeP2Desbloqueado = true; }
     void desbloquearPersonajeP3() { personajeP3Desbloqueado = true; }
 
+    void resetear();
+
 };
 
 #endif // INVENTARIO_H

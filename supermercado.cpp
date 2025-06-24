@@ -262,6 +262,7 @@ bool supermercado::eventFilter(QObject* obj, QEvent* event) {
                     }
 
                     QTimer::singleShot(3000, this, [=]() {
+                         ActualizarBarraEscudo();
                         mostrarNotificacion("🛒 Nivel completado...");
                         Caminos* c = new Caminos(jugador);
                         Inventario::getInstance()->setBalas(jugador->getMuniciones());

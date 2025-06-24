@@ -101,6 +101,19 @@ public:
     bool cascoAplicado=false;
     bool chalecoAplicado=false;
 
+    bool escudoAumentadoPorEquipo() const {
+        return escudoAumentado;
+    }
+
+    void marcarEscudoAumentado(bool estado) {
+        escudoAumentado = estado;
+    }
+
+    // Método para resetear el estado cuando se quita equipo
+    void resetearBonosEquipo() {
+        escudoAumentado = false;
+    }
+
 private:
 
     QVector<QPixmap> frames;
@@ -118,6 +131,8 @@ private:
     int energia;
     int municiones;
     int velocidadMovimiento;
+
+    bool escudoAumentado = false;
 
 };
 

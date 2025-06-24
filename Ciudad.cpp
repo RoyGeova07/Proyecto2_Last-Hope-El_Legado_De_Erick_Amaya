@@ -163,17 +163,19 @@ Ciudad::Ciudad(personaje* jugadorExistente,QWidget* parent) : AtributosPersonaje
                                 QMessageBox::information(this, "💀 GAME OVER", "Has muerto...");
 
                                 Inventario* inv = Inventario::getInstance();
-                                inv->eliminarObjeto("casco");      // quita el casco
-                                inv->eliminarObjeto("chaleco");    // quita el chaleco (si estaba equipado)
-                                jugador->setEscudo(0);             // pone la barra en 0
+                                inv->resetear(); // Limpia todo pero conserva municiones
+
+                                inv->setBalas(180);
+
+
+
+                                jugador->setEscudo(0);
 
                                 this->hide();
-                                QTimer::singleShot(300, this, [=]()
-                                {
-
-                                    Inicio*i=new Inicio();
+                                QTimer::singleShot(300, this, [=]() {
+                                    Inicio* i = new Inicio();
                                     i->show();
-                                    deleteLater();  // destruye correctamente esta ventana actual
+                                    deleteLater();
                                 });
 
                                 this->close();
@@ -340,8 +342,6 @@ bool Ciudad::eventFilter(QObject* obj, QEvent* event) {
 
                     //agregar llave al inventario si es primera vez
                     if (TablaHash::getInstance().estaDescubierto("Nivel2")){
-                        //Inventario::getInstance()->insertarObjeto("municiones",20,"arma","disparar");
-                        //Inventario::getInstance()->setBalas(Inventario::getInstance()->getBalas()+30);
                         mostrarNotificacion("No hay premio :(");
                     } else {
                         Inventario::getInstance()->insertarObjeto("llave",1,"objeto","desconocido");
@@ -353,6 +353,7 @@ bool Ciudad::eventFilter(QObject* obj, QEvent* event) {
                     QTimer::singleShot(3000, this, [=]() {
                         mostrarNotificacion("🏃 Volviendo al camino...");
 
+                         ActualizarBarraEscudo();
                         Inventario::getInstance()->setBalas(jugador->getMuniciones());
 
                         Caminos* c = new Caminos(jugador);
