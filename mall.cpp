@@ -157,8 +157,11 @@ Mall::Mall(personaje* jugadorExistente,QWidget* parent) : AtributosPersonaje(jug
 
                     QTimer::singleShot(1000, this, [=]() {
                         QMessageBox::information(this, "💀 GAME OVER", "Has muerto...");
+                        Inventario* inv = Inventario::getInstance();
+                        inv->eliminarObjeto("casco");      // quita el casco
+                        inv->eliminarObjeto("chaleco");    // quita el chaleco (si estaba equipado)
+                        jugador->setEscudo(0);             // pone la barra en 0
 
-                        jugador->reiniciarEstadoDefensivo();
 
                         this->hide();
                         QTimer::singleShot(300, this, [=]()

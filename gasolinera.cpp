@@ -159,7 +159,10 @@ Gasolinera::Gasolinera(personaje* jugadorExistente, QWidget* parent) : Atributos
                     QTimer::singleShot(1000, this, [=]() {
                         QMessageBox::information(this, "💀 GAME OVER", "Has muerto...");
 
-                        jugador->reiniciarEstadoDefensivo();
+                        Inventario* inv = Inventario::getInstance();
+                        inv->eliminarObjeto("casco");      // quita el casco
+                        inv->eliminarObjeto("chaleco");    // quita el chaleco (si estaba equipado)
+                        jugador->setEscudo(0);             // pone la barra en 0
 
                         this->hide();
                         QTimer::singleShot(300, this, [=]()
