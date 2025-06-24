@@ -62,7 +62,7 @@ laboratorio::laboratorio(personaje* jugadorExistente, QWidget* parent) : Atribut
     });
 
     cofreLabel = new QLabel(this);
-    cofreLabel->setGeometry(1112, 508, 164, 164);
+    cofreLabel->setGeometry(1112, 508, 64, 64);
     cofreLabel->setPixmap(cofreCerrado.scaled(64, 64));
     cofreLabel->show();
     cofreLabel->installEventFilter(this);
@@ -82,6 +82,7 @@ laboratorio::laboratorio(personaje* jugadorExistente, QWidget* parent) : Atribut
     boss = new Zombie(Zombie::Tipo::BOSS, this);
     boss->move(1050, 540);
     boss->setVelocidad(3);
+    boss->setAttribute(Qt::WA_TransparentForMouseEvents, true);
     boss->show();
     zombies.append(boss);
 
@@ -94,6 +95,7 @@ laboratorio::laboratorio(personaje* jugadorExistente, QWidget* parent) : Atribut
         z->move(xBase, yBase + i * yStep);
         z->show();
         z->setVelocidad(4);
+        z->setAttribute(Qt::WA_TransparentForMouseEvents, true);
         zombies.append(z);
         xBase += 80;
     }
@@ -334,13 +336,13 @@ void laboratorio::recogerAntidoto() {
         });
     }
 }
-
 void laboratorio::abrirCofreFinal() {
     cofreAbiertoYa = true;
     cofreLabel->setPixmap(cofreAbierto.scaled(64, 64));
     mensajeCofre->hide();
     mostrarDialogoFinalBonito(); // Llama al nuevo diálogo visual
 }
+
 
 void laboratorio::mostrarDialogoFinalBonito() {
     QWidget* dialogo = new QWidget(this, Qt::Dialog | Qt::FramelessWindowHint);
@@ -378,7 +380,7 @@ void laboratorio::mostrarDialogoFinalBonito() {
         "QPushButton:hover { background-color: #78ffd7; }"
         );
     btnControl->setStyleSheet(
-        "QPushButton { background-color: #fd6767; color: #fff; font-weight: bold; font-size: 18px; border-radius: 18px; border: 2px solid #ffbbbb; }"
+        "QPushButton { background-color: #fd6767; color: #fff; font-weight: bold; font-size: 14px; border-radius: 18px; border: 2px solid #ffbbbb; }"
         "QPushButton:hover { background-color: #ff8585; }"
         );
 
@@ -396,6 +398,8 @@ void laboratorio::mostrarDialogoFinalBonito() {
     dialogo->raise();
     dialogo->activateWindow();
 }
+
+
 
 // Final estándar: aparecen NPCs y mensaje de victoria
 void laboratorio::mostrarFinalStandard() {
@@ -427,30 +431,31 @@ void laboratorio::mostrarFinalStandard() {
     });
 }
 
-// Final alternativo: aparecen zombies y mensaje de control
 void laboratorio::mostrarFinalZombies() {
     if (finalYaDesplegado) return;
     finalYaDesplegado = true;
     deshabilitarControlesFinal();
 
-    // Zombies alineados en el piso (misma altura que el personaje principal)
+    // Zombies alineados en el piso (VARIADOS igual que los NPCs del final bueno)
     QVector<Zombie*> zombiesFinales;
-    int zombiesMostrar = 16;
-    int startX = 150;
-    int ySuelo = 480; // O el valor Y de tu personaje
+    int zombiesMostrar = 10;
+    int startX = 180;
+    int ySuelo = 480; // Ajusta este valor si tu piso es otro
     for (int i=0; i<zombiesMostrar; ++i) {
-        Zombie* z = new Zombie(Zombie::Tipo::Z1, this);
-        int x = startX + (i*80); // Espaciado horizontal
+        // OJO: aquí se cicla por los tipos de zombie 0,1,2,3,4,5
+        Zombie* z = new Zombie(static_cast<Zombie::Tipo>(i % 6), this);
+        int x = startX + (i*100); // Mismo espaciado que los NPCs
         z->move(x, ySuelo);
         z->setVelocidad(0);
         z->show();
         zombiesFinales.append(z);
     }
 
-    QLabel* textoFinal = new QLabel("🧟‍♂️ Ahora eres el amo de los zombies... Final alternativo alcanzado 🧟‍♂️", this);
-    textoFinal->setStyleSheet("background: rgba(0,0,0,200); color: #ff6666; font-size: 32px; font-weight: bold; padding: 14px; border-radius: 20px;");
+    QLabel* textoFinal = new QLabel("🧟‍♂️ Ahora eres el amo de los zombies...\nFinal alternativo alcanzado 🧟‍♂️", this);
+    textoFinal->setStyleSheet("background: rgba(0,0,0,200); color: #ff6666; font-size: 14px; font-weight: bold; padding: 8px; border-radius: 16px;");
     textoFinal->setAlignment(Qt::AlignCenter);
-    textoFinal->setGeometry((width()-800)/2, 40, 800, 64);
+    // Puedes reducir el ancho y alto para que no tape tanto
+    textoFinal->setGeometry((width()-500)/2, 40, 500, 60);
     textoFinal->show();
 
     QTimer::singleShot(6000, this, [=](){
