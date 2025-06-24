@@ -75,20 +75,21 @@ laboratorio::laboratorio(personaje* jugadorExistente, QWidget* parent) : Atribut
 
     // --- AGREGA BOSS ---
     Zombie* boss = new Zombie(Zombie::Tipo::BOSS, this);
-    boss->move(950, 540); // Abajo derecha
+    boss->move(1050, 540); // Un poco atrás (más a la derecha)
     boss->setVelocidad(2); // Opcional, más lento por ser jefe
     boss->show();
     zombies.append(boss);
 
     // Los Z1 adelante y con espacio entre ellos
-    int xBase = 840; // Más a la izquierda del boss
-    int yBase = 540;  // Nivel inferior
+    int xBase = 920; // Más a la izquierda del boss
+    int yBase = 530;  // Nivel inferior
     int yStep = 60;   // Espaciado vertical
     for (int i = 0; i < 3; ++i) {
         Zombie* z = new Zombie(Zombie::Tipo::Z1, this);
         z->move(xBase, yBase + i * yStep);
         z->show();
         zombies.append(z);
+        xBase += 80;
     }
 
     // Conectar colisiones con jugador (BOSS y todos los Z1)
@@ -100,7 +101,6 @@ laboratorio::laboratorio(personaje* jugadorExistente, QWidget* parent) : Atribut
 
             if(jugador->getVidas()>0)
             {
-
                 if(jugador->getEscudo()>0)
                 {
                     int escudoActual=jugador->getEscudo();
@@ -131,13 +131,13 @@ laboratorio::laboratorio(personaje* jugadorExistente, QWidget* parent) : Atribut
 
                         this->hide();
                         QTimer::singleShot(300, this, [=]()
-                        {
+                                           {
 
-                            Inicio*i=new Inicio();
-                            i->show();
-                            deleteLater();  // destruye correctamente esta ventana actual
+                                               Inicio*i=new Inicio();
+                                               i->show();
+                                               deleteLater();  // destruye correctamente esta ventana actual
 
-                        });
+                                           });
 
                         this->close();
                     });

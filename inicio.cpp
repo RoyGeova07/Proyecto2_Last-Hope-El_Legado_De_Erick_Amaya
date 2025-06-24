@@ -56,8 +56,7 @@ Inicio::Inicio(QWidget*parent):QWidget(parent),jugador(nullptr)
 
 
     //aqui los botones
-    btnNuevaPartida=new QPushButton("Nueva Partida");
-    btnCargarPartida=new QPushButton("Cargar Partida");
+    btnNuevaPartida=new QPushButton("Jugar");
     Salir=new QPushButton("Salir");
 
     QString estiloBoton =
@@ -76,7 +75,6 @@ Inicio::Inicio(QWidget*parent):QWidget(parent),jugador(nullptr)
         "}";
 
     btnNuevaPartida->setStyleSheet(estiloBoton);
-    btnCargarPartida->setStyleSheet(estiloBoton);
     Salir->setStyleSheet(estiloBoton);
 
     //aqui el layout general
@@ -85,7 +83,6 @@ Inicio::Inicio(QWidget*parent):QWidget(parent),jugador(nullptr)
     layoutVertical->addWidget(miniTitulo);
     layoutVertical->addSpacing(50);
     layoutVertical->addWidget(btnNuevaPartida,0,Qt::AlignCenter);
-    layoutVertical->addWidget(btnCargarPartida,0,Qt::AlignCenter);
     layoutVertical->addWidget(Salir,0,Qt::AlignCenter);
     layoutVertical->addStretch();
 
