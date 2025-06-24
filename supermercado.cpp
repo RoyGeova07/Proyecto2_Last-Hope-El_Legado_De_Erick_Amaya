@@ -100,33 +100,33 @@ supermercado::supermercado(personaje*jugadorExistente,QWidget* parent) : Atribut
     ActualizarMuniciones();
 
     // --------------- ZOMBIES ---------------
-    int posX = 960; // a la izquierda
+    int posX = 80; // a la izquierda
     int posY = 500;
 
     // 2 zombies grandotes (Z7)
-    for (int i = 0; i < 4; ++i) {
+    for (int i = 0; i < 2; ++i) {
         Zombie* z7 = new Zombie(Zombie::Tipo::Z7, this);
         z7->move(posX, posY + i*60);
-        z7->setVelocidad(3); // más lento
+        z7->setVelocidad(2); // más lento
         z7->show();
         zombies.append(z7);
         posX += 80; // pequeño desplazamiento para que no se encimen
     }
 
     // 2 zombies tipo 5 (Z5)
-    posX = 820;
-    for (int i = 0; i < 3; ++i) {
+    posX = 250;
+    for (int i = 0; i < 2; ++i) {
         Zombie* z5 = new Zombie(Zombie::Tipo::Z5, this);
         z5->move(posX, posY + 40*i);
-        z5->setVelocidad(4); // velocidad media
+        z5->setVelocidad(3); // velocidad media
         z5->show();
         zombies.append(z5);
         posX += 80;
     }
-    posX = 950;
+
     // 1 zombie tipo 3 (Z3)
     Zombie* z3 = new Zombie(Zombie::Tipo::Z3, this);
-    z3->move(posX, posY + 30);
+    z3->move(400, posY + 30);
     z3->setVelocidad(5); // más rápido
     z3->show();
     zombies.append(z3);
@@ -166,19 +166,17 @@ supermercado::supermercado(personaje*jugadorExistente,QWidget* parent) : Atribut
 
                     QTimer::singleShot(1000, this, [=]() {
                         QMessageBox::information(this, "💀 GAME OVER", "Has muerto...");
-                        Inventario* inv = Inventario::getInstance();
-                        inv->eliminarObjeto("casco");      // quita el casco
-                        inv->eliminarObjeto("chaleco");    // quita el chaleco (si estaba equipado)
-                        jugador->setEscudo(0);             // pone la barra en 0
+
+                        jugador->reiniciarEstadoDefensivo();
 
                         this->hide();
                         QTimer::singleShot(300, this, [=]()
-                        {
+                                           {
 
-                            Inicio*i=new Inicio();
-                            i->show();
-                            deleteLater();  // destruye correctamente esta ventana actual
-                        });
+                                               Inicio*i=new Inicio();
+                                               i->show();
+                                               deleteLater();  // destruye correctamente esta ventana actual
+                                           });
 
                         this->close();
                     });
@@ -255,8 +253,8 @@ bool supermercado::eventFilter(QObject* obj, QEvent* event) {
                     mensajeCofre->show();
 
                     if (TablaHash::getInstance().estaDescubierto("Nivel6")){
-                         Inventario::getInstance()->setBalas(Inventario::getInstance()->getBalas()+30);
-                        mostrarNotificacion("Recibiste 30 municiones!");
+                        // Inventario::getInstance()->setBalas(Inventario::getInstance()->getBalas()+30);
+                        mostrarNotificacion("No hay premio :(");
                     } else {
                         Inventario::getInstance()->insertarObjeto("chaleco",2,"armadura","protege");
                         TablaHash::getInstance().descubrir("Nivel6");
@@ -330,7 +328,7 @@ void supermercado::verificarZombiesYMostrarMensaje() {
     }
 
     if (!zombiesVivos) {
-         mensajeMostrado = true;
+        mensajeMostrado = true;
         mostrarNotificacion("🏆 ¡Has limpiado el Supermercado!\nPodés abrir el cofre.");
     }
 }

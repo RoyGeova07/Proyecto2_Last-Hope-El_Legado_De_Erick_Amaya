@@ -78,11 +78,11 @@ void NPC::mostrarDialogo(DialogoNPC* dialogoUI)
 
         // Ocultar automaticamente luego de 3.5 segundos (3500 ms)
         QTimer::singleShot(3500,dialogoUI,[dialogoUI]()
-        {
+                           {
 
-            dialogoUI->ocultarDialogo();
+                               dialogoUI->ocultarDialogo();
 
-        });
+                           });
 
         return;
 
@@ -433,44 +433,31 @@ void NPC::construirArbolDecisiones()
 
     /* ───────── NPC 6 ───────── */
     case Tipo::NPC6: {
-        TablaHash::EstadoNPC estado = TablaHash::getInstance().getEstadoNPC("NPC6");
+        if (Inventario::getInstance()->objetoExiste("casco")) {
+            // Si el jugador TIENE el casco: ofrecer intercambio
+            arbolDialogos = new NodoDialogo(
+                "¡Hey! ¿Quieres cambiar ese casco por granadas?",
+                {"Sí, intercambiar", "No, gracias"}
+                );
 
-        if (estado == TablaHash::EstadoNPC::AceptoAyuda) {
-            // Si YA ACEPTÓ antes
-            if (Inventario::getInstance()->objetoExiste("casco")) {
-                // Si tiene el casco: intercambio
-                arbolDialogos = new NodoDialogo(
-                    "¡El casco! Los zapatos son tuyos.",
-                    {"Gracias"},
-                    "DAR_ZAPATOS"
-                    );
-            } else {
-                // Si NO tiene el casco: recordatorio
-                arbolDialogos = new NodoDialogo(
-                    "¿Ya conseguiste el casco del gimnasio?",
-                    {"Todavía no", "Adiós"}
-                    );
-            }
-        }
-        else if (estado == TablaHash::EstadoNPC::RechazoAyuda) {
-            // Si RECHAZÓ antes: le vuelve a ofrecer
-            arbolDialogos = new NodoDialogo(
-                "¿Seguro que no quieres mis zapatos especiales? ¡Son muy útiles!",
-                {"Vale, te ayudaré", "No, gracias"}
+            auto n6_si = new NodoDialogo(
+                "¡Buen trato! Toma estas granadas.",
+                {"Gracias"},
+                "MARCAR_ACEPTO_NPC6"  // Acción combinada
                 );
-            auto n6_si = new NodoDialogo("Vé al gimnasio y tráeme el casco.", {"Entendido"}, "MARCAR_ACEPTO_NPC6");
-            auto n6_no = new NodoDialogo("Bueno...", {"Adiós"});
-            arbolDialogos->hijos << n6_si << n6_no;
-        }
-        else {
-            // Primera interacción
-            arbolDialogos = new NodoDialogo(
-                "¿Me consigues un casco del gimnasio? Te daré mis zapatos especiales.",
-                {"Sí", "No"}
+
+            auto n6_no = new NodoDialogo(
+                "Vuelve más tarde si cambias de opinión.",
+                {"Adiós"}
                 );
-            auto n6_si = new NodoDialogo("Vé, antes que cambie de opinión.", {"Entendido"}, "MARCAR_ACEPTO_NPC6");
-            auto n6_no = new NodoDialogo("Estaré aquí si vuelves...", {"Adiós"}, "MARCAR_RECHAZO_NPC6");
+
             arbolDialogos->hijos << n6_si << n6_no;
+        } else {
+            // Si NO tiene el casco: mensaje simple
+            arbolDialogos = new NodoDialogo(
+                "Si consigues un casco, puedo cambiártelo por granadas.",
+                {"Entendido"}
+                );
         }
         break;
     }
@@ -507,8 +494,8 @@ void NPC::ejecutarConsecuencia(NodoDialogo *hoja)
         inventarioRef->eliminarObjeto("llave");
     }
     else if(c=="DAR_GRANADAS"){
-        mostrarNotificacion("✔️ Obtuviste 10 granadas");
-        inventarioRef->insertarObjeto("granada",10,"arma","explota");
+        mostrarNotificacion("✔️ Obtuviste 5 granadas");
+        inventarioRef->insertarObjeto("granada",5,"arma","explota");
     }
     else if(c=="QUITAR_MUNICIONES"){
         mostrarNotificacion("¡Ganaste dos botiquines a cambio de 20 municiones! ");
@@ -561,19 +548,24 @@ void NPC::ejecutarConsecuencia(NodoDialogo *hoja)
         inventarioRef->setBalas(inventarioRef->getBalas()-20);
         inventarioRef->insertarObjeto("curar1", 2, "Botiquín", "Cura vida");
     }
+
     else if (c=="MARCAR_RECHAZO_NPC4"){
         TablaHash::getInstance().setEstadoNPC("NPC4", TablaHash::EstadoNPC::RechazoAyuda);
     }
     else if (c=="MARCAR_ACEPTO_NPC5"){
         TablaHash::getInstance().setEstadoNPC("NPC5", TablaHash::EstadoNPC::AceptoAyuda);
-        mostrarNotificacion("✔️ Obtuviste 10 granadas");
-        inventarioRef->insertarObjeto("granada",10,"arma","explota");
+        mostrarNotificacion("✔️ Obtuviste 5 granadas");
+        inventarioRef->insertarObjeto("granada",5,"arma","explota");
     }
     else if (c=="MARCAR_RECHAZO_NPC5"){
         TablaHash::getInstance().setEstadoNPC("NPC5", TablaHash::EstadoNPC::RechazoAyuda);
     }
     else if (c=="MARCAR_ACEPTO_NPC6"){
         TablaHash::getInstance().setEstadoNPC("NPC6", TablaHash::EstadoNPC::AceptoAyuda);
+        mostrarNotificacion("✔️ Obtuviste 5 granadas a cambio de un casco!");
+        inventarioRef->insertarObjeto("granada",5,"arma","explota");
+        inventarioRef->eliminarObjeto("casco");
+        //DAR_GRANADAS;QUITAR_CASCO
     }
     else if (c=="MARCAR_RECHAZO_NPC6"){
         TablaHash::getInstance().setEstadoNPC("NPC6", TablaHash::EstadoNPC::RechazoAyuda);

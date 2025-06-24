@@ -158,13 +158,13 @@ Gimnasio::Gimnasio(personaje* jugadorExistente,QWidget* parent) : AtributosPerso
 
                         this->hide();
                         QTimer::singleShot(300, this, [=]()
-                        {
+                                           {
 
-                            Inicio*i=new Inicio();
-                            i->show();
-                            deleteLater();  // destruye correctamente esta ventana actual
+                                               Inicio*i=new Inicio();
+                                               i->show();
+                                               deleteLater();  // destruye correctamente esta ventana actual
 
-                        });
+                                           });
 
                         this->close();
 
@@ -241,8 +241,8 @@ bool Gimnasio::eventFilter(QObject* obj, QEvent* event) {
                     mensajeCofre->setText("🎁 Cofre abierto");
                     mensajeCofre->show();
                     if (TablaHash::getInstance().estaDescubierto("Nivel3")){
-                         Inventario::getInstance()->setBalas(Inventario::getInstance()->getBalas()+30);
-                        mostrarNotificacion("Recibiste 30 municiones!");
+                        //Inventario::getInstance()->setBalas(Inventario::getInstance()->getBalas()+30);
+                        mostrarNotificacion("No hay premio :(");
                     }else {
                         Inventario::getInstance()->insertarObjeto("casco",1,"armadura","protege");
                         TablaHash::getInstance().descubrir("Nivel3");
