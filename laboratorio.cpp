@@ -52,8 +52,8 @@ laboratorio::laboratorio(personaje* jugadorExistente, QWidget* parent) : Atribut
         this->hide();
         QTimer::singleShot(300, this, [=]() {
             Caminos* c = new Caminos(jugador);
-            c->cambiarRuta(3);
-            c->posicionarJugadorEnCalleRuta3();
+            c->cambiarRuta(10);
+            c->posicionarJugadorEnCalleRuta10();
             c->show();
             ResetearMovimiento();
             this->close();

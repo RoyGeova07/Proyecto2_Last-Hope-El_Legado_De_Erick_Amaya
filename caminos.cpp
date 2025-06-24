@@ -351,6 +351,15 @@ void Caminos::posicionarJugadorEnCalleRuta9()
     jugador->move(posX,posY);
 
 }
+void Caminos::posicionarJugadorEnCalleRuta10()
+{
+
+    int posX=158;
+    int posY=358;
+
+    jugador->move(posX,posY);
+
+}
 
 
 void Caminos::posicionarJugadorDeVueltaARuta2_Desde_Ruta3()
