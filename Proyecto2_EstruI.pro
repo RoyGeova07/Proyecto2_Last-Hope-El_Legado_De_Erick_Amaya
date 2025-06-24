@@ -9,11 +9,14 @@ CONFIG += c++17
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    ArbolAvl.cpp \
     AtributosPersonaje.cpp \
     Ciudad.cpp \
     Gimnasio.cpp \
     Inventario.cpp \
     TablaHash.cpp \
+    WidgetNiveles.cpp \
+    WidgetZombies.cpp \
     bala.cpp \
     caminos.cpp \
     dialogonpc.cpp \
@@ -35,6 +38,7 @@ SOURCES += \
     zombie.cpp
 
 HEADERS += \
+    ArbolAvl.h \
     AtributosPersonaje.h \
     Ciudad.h \
     Cola.h \
@@ -43,6 +47,8 @@ HEADERS += \
     Inventario.h \
     NodoDialogo.h \
     TablaHash.h \
+    WidgetNiveles.h \
+    WidgetZombies.h \
     bala.h \
     caminos.h \
     dialogonpc.h \

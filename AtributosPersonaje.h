@@ -15,6 +15,7 @@
 #include "mapa.h"
 #include <QTabWidget>
 #include"granada.h"
+#include"ArbolAvl.h"
 
 class AtributosPersonaje : public QWidget {
     Q_OBJECT
@@ -115,6 +116,13 @@ public:
 
     QList<Granada*> granadasActivas;
     void intentarLanzarGranada();
+
+    ArbolAvl*arbolZombies;
+        ArbolAvl*arbolMapas;
+
+
+    bool ordenAscendente = true;
+
 
 
 };
