@@ -94,6 +94,7 @@ Gimnasio::Gimnasio(personaje* jugadorExistente,QWidget* parent) : AtributosPerso
     mensajeCofre->hide();
 
     Movimientos();
+
     puedeDisparar = true;
     labelMuniciones->show();
     ActualizarMuniciones();
@@ -255,6 +256,7 @@ bool Gimnasio::eventFilter(QObject* obj, QEvent* event) {
                         mostrarNotificacion("¡Recuperaste el casco!");
                     }
                     QTimer::singleShot(3000, this, [=]() {
+                        ActualizarBarraEscudo();
                         mostrarNotificacion("🏋️ Nivel completado...");
                         Caminos* c=new Caminos(jugador);
                         Inventario::getInstance()->setBalas(jugador->getMuniciones());

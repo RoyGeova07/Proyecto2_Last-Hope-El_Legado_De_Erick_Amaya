@@ -40,6 +40,7 @@ void Inventario::insertarObjeto(const QString &nombre, int cantidad, const QStri
 
     NodoInventario* nuevo = new NodoInventario(nombre, cantidad, tipo, uso);
     raiz = insertar(raiz, nuevo);
+     emit objetoAnadido(nombre);
 
 }
 
@@ -67,6 +68,7 @@ NodoInventario* Inventario::insertar(NodoInventario *nodo, NodoInventario *nuevo
 void Inventario::eliminarObjeto(const QString& nombre)
 {
     raiz = eliminar(raiz, nombre);
+     emit objetoEliminado(nombre);
 }
 
 NodoInventario* Inventario::eliminar(NodoInventario *nodo, const QString &nombre)

@@ -555,9 +555,61 @@ void AtributosPersonaje::inicializarTabWidget() {
          {"P2",":/imagenes/assets/protagonista/P2.png",Inventario::getInstance()->getPersonajeP2Desbloqueado()},
     {"P3",":/imagenes/assets/protagonista/P3.png",Inventario::getInstance()->getPersonajeP3Desbloqueado()}
 
-};
+    };
 
 QVector<QPushButton*> botonesUsar;
+
+    // Conexión para objetoEliminado
+    connect(Inventario::getInstance(), &Inventario::objetoEliminado, this, [this, skins](const QString& objeto) {
+        if (!jugador) return;
+
+        if (objeto == "casco" || objeto == "chaleco") {
+            int reduccion = 0;
+            QString skinActual = skins[static_cast<int>(jugador->personajeActual)].nombre;
+
+            // Solo reducir si el objeto estaba contribuyendo al escudo
+            if (skinActual == "P1" && objeto == "casco") {
+                reduccion = 10;
+            } else if ((skinActual == "P2" || skinActual == "P3")) {
+                reduccion = 10; // Ambos objetos aportan 10
+            }
+
+            if (reduccion > 0) {
+                int nuevoEscudo = std::max(0, jugador->getEscudo() - reduccion);
+                jugador->setEscudo(nuevoEscudo);
+                ActualizarBarraEscudo();
+            }
+
+            // Actualizar estado
+            bool tieneEquipo = (skinActual == "P1" && Inventario::getInstance()->objetoExiste("casco")) ||
+                               ((skinActual == "P2" || skinActual == "P3") &&
+                                (Inventario::getInstance()->objetoExiste("casco") ||
+                                 Inventario::getInstance()->objetoExiste("chaleco")));
+            jugador->marcarEscudoAumentado(tieneEquipo);
+        }
+    });
+
+    // Conexión para objetoAnadido
+    connect(Inventario::getInstance(), &Inventario::objetoAnadido, this, [this, skins](const QString& objeto) {
+        if (!jugador) return;
+
+        if (objeto == "casco" || objeto == "chaleco") {
+            int aumento = 0;
+            QString skinActual = skins[static_cast<int>(jugador->personajeActual)].nombre;
+
+            if (skinActual == "P1" && objeto == "casco") {
+                aumento = 10;
+            } else if (skinActual == "P2" || skinActual == "P3") {
+                aumento = 10; // Cada objeto aporta 10
+            }
+
+            if (aumento > 0) {
+                jugador->aumentarEscudo(aumento);
+                jugador->marcarEscudoAumentado(true);
+                ActualizarBarraEscudo();
+            }
+        }
+    });
 
 for(int i=0;i<skins.size();++i)
 {
@@ -661,6 +713,8 @@ for(int i=0;i<skins.size();++i)
         }
     }
 
+
+
     QFrame* skinFrame = new QFrame();
     skinFrame->setStyleSheet("background-color: #2d2d2d; border: 2px solid #555; border-radius: 12px;");
     skinFrame->setLayout(skinLayout);
@@ -705,6 +759,8 @@ for(int i=0;i<skins.size();++i)
 
         mostrarNotificacion(QString("🧍 Atuendo cambiado a: %1").arg(skins[i].nombre));
     });
+
+
 }
 
 layoutPersonajes->addStretch();
@@ -1168,6 +1224,14 @@ void AtributosPersonaje::intentarLanzarGranada()
     if (!lanzarGranadaHabilitado) {
         mostrarNotificacion("🚫 No puedes lanzar granadas en esta zona.");
         return;
+    }
+
+    if(jugador->personajeActual==personaje::P2||jugador->personajeActual==personaje::P3)
+    {
+
+        mostrarNotificacion("🚫  No puedes lanzar granada con este atuendo");
+        return;
+
     }
 
     NodoInventario* granadaNodo = Inventario::getInstance()->buscar(

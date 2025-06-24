@@ -400,14 +400,14 @@ void NPC::construirArbolDecisiones()
             if (Inventario::getInstance()->objetoExiste("chaleco")) {
                 // Si YA ACEPTÓ y TIENE el chaleco: Diálogo final
                 arbolDialogos = new NodoDialogo(
-                    "¡Gracias por los chalecos! Toma el tuyo.",
+                    "¡Gracias por mi chaleco! Toma 70 municiones.",
                     {"Gracias"},
-                    "DAR_CHALECO"
+                    "DAR_MUNICIONES2"
                     );
             } else {
                 // Si YA ACEPTÓ pero NO tiene chaleco: Recordatorio
                 arbolDialogos = new NodoDialogo(
-                    "¿Ya encontraste mis chalecos? Necesitas granadas...",
+                    "¿Ya encontraste mi chaleco? Necesitas granadas...",
                     {"Todavía no", "Adiós"}
                     );
             }
@@ -415,7 +415,7 @@ void NPC::construirArbolDecisiones()
         else if (estado == TablaHash::EstadoNPC::RechazoAyuda) {
             // Si RECHAZÓ antes: Le vuelve a preguntar
             arbolDialogos = new NodoDialogo(
-                "¿Seguro que no me ayudas con los chalecos? Te daré granadas...",
+                "¿Seguro que no me ayudas con el chaleco? Te daré granadas...",
                 {"Vaya, te ayudo", "No, gracias"}
                 );
 
@@ -426,7 +426,7 @@ void NPC::construirArbolDecisiones()
         else {
             // Primera vez que habla con él
             arbolDialogos = new NodoDialogo(
-                "¿Me ayudas a recuperar mis chalecos del supermercado?",
+                "¿Me ayudas a recuperar mi chaleco del supermercado?",
                 {"Sí", "No"}
                 );
 
@@ -524,6 +524,12 @@ void NPC::ejecutarConsecuencia(NodoDialogo *hoja)
         mostrarNotificacion("✔️ Obtuviste 60 municiones" );
         inventarioRef->insertarObjeto("municiones", 60, "arma", "disparar");
         inventarioRef->eliminarObjeto("llave");
+    }
+
+    else if(c=="DAR_MUNICIONES2"){
+        mostrarNotificacion("✔️ Obtuviste 70 municiones" );
+        inventarioRef->insertarObjeto("municiones", 70, "arma", "disparar");
+        inventarioRef->eliminarObjeto("chaleco");
     }
 
     //Verificar estados de loos dialogos

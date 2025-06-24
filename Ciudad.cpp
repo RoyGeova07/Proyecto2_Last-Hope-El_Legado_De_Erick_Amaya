@@ -99,6 +99,7 @@ Ciudad::Ciudad(personaje* jugadorExistente,QWidget* parent) : AtributosPersonaje
     mensajeCofre->hide();//oculto por defecto
 
     Movimientos();
+     connect(movimientoTimer, &QTimer::timeout, this, &Ciudad::onMovimientoUpdate);
     puedeDisparar=true;
     labelMuniciones->show();//mostrar el contador municiones
     ActualizarMuniciones();

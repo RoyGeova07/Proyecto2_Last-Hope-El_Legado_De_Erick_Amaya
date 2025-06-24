@@ -4,6 +4,7 @@
 
 #include <QString>
 #include <QDebug>
+#include <QObject>
 
 // Nodo del ABB
 struct NodoInventario
@@ -20,8 +21,9 @@ struct NodoInventario
         : nombre(n), cantidad(cant), tipo(t), uso(u), izquierda(nullptr), derecha(nullptr) {}
 };
 
-class Inventario
-{
+
+class Inventario : public QObject {
+    Q_OBJECT
 
 private:
 
@@ -41,7 +43,9 @@ private:
     // Prohibir copiar
     Inventario(const Inventario&)=delete;
     Inventario& operator=(const Inventario&)=delete;
-
+signals:
+    void objetoEliminado(const QString& nombre);
+    void objetoAnadido(const QString& nombre);
 public:
 
     static Inventario* getInstance();//singleton

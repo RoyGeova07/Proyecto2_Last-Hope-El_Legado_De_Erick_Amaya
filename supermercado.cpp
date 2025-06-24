@@ -258,12 +258,13 @@ bool supermercado::eventFilter(QObject* obj, QEvent* event) {
                         Inventario::getInstance()->setBalas(Inventario::getInstance()->getBalas()+30);
                         mostrarNotificacion("Recibiste 30 municiones!");
                     } else {
-                        Inventario::getInstance()->insertarObjeto("chaleco",2,"armadura","protege");
+                        Inventario::getInstance()->insertarObjeto("chaleco",1,"armadura","protege");
                         TablaHash::getInstance().descubrir("Nivel6");
-                        mostrarNotificacion("¡Recibiste dos chalecos!");
+                        mostrarNotificacion("¡Recibiste el chaleco!");
                     }
 
                     QTimer::singleShot(3000, this, [=]() {
+                        ActualizarBarraEscudo();
                         mostrarNotificacion("🛒 Nivel completado...");
                         Caminos* c = new Caminos(jugador);
                         Inventario::getInstance()->setBalas(jugador->getMuniciones());

@@ -95,6 +95,7 @@ Gasolinera::Gasolinera(personaje* jugadorExistente, QWidget* parent) : Atributos
     mensajeCofre->hide();
 
     Movimientos();
+     connect(movimientoTimer, &QTimer::timeout, this, &Gasolinera::onMovimientoUpdate);
     puedeDisparar = true;
     labelMuniciones->show();
     ActualizarMuniciones();
