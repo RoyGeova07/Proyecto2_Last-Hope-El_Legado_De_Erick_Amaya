@@ -8,6 +8,9 @@
 #include<QPainter>
 #include <QStackedLayout>
 #include<QScrollArea>
+#include"arbolavl.h"
+#include"widgetzombies.h"
+#include"widgetniveles.h"
 
 AtributosPersonaje::AtributosPersonaje(personaje *jugadorExistente, QWidget *parent):QWidget(parent),
 
@@ -16,7 +19,6 @@ AtributosPersonaje::AtributosPersonaje(personaje *jugadorExistente, QWidget *par
     derechaPresionada(false), arribaPresionado(false),
     abajoPresionado(false), ZPresionado(false), tablaNiveles(TablaHash::getInstance())
 {
-
     inventarioWidget=new InventarioWidget(Inventario::getInstance());
     tablaWidget = new TablaWidget(&TablaHash::getInstance(), &TablaHash::getInstance(), this);
    // tablaWidget = new TablaWidget(TablaHash::getInstance(), TablaHash::getInstance());
@@ -549,7 +551,7 @@ void AtributosPersonaje::inicializarTabWidget() {
     {
 
     {"P1",":/imagenes/assets/protagonista/P1.png",true},
-        {"P2",":/imagenes/assets/protagonista/P2.png",Inventario::getInstance()->getPersonajeP2Desbloqueado()},
+    {"P2",":/imagenes/assets/protagonista/P2.png",Inventario::getInstance()->getPersonajeP2Desbloqueado()},
     {"P3",":/imagenes/assets/protagonista/P3.png",Inventario::getInstance()->getPersonajeP3Desbloqueado()}
 
 };
@@ -710,6 +712,74 @@ for(int i=0;i<skins.size();++i)
 layoutPersonajes->addStretch();
 contenidoScroll->setLayout(layoutPersonajes);
 scrollArea->setWidget(contenidoScroll);
+
+// ===================== NUEVA PESTAÑA: ZOMBIES Y NIVELES ==========================
+// ===================== NUEVA PESTAÑA: ZOMBIES Y NIVELES ==========================
+QWidget* pestanaZombies = new QWidget();
+QVBoxLayout* layoutPrincipal = new QVBoxLayout(pestanaZombies);
+
+// Botones de ordenamiento
+QHBoxLayout* botonesLayout = new QHBoxLayout();
+QPushButton* btnOrdenZombies = new QPushButton("Ordenar Zombies ↑↓");
+QPushButton* btnOrdenNiveles = new QPushButton("Ordenar Niveles ↑↓");
+botonesLayout->addWidget(btnOrdenZombies);
+botonesLayout->addWidget(btnOrdenNiveles);
+layoutPrincipal->addLayout(botonesLayout);
+
+// Scroll para niveles
+QWidget* contNiveles = new QWidget();
+QVBoxLayout* layoutNiveles = new QVBoxLayout(contNiveles);
+layoutPrincipal->addWidget(new QLabel("🗺️ Niveles"));
+
+// Árbol AVL de zombies
+arbolZombies = new ArbolAvl();
+arbolZombies->insertar("Z1", 24, 1, 4, 6, "Ninguna");
+arbolZombies->insertar("Z2", 25, 1, 4, 5, "Ninguna");
+arbolZombies->insertar("Z3", 13, 1, 4, 1, "Ninguna");
+arbolZombies->insertar("Z4", 15, 1, 4, 2, "Ninguna");
+arbolZombies->insertar("Z5", 17, 1, 4, 3, "Ninguna");
+arbolZombies->insertar("Z6", 25, 1, 4, 4, "Ninguna");
+arbolZombies->insertar("Z7", 40, 1, 4, 7, "Ninguna");
+arbolZombies->insertar("BOSS", 250, 1, 4, 8, "Gran Recompensa");
+
+// Widget para mostrar los zombies
+WidgetZombies* widgetZombies = new WidgetZombies(arbolZombies, this);
+layoutPrincipal->addWidget(widgetZombies);
+
+// Mostrar niveles
+arbolMapas = new ArbolAvl();
+arbolMapas->insertar("Laboratorio", 0, 0, 0, 1, "antidoto");
+arbolMapas->insertar("Supermercado", 0, 0, 0, 2, "chaleco");
+arbolMapas->insertar("Gasolinera", 0, 0, 0, 3, "famas");
+arbolMapas->insertar("Mall", 0, 0, 0, 4, "franco");
+arbolMapas->insertar("Gimnasio", 0, 0, 0, 5, "casco");
+arbolMapas->insertar("Ciudad Ruinas", 0, 0, 0, 6, "30 municiones y llave");
+
+WidgetNiveles* widgetNiveles = new WidgetNiveles(arbolMapas, this);
+layoutPrincipal->addWidget(new QLabel("🗺️ Niveles"));
+layoutPrincipal->addWidget(widgetNiveles);
+
+connect(btnOrdenNiveles, &QPushButton::clicked, this, [=]() mutable {
+    ordenAscendente = !ordenAscendente;
+    widgetNiveles->actualizar(ordenAscendente);
+});
+
+// Conectar botones
+connect(btnOrdenZombies, &QPushButton::clicked, this, [=]() mutable {
+    static bool orden = true;
+    orden = !orden;
+    widgetZombies->actualizar(orden);
+});
+
+connect(btnOrdenNiveles, &QPushButton::clicked, this, [=]() {
+    static bool asc = true;
+    asc = !asc;
+    widgetNiveles->actualizar(asc);
+});
+
+tabWidget->addTab(pestanaZombies, "Zombies - Mapas");
+// ====================================================================================
+
 tabWidget->addTab(scrollArea, "Personajes - Habilidades");
 tabWidget->addTab(tablaWidget, "Niveles - NPCs");
 

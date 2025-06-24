@@ -14,6 +14,7 @@ SOURCES += \
     Gimnasio.cpp \
     Inventario.cpp \
     TablaHash.cpp \
+    arbolavl.cpp \
     bala.cpp \
     caminos.cpp \
     dialogonpc.cpp \
@@ -32,6 +33,8 @@ SOURCES += \
     personaje.cpp \
     supermercado.cpp \
     tablawidget.cpp \
+    widgetniveles.cpp \
+    widgetzombies.cpp \
     zombie.cpp
 
 HEADERS += \
@@ -43,6 +46,7 @@ HEADERS += \
     Inventario.h \
     NodoDialogo.h \
     TablaHash.h \
+    arbolavl.h \
     bala.h \
     caminos.h \
     dialogonpc.h \
@@ -60,6 +64,8 @@ HEADERS += \
     personaje.h \
     supermercado.h \
     tablawidget.h \
+    widgetniveles.h \
+    widgetzombies.h \
     zombie.h
 
 FORMS += \

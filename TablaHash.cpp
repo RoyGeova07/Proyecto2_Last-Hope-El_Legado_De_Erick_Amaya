@@ -1,4 +1,4 @@
-#include "tablahash.h"
+    #include "tablahash.h"
 
 TablaHash::TablaHash(QObject *parent, int cap)
     : QObject(parent), capacidad(cap), tabla(cap) {}
