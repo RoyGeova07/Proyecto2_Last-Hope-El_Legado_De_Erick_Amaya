@@ -1230,7 +1230,7 @@ void Caminos::keyPressEvent(QKeyEvent *event)
     }
     // -----------------------------------------------------------------------
 
-    if(!jugador)
+    if(jugador)
     {
         jugador->DetenerAnimacion();
         auto anim=jugador->obtenerAnimacion("idle",jugador->personajeActual);

@@ -80,3 +80,4 @@ CMakeLists.txt.user*
 .rcc/
 .uic/
 /build*/
+_codeql_detected_source_root
