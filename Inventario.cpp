@@ -237,22 +237,24 @@ bool Inventario::objetoExiste(const QString& nombre) const
 
 void Inventario::resetear() {
     // 1. Destruir todo el árbol excepto municiones
-    NodoInventario* nuevaRaiz = nullptr;
     NodoInventario* municiones = buscar(raiz, "municiones");
+    NodoInventario* municionesCopia = nullptr;
 
+    // Si existe el nodo de municiones, crear una copia antes de destruir el árbol
     if(municiones) {
-        // Desconectar municiones del árbol original
-        municiones->izquierda = nullptr;
-        municiones->derecha = nullptr;
-        nuevaRaiz = municiones;
+        municionesCopia = new NodoInventario(municiones->nombre, municiones->cantidad, municiones->tipo, municiones->uso);
     }
 
-    // Destruir el resto del árbol
+    // Destruir todo el árbol (incluyendo el nodo original de municiones)
     destruirArbol(raiz);
-    raiz = nuevaRaiz;
+    raiz = nullptr;
+
+    // Restaurar el nodo de municiones con la copia
+    if(municionesCopia) {
+        raiz = municionesCopia;
+    }
 
     // 2. Resetear valores
-    //
     balas = 180;
     personajeP2Desbloqueado = false;
     personajeP3Desbloqueado = false;
